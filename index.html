@@ -290,39 +290,23 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    #homeReviewsContainer {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        gap: 24px;
-        padding-bottom: 20px;
-    }
-    
-    .review-item {
-        min-width: 300px;
-        flex-shrink: 0;
-        scroll-snap-align: center;
-    }
-
-
-
+   /* Stil pentru Carousel-ul cu o singură recenzie */
 #homeReviewsContainer {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        gap: 20px;
-        padding: 20px 0;
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none;  /* IE/Edge */
-    }
-    #homeReviewsContainer::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
-    
-    .review-item {
-        min-width: 280px;
-        max-width: 320px;
-        flex-shrink: 0;
-        scroll-snap-align: start;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px; /* Înălțime fixă pentru a evita săriturile de pagină */
+    position: relative;
+    overflow: hidden;
+}
+
+.review-item {
+    width: 100%;
+    max-width: 500px; /* Lățime optimă pentru citit */
+    margin: 0 auto;
+    transition: all 0.8s ease;
+    /* Recenzia va fi centrată și va ocupa tot spațiul containerului */
+}
 </style>
 </head>
 <body>
@@ -592,12 +576,12 @@
     <div class="indigo-frame rounded-2xl p-8 opacity-20 italic text-xs min-w-[300px]">Se încarcă recenzii...</div>
 </div>
 
-        <div data-reveal="up">
-            <a href="recenzii.html" class="inline-block px-12 py-4 border-2 border-brand-blue rounded-full text-brand-blue text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-blue hover:text-white transition-all duration-500 shadow-[0_0_30px_rgba(113,140,229,0.2)]">
-                Vezi toate recenziile
-            </a>
-        </div>
-    </div>
+<!-- Elimină data-reveal pentru ca butonul să nu aștepte scroll-ul -->
+<div class="mt-4"> 
+    <a href="Recenzii.html" class="inline-block px-12 py-4 border-2 border-brand-blue rounded-full text-brand-blue text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-blue hover:text-white transition-all duration-500 shadow-[0_0_30px_rgba(113,140,229,0.2)]">
+        Vezi toate recenziile
+    </a>
+</div>
 </section>
 
 <!-- SECTION 2: COLLECTION PREVIEW -->
@@ -791,7 +775,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, orderBy, serverTimestamp, updateDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc,limit, getDoc, getDocs, query, orderBy, serverTimestamp, updateDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 const firebaseConfig = {
     apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
     authDomain: "handmade-marry.firebaseapp.com",
@@ -872,6 +856,74 @@ onAuthStateChanged(auth, user => {
         });
     }
 });
+
+
+
+async function loadHomeReviews() {
+    const container = document.getElementById('homeReviewsContainer');
+    if(!container) return;
+
+    try {
+        const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"), limit(6));
+        const snap = await getDocs(q);
+        
+        const reviews = [];
+        snap.forEach(d => reviews.push(d.data()));
+
+        if (reviews.length === 0) {
+            container.innerHTML = "<p class='italic opacity-50 text-xs'>Nu există încă recenzii.</p>";
+            return;
+        }
+
+        let currentIndex = 0;
+
+        // Funcția care afișează recenzia curentă cu animație
+        const showReview = (index) => {
+            const data = reviews[index];
+            const isOwner = data.email === 'hancimaria39@gmail.com';
+            
+            // Creăm HTML-ul pentru recenzia curentă
+            const reviewHTML = `
+                <div class="review-item indigo-frame rounded-2xl p-8 text-center shadow-2xl">
+                    <div class="flex flex-col items-center gap-4">
+                        <img src="${data.photo || 'https://i.pravatar.cc/150'}" class="w-16 h-16 rounded-full border-2 border-brand-magenta shadow-lg">
+                        <div>
+                            <p class="text-brand-ice font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                                ${data.name}
+                                ${isOwner ? '<span class="text-[8px] bg-brand-magenta text-white px-2 py-0.5 rounded-full tracking-normal">OWNER</span>' : ''}
+                            </p>
+                            <p class="text-brand-magenta text-sm mt-1">${'★'.repeat(data.rating)}</p>
+                        </div>
+                        <p class="text-brand-softpink/90 text-sm md:text-base leading-relaxed italic max-w-md">
+                            "${data.text}"
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            // Animăm tranziția folosind GSAP (existent în site-ul tău)
+            gsap.to(container, { opacity: 0, y: -10, duration: 0.5, onComplete: () => {
+                container.innerHTML = reviewHTML;
+                gsap.to(container, { opacity: 1, y: 0, duration: 0.5 });
+            }});
+        };
+
+        // Pornim prima recenzie
+        showReview(0);
+
+        // Rotim recenziile la fiecare 5 secunde
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % reviews.length;
+            showReview(currentIndex);
+        }, 5000);
+
+    } catch (e) {
+        console.error("Eroare la încărcarea recenziilor:", e);
+    }
+}
+
+// Nu uita să o apelezi tot aici în modul
+loadHomeReviews();
 
 </script>
 
@@ -999,44 +1051,7 @@ window.handleAccountClick = function() {
 };
 
 
-// FETCH TOP REVIEWS FOR HOME PAGE
-async function loadHomeReviews() {
-    const container = document.getElementById('homeReviewsContainer');
-    if(!container) return;
 
-    try {
-        const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"), limit(6));
-        const snap = await getDocs(q);
-        
-        container.innerHTML = ""; // Ștergem placeholder-ul
-
-        snap.forEach(d => {
-            const data = d.data();
-            const isOwner = data.email === 'hancimaria39@gmail.com';
-            
-            container.innerHTML += `
-                <div class="review-item indigo-frame rounded-2xl p-6 text-left flex flex-col justify-between hover:border-brand-magenta/50 transition-all duration-500">
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <img src="${data.photo || 'https://i.pravatar.cc/150'}" class="w-10 h-10 rounded-full border border-brand-magenta/30">
-                            <div>
-                                <p class="text-brand-ice font-bold text-[10px] uppercase tracking-widest flex items-center gap-2">
-                                    ${data.name}
-                                    ${isOwner ? '<span class="text-[7px] bg-brand-magenta text-white px-1.5 py-0.5 rounded-full">OWNER</span>' : ''}
-                                </p>
-                                <p class="text-brand-magenta text-[10px]">${'★'.repeat(data.rating)}</p>
-                            </div>
-                        </div>
-                        <p class="text-brand-softpink/70 text-[11px] leading-relaxed italic">"${data.text.substring(0, 120)}${data.text.length > 120 ? '...' : ''}"</p>
-                    </div>
-                </div>
-            `;
-        });
-    } catch (e) {
-        console.error("Eroare la încărcarea recenziilor:", e);
-    }
-}
-loadHomeReviews();
 </script>
 </body>
 </html>
