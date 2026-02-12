@@ -287,6 +287,50 @@
 </style>
 </head>
 <body>
+
+
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-brand-dark/90 backdrop-blur-md" onclick="toggleAuthModal()"></div>
+    
+    <div class="relative bg-[#1a0f2e] border border-brand-blue/20 p-8 md:p-12 w-full max-w-md rounded-sm shadow-2xl">
+        <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-brand-blue/50 hover:text-brand-ice">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+
+        <h2 id="auth-title" class="text-3xl font-serif text-brand-ice mb-8 text-center italic">Autentificare</h2>
+        
+        <form onsubmit="authFunctions.handleEmailAuth(event)" class="space-y-6">
+            <div>
+                <label class="block text-[10px] uppercase tracking-widest text-brand-blue/50 mb-2">Email</label>
+                <input type="email" id="auth-email" required class="w-full bg-brand-dark/50 border border-brand-blue/10 px-4 py-3 text-brand-ice focus:border-brand-magenta outline-none transition-all">
+            </div>
+            <div>
+                <label class="block text-[10px] uppercase tracking-widest text-brand-blue/50 mb-2">Parolă</label>
+                <input type="password" id="auth-pass" required class="w-full bg-brand-dark/50 border border-brand-blue/10 px-4 py-3 text-brand-ice focus:border-brand-magenta outline-none transition-all">
+            </div>
+            
+            <button type="submit" class="w-full bg-brand-magenta py-4 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-brand-purple transition-all shadow-lg">
+                Continuă
+            </button>
+        </form>
+
+        <div class="relative my-8 text-center">
+            <span class="absolute inset-0 flex items-center"><span class="w-full border-t border-brand-blue/10"></span></span>
+            <span class="relative bg-[#1a0f2e] px-4 text-[9px] uppercase tracking-widest text-brand-blue/30">sau</span>
+        </div>
+
+        <button onclick="authFunctions.loginWithGoogle()" class="w-full border border-brand-blue/20 py-4 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-brand-blue/10 transition-all flex items-center justify-center gap-3 text-brand-ice">
+            <i class="fa-brands fa-google text-lg"></i>
+            Intră cu Google
+        </button>
+
+        <p class="mt-8 text-center text-[10px] tracking-widest text-brand-blue/40 uppercase">
+            Nu ai cont? <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-brand-ice border-b border-brand-ice/20">Creează Cont Nou</button>
+        </p>
+    </div>
+</div>
 <!-- LOADER -->
 <div class="loader">
     <img 
@@ -313,7 +357,11 @@
         <a href="#philosophy" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Philosophy</a>
         <a href="#collection" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Collection</a>
         <a href="#bespoke" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Bespoke</a>
+
+<a href="javascript:void(0)" onclick="toggleAuthModal()" class="hover:text-brand-ice hover:scale-105 transition-all login-trigger-text text-brand-magenta">Log In</a>
     </div>
+
+
 
     <!-- 3. Mobile Hamburger (Right) - Visible on Mobile only -->
     <div class="flex-shrink-0 w-32 flex justify-end">
@@ -324,6 +372,27 @@
         </div>
     </div>
 </nav>
+
+
+<div id="authModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-brand-dark/90 backdrop-blur-md" onclick="toggleAuthModal()"></div>
+    <div class="relative bg-[#1a0f2e] border border-brand-blue/20 p-8 md:p-12 w-full max-w-md rounded-sm shadow-2xl">
+        <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-brand-blue/50 hover:text-brand-ice"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        <h2 id="auth-title" class="text-3xl font-serif text-brand-ice mb-8 text-center italic">Autentificare</h2>
+        <form id="authForm" class="space-y-6">
+            <input type="email" id="auth-email" placeholder="Email" required class="w-full bg-brand-dark/50 border border-brand-blue/10 px-4 py-3 text-brand-ice outline-none focus:border-brand-magenta">
+            <input type="password" id="auth-pass" placeholder="Parolă" required class="w-full bg-brand-dark/50 border border-brand-blue/10 px-4 py-3 text-brand-ice outline-none focus:border-brand-magenta">
+            <button type="submit" class="w-full bg-brand-magenta py-4 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-brand-purple transition-all">Continuă</button>
+        </form>
+        <div class="my-6 text-center text-[9px] text-brand-blue/30 uppercase tracking-widest">sau</div>
+        <button onclick="window.authFunctions.loginWithGoogle()" class="w-full border border-brand-blue/20 py-4 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-brand-blue/10 transition-all flex items-center justify-center gap-3 text-brand-ice">
+            <i class="fa-brands fa-google"></i> Intră cu Google
+        </button>
+        <p class="mt-8 text-center text-[10px] tracking-widest text-brand-blue/40 uppercase">
+            Nu ai cont? <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-brand-ice border-b border-brand-ice/20">Creează Cont</button>
+        </p>
+    </div>
+</div>
 
 <!-- MOBILE MENU OVERLAY -->
 <div class="mobile-menu" id="mobileMenu">
@@ -338,6 +407,7 @@
     <a href="#philosophy" class="mobile-link italic" onclick="toggleMenu()">Philosophy</a>
     <a href="#collection" class="mobile-link italic" onclick="toggleMenu()">Collection</a>
     <a href="#bespoke" class="mobile-link italic" onclick="toggleMenu()">Bespoke</a>
+<a href="javascript:void(0)" class="mobile-link italic login-trigger-text text-brand-magenta" onclick="toggleAuthModal()">Log In</a>
     
     <div class="mt-12 opacity-0 mobile-link text-center">
         <p class="text-[10px] uppercase tracking-widest text-brand-blue mb-4">Follow Us</p>
@@ -348,228 +418,329 @@
     </div>
 </div>
 <!-- HERO -->
-<header id="home" class="relative w-full h-screen flex items-center justify-center overflow-hidden bg-brand-dark text-center px-4">
+<header id="home" class="relative w-full h-[80vh] md:h-screen flex items-center justify-center overflow-hidden bg-brand-dark text-center px-4">
     <div class="glow-soft" style="background: var(--blue); top: -100px; left: -100px;"></div>
 
-<div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-brand-dark/50 z-10"></div>
-    <img 
-        src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=1600&auto=format&fit=crop" 
-        class="w-full h-full object-cover hero-img" 
-        alt="Hero" 
-        fetchpriority="high" 
-        decoding="sync"
-    />
-</div>
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-brand-dark/40 z-10"></div>
+        <img 
+            src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=1600&auto=format&fit=crop" 
+            class="w-full h-full object-cover object-center md:object-[center_20%] hero-img" 
+            alt="Hero" 
+            fetchpriority="high" 
+            decoding="sync"
+        />
+    </div>
 
-<div class="relative z-20 max-w-4xl mx-auto">
-    <p class="reveal-on-load font-sans text-[10px] md:text-xs tracking-[0.5em] md:tracking-[1em] uppercase text-brand-ice mb-6 md:mb-8 opacity-0">
-        MC Handmade Marry
-    </p>
-    <h1 class="reveal-on-load text-5xl md:text-[8rem] lg:text-[9rem] font-serif font-light leading-[1.1] md:leading-none mb-8 md:mb-10 text-brand-alabaster opacity-0">
-        Petale care <br /> <span class="text-stroke-blue italic">nu se ofilesc.</span>
-    </h1>
-    <div class="reveal-on-load h-16 md:h-24 w-[1px] bg-brand-ice mx-auto opacity-0"></div>
-</div>
+    <div class="relative z-20 max-w-4xl mx-auto mt-10">
+        <p class="reveal-on-load font-sans text-[10px] md:text-xs tracking-[0.4em] md:tracking-[0.8em] uppercase text-brand-ice mb-4 md:mb-6 opacity-0 font-medium">
+            HANDMADE by Mary
+        </p>
+        <!-- Scaled down text: from 8rem/9rem to 5rem/6rem -->
+        <h1 class="reveal-on-load text-4xl md:text-7xl lg:text-8xl font-serif font-light leading-[1.1] md:leading-tight mb-6 md:mb-8 text-brand-alabaster opacity-0">
+            Petale care <br /> <span class="text-stroke-blue italic">nu se ofilesc.</span>
+        </h1>
+        <div class="reveal-on-load h-12 md:h-20 w-[1px] bg-brand-ice/50 mx-auto opacity-0"></div>
+    </div>
 </header>
 <main class="w-full overflow-hidden"> <!-- Added overflow-hidden here as extra safety -->
 
 
 <!-- SECTION 1: PHILOSOPHY -->
-    <section id="philosophy" class="py-20 md:py-40 bg-brand-peach relative text-brand-dark">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
-            
-            <div data-reveal="left" class="order-2 lg:order-1">
-                <!-- Small Tag -->
+<section id="philosophy" class="py-16 md:py-24 bg-brand-peach relative text-brand-dark">
+    <div class="max-w-4xl mx-auto px-6 flex flex-col items-center">
+        
+        <!-- TOP: Title -->
+        <div class="text-center mb-10" data-reveal="up">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold tracking-tight text-brand-dark">
+                HANDMADE
+            </h2>
+            <h3 class="text-2xl md:text-3xl font-serif italic text-brand-magenta/80">
+                by Mary
+            </h3>
+        </div>
 
-                
-                <!-- Main Headline -->
-                <h2 class="text-6xl md:text-8xl font-serif font-bold leading-[0.9] text-brand-dark mb-2">
-                    HANDMADE
-                </h2>
-                <h3 class="text-5xl md:text-7xl font-serif italic text-brand-magenta/80 mb-10">
-                    by Mary
-                </h3>
-                
-                <!-- Services Description -->
-                <div class="border-l-2 border-brand-magenta/20 pl-6 mb-10">
-                    <p class="text-xl md:text-2xl font-serif italic mb-4">Creații unice, create cu suflet.</p>
-                    
-                    <ul class="space-y-3 text-sm md:text-base font-medium uppercase tracking-wider opacity-80">
-                        <li class="flex items-center gap-3">
-                            <span class="w-1.5 h-1.5 bg-brand-magenta rounded-full"></span>
-                            Flori de săpun (Individuale & Buchete)
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <span class="w-1.5 h-1.5 bg-brand-magenta rounded-full"></span>
-                            Lumânări Parfumate
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <span class="w-1.5 h-1.5 bg-brand-magenta rounded-full"></span>
-                            Decor & Aranjamente
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Categories -->
-                <div class="flex flex-wrap gap-x-6 gap-y-2 text-[10px] uppercase tracking-[0.2em] font-bold text-brand-dark/50 mb-12">
-                    <span>Evenimente</span> • <span>Cadouri</span> • <span>Mărturii</span>
-                </div>
-
-                <!-- Social Links -->
-                <div class="flex items-center gap-6">
-                    <a href="https://www.instagram.com/handmade.candles.mary?igsh=bDVldWphNHZscmhp" target="_blank" class="px-8 py-3 border border-brand-dark/20 rounded-full flex items-center gap-3 hover:bg-brand-magenta hover:text-white hover:border-transparent transition-all duration-300 group">
-                        <i class="fa-brands fa-instagram text-xl group-hover:scale-110 transition-transform"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest">Instagram</span>
-                    </a>
-                    <!-- TikTok -->
-                    <a href="https://www.tiktok.com/@handmade.candles.soap?_r=1&_t=ZG-93rQGoj8tWq" target="_blank" class="px-8 py-3 border border-brand-dark/20 rounded-full flex items-center gap-3 hover:bg-brand-magenta hover:text-white hover:border-transparent transition-all duration-300 group">
-                        <i class="fa-brands fa-tiktok text-xl group-hover:scale-110 transition-transform"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-widest">TikTok</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Image Side -->
-            <div class="relative order-1 lg:order-2" data-reveal="right">
-                <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
-                    <div class="img-container aspect-square md:h-[550px] shadow-2xl">
-                        <img 
-                            src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FCaptur%C4%83%20de%20ecran%202026-02-12%20192716.png?alt=media&token=89a9939e-38a7-4434-8fb6-58979eec3cc5" 
-                            class="w-full h-full object-cover" 
-                            alt="Handmade by Mary Detail" 
-                            loading="lazy"
-                        />
-                    </div>
+        <!-- MIDDLE: Image (Now Vertical & Controlled Size) -->
+        <div class="relative mb-12 w-full max-w-[320px] md:max-w-[380px]" data-reveal="up">
+            <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
+                <!-- Changed aspect-ratio to 3/4 for a vertical look -->
+                <div class="img-container aspect-[3/4] shadow-2xl overflow-hidden rounded-sm">
+                    <img 
+                        src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FCaptur%C4%83%20de%20ecran%202026-02-12%20192716.png?alt=media&token=89a9939e-38a7-4434-8fb6-58979eec3cc5" 
+                        class="w-full h-full object-cover" 
+                        alt="Handmade by Mary Detail" 
+                        loading="lazy"
+                    />
                 </div>
             </div>
         </div>
-    </section>
 
-<!-- SECTION 2: COLLECTION -->
+        <!-- BOTTOM: Content & Socials -->
+        <div class="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-8 items-start" data-reveal="up">
+            
+            <!-- Description -->
+            <div class="border-l-2 border-brand-magenta/20 pl-6">
+                <p class="text-lg font-serif italic mb-3">Creații unice, create cu suflet.</p>
+                <ul class="space-y-2 text-[10px] md:text-[11px] font-semibold uppercase tracking-wider opacity-80">
+                    <li class="flex items-center gap-2">
+                        <span class="w-1 h-1 bg-brand-magenta rounded-full"></span>
+                        Flori de săpun & Buchete
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-1 h-1 bg-brand-magenta rounded-full"></span>
+                        Lumânări Parfumate
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-1 h-1 bg-brand-magenta rounded-full"></span>
+                        Decor & Aranjamente
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Social Links (Compact) -->
+            <div class="flex flex-col gap-4">
+                <p class="text-[9px] uppercase tracking-[0.2em] font-bold text-brand-dark/40">
+                    Evenimente • Cadouri • Mărturii
+                </p>
+                <div class="flex items-center gap-3">
+                    <a href="https://www.instagram.com/handmade.candles.mary?igsh=bDVldWphNHZscmhp" target="_blank" class="flex-1 py-2.5 border border-brand-dark/20 rounded-full flex items-center justify-center gap-2 hover:bg-brand-magenta hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-instagram text-base"></i>
+                        <span class="text-[9px] font-bold uppercase tracking-widest">Instagram</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@handmade.candles.soap?_r=1&_t=ZG-93rQGoj8tWq" target="_blank" class="flex-1 py-2.5 border border-brand-dark/20 rounded-full flex items-center justify-center gap-2 hover:bg-brand-magenta hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-tiktok text-base"></i>
+                        <span class="text-[9px] font-bold uppercase tracking-widest">TikTok</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: COLLECTION PREVIEW -->
 <section id="collection" class="py-24 md:py-40 bg-brand-dark relative overflow-hidden">
     <div class="glow-soft" style="background: var(--purple); top: 10px; right: -100px; opacity: 0.2;"></div>
     
     <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <!-- HEADER: Changed to reflect a variety of collections -->
         <div class="mb-24 text-center md:text-left">
-            <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-6 block font-bold">The Signature Gallery</span>
-            <h2 class="text-5xl md:text-8xl font-serif text-brand-ice italic mb-6">Midnight <br/> Indigo Collection</h2>
+            <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-6 block font-bold">Explorați Arta Noastră</span>
+            <h2 class="text-5xl md:text-8xl font-serif text-brand-ice italic mb-6">Galerie de <br/> Semnătură</h2>
             <p class="text-brand-blue/60 text-[11px] uppercase tracking-[0.3em] font-light max-w-xl leading-loose">
-                A curation of our most intricate sculptures, bathed in deep pigments and celestial light.
+                O selecție curată din cele mai apreciate creații. De la tonuri dramatice de indigo la nuanțe calde, fiecare piesă este sculptată manual pentru a capta un moment de eternitate.
             </p>
         </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
-                
-                <!-- Col 1 -->
-                <div class="flex flex-col gap-12">
-                    <div class="indigo-frame reveal-gallery" data-speed="0.9">
-                        <div class="img-container aspect-[3/4]">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" loading="lazy" decoding="async" alt="Velvet Morning" />
-                        </div>
-                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Velvet Morning</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+            <!-- Col 1 -->
+            <div class="flex flex-col gap-12">
+                <div class="indigo-frame reveal-gallery" data-speed="0.9">
+                    <div class="img-container aspect-[3/4]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" loading="lazy" alt="Velvet Morning" />
                     </div>
-                    <div class="indigo-frame reveal-gallery" data-speed="1.1">
-                        <div class="img-container aspect-[1/1]">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" loading="lazy" decoding="async" alt="Crimson Passion" />
-                        </div>
-                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Crimson Passion</p>
-                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right"> </p>
                 </div>
-
-                <!-- Col 2 -->
-                <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
-                    <div class="indigo-frame reveal-gallery" data-speed="1.2">
-                        <div class="img-container aspect-[3/4]">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" loading="lazy" decoding="async" alt="Golden Hour" />
-                        </div>
-                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Golden Hour</p>
+                <div class="indigo-frame reveal-gallery" data-speed="1.1">
+                    <div class="img-container aspect-[1/1]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" loading="lazy" alt="Crimson Passion" />
                     </div>
-                    <div class="indigo-frame reveal-gallery" data-speed="0.8">
-                        <div class="img-container aspect-[4/5]">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" loading="lazy" decoding="async" alt="Eternal Loop" />
-                        </div>
-                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Eternal Loop</p>
-                    </div>
-                </div> 
-
-                <!-- Col 3 -->
-                <div class="flex flex-col gap-12 lg:mt-16">
-                    <div class="indigo-frame reveal-gallery" data-speed="1.3">
-                        <div class="img-container aspect-[3/4]">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" loading="lazy" decoding="async" alt="Touch of Grace" />
-                        </div>
-                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Touch of Grace</p>
-                    </div>
-                    <div class="indigo-frame reveal-gallery" data-speed="1.0">
-                        <div class="img-container aspect-[4/3]">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" loading="lazy" decoding="async" alt="Indigo Box Set" />
-                        </div>
-                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Indigo Box Set</p>
-                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic"> </p>
                 </div>
-
             </div>
+
+            <!-- Col 2 -->
+            <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
+                <div class="indigo-frame reveal-gallery" data-speed="1.2">
+                    <div class="img-container aspect-[3/4]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" loading="lazy" alt="Golden Hour" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic"> </p>
+                </div>
+                <div class="indigo-frame reveal-gallery" data-speed="0.8">
+                    <div class="img-container aspect-[4/5]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" loading="lazy" alt="Eternal Loop" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right"> </p>
+                </div>
+            </div> 
+
+            <!-- Col 3 -->
+            <div class="flex flex-col gap-12 lg:mt-16">
+                <div class="indigo-frame reveal-gallery" data-speed="1.3">
+                    <div class="img-container aspect-[3/4]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" loading="lazy" alt="Touch of Grace" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">  </p>
+                </div>
+                <div class="indigo-frame reveal-gallery" data-speed="1.0">
+                    <div class="img-container aspect-[4/3]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" loading="lazy" alt="Indigo Box Set" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW BUTTON: View Collections -->
+        <div class="mt-24 flex justify-center" data-reveal="up">
+            <a href="#" class="group relative px-12 py-5 border border-brand-ice/20 flex items-center gap-4 transition-all duration-500 hover:border-brand-ice">
+                <span class="text-brand-ice text-[10px] uppercase tracking-[0.6em] font-bold">Vezi Colecțiile</span>
+                <i class="fa-solid fa-arrow-right-long text-brand-ice text-sm transform transition-transform duration-500 group-hover:translate-x-2"></i>
+            </a>
+        </div>
+    </div>
 </section>
 
-<!-- SECTION 3: BESPOKE -->
-<section id="bespoke" class="py-40 bg-brand-alabaster text-brand-dark relative">
+<!-- SECTION 3: COMANDA PERSONALIZATA -->
+<section id="bespoke" class="py-24 md:py-32 bg-brand-alabaster text-brand-dark relative">
     <div class="max-w-4xl mx-auto px-6 text-center">
-        <span class="text-brand-magenta text-[11px] uppercase tracking-[0.8em] mb-12 block font-bold">Custom Creation</span>
-        <h2 class="text-7xl md:text-[10rem] font-serif leading-[0.8] mb-16">
-            Bespoke <br/> <span class="text-stroke-dark italic">Ritual.</span>
+        <span class="text-brand-magenta text-[10px] uppercase tracking-[0.6em] mb-8 block font-bold">Personalizare Completă</span>
+        
+        <h2 class="text-4xl md:text-7xl font-serif leading-tight mb-8">
+            Creat special <br/> <span class="text-stroke-dark italic">pentru tine.</span>
         </h2>
-        <p class="text-brand-dark/60 text-lg font-light mb-16 max-w-xl mx-auto italic">
-            "Fiecare cadou este o conversație tăcută. Noi sculptăm cuvintele pe care nu le poți spune."
+        
+        <p class="text-brand-dark/70 text-base md:text-lg font-light mb-12 max-w-xl mx-auto leading-relaxed italic">
+            "Fiecare creație este o conversație tăcută. Noi sculptăm în ceară și săpun cuvintele pe care dorești să le transmiți."
         </p>
-        <div class="flex flex-col md:flex-row justify-center items-center gap-12">
-            <a href="#" class="bg-brand-dark text-brand-alabaster px-16 py-6 font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-brand-magenta transition-all shadow-2xl rounded-sm">Design a Bouquet</a>
-            <a href="#" class="text-brand-magenta border-b-2 border-brand-magenta/20 pb-2 text-[10px] uppercase tracking-[0.4em] hover:border-brand-magenta transition-all font-bold">Scent Profile</a>
+
+        <div class="flex flex-col items-center gap-6">
+            <p class="text-[11px] uppercase tracking-widest text-brand-dark/40 mb-2">Apasă butonul de mai jos pentru detalii și comenzi</p>
+            
+            <!-- Buton WhatsApp cu link-ul tău -->
+            <a href="https://api.whatsapp.com/send?phone=4917675891440" 
+               target="_blank"
+               class="group relative overflow-hidden bg-brand-dark text-brand-alabaster px-12 py-6 font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-brand-magenta transition-all shadow-2xl rounded-sm flex items-center gap-4">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                Comandă pe WhatsApp
+            </a>
+            
+            <div class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[9px] uppercase tracking-[0.2em] font-bold text-brand-magenta/60">
+                <span>Culori la alegere</span> • <span>Mărturii Evenimente</span> • <span>Cadouri Corporate</span>
+            </div>
         </div>
     </div>
 </section>
 </main>
 <!-- FOOTER -->
-<footer class="bg-[#0D071A] py-20 md:py-32 px-6 md:px-10 border-t border-brand-blue/10">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-20">
-        <div class="md:col-span-2">
+<!-- FOOTER -->
+<footer class="bg-[#0D071A] pt-24 pb-12 px-6 md:px-10 border-t border-brand-blue/10 relative overflow-hidden">
+    <!-- Fundal subtil cu reflexii -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-96 bg-brand-purple/5 blur-[120px] pointer-events-none"></div>
 
-<!-- REPLACED TEXT "MC." WITH LOGO IMAGE HERE -->
-        <img 
-            src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F58e030c9-f51d-4b5f-abb2-8b88ea0f9507.png?alt=media&token=abbedc81-126b-44a2-b492-66eac45a447d" 
-            alt="MC Handmade Marry Logo" 
-            class="w-32 md:w-40 mb-6 md:mb-8 block opacity-90"
-        />
+    <div class="max-w-7xl mx-auto text-center">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-12 items-start">
+            
+            <!-- 1. BRAND COLUMN - Centered -->
+            <div class="flex flex-col items-center space-y-8 order-1">
+                <img 
+                    src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F58e030c9-f51d-4b5f-abb2-8b88ea0f9507.png?alt=media&token=abbedc81-126b-44a2-b492-66eac45a447d" 
+                    alt="MC Logo" 
+                    class="w-32 md:w-40 opacity-90 hover:scale-105 transition-transform duration-500"
+                />
+                <p class="text-brand-blue/50 text-[11px] md:text-xs max-w-xs font-light leading-loose uppercase tracking-[0.2em]">
+                    MC Handmade Marry. <br>
+                    Artă botanică românească. Flori care nu se ofilesc niciodată, sculptate manual pentru momente de neuitat.
+                </p>
+                <div class="flex justify-center space-x-5">
+                    <a href="https://www.instagram.com/handmade.candles.mary" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@handmade.candles.soap" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-tiktok text-lg"></i>
+                    </a>
+                    <a href="https://api.whatsapp.com/send?phone=4917675891440" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                    </a>
+                </div>
+            </div>
 
-        <p class="text-brand-blue/40 text-sm max-w-sm font-light leading-loose uppercase tracking-[0.2em]">
-            MC Handmade Marry. <br>
-            Artă botanică românească. Flori care durează o viață, sculptate din ingrediente naturale.
-        </p>
-        <div class="flex space-x-6 mt-8 md:mt-12">
-            <a href="#" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-tiktok"></i></a>
+            <!-- 2. NAVIGATION COLUMN - Centered -->
+            <div class="flex flex-col items-center order-2 md:order-2">
+                <h5 class="text-brand-ice text-[10px] uppercase tracking-[0.4em] mb-8 font-bold">Navigare</h5>
+                <ul class="text-brand-blue/60 text-[10px] space-y-5 font-medium tracking-[0.2em]">
+                    <li><a href="#home" class="hover:text-brand-magenta transition-colors">ACASĂ</a></li>
+                    <li><a href="#philosophy" class="hover:text-brand-magenta transition-colors">DESPRE BRAND</a></li>
+                    <li><a href="#collection" class="hover:text-brand-magenta transition-colors">GALERIE PRODUSE</a></li>
+                    <li><a href="#bespoke" class="hover:text-brand-magenta transition-colors">COMENZI SPECIALE</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. DEVELOPER COLUMN - Centered with New Image -->
+            <div class="flex flex-col items-center order-3 md:order-3">
+                <div class="relative group">
+                    <!-- Glow Effect -->
+                    <div class="absolute inset-0 bg-brand-ice/20 blur-2xl rounded-full group-hover:bg-brand-magenta/30 transition-all duration-700"></div>
+                    
+                    <!-- Creator Avatar (New Image) -->
+                    <a href="https://www.tiktok.com/@lost_soul_zzz" target="_blank" class="relative block w-24 h-24 mb-6 rounded-full border-2 border-brand-ice/30 p-1 overflow-hidden transition-transform duration-500 group-hover:scale-110 group-hover:border-brand-magenta">
+                        <img 
+                            src="https://iili.io/f1ddIfe.png" 
+                            alt="Lost Soul" 
+                            class="w-full h-full object-cover rounded-full bg-[#0D071A]"
+                        />
+                    </a>
+                </div>
+                
+                <h6 class="text-brand-ice/80 text-[10px] uppercase tracking-[0.3em] font-bold mb-2">Website realizat de</h6>
+                <p class="text-brand-magenta font-serif italic text-xl mb-4">Lost Soul / Nica Emmanuel</p>
+                
+                <a href="https://discord.com/users/1063511180376817755" target="_blank" class="flex items-center gap-3 text-brand-blue/50 hover:text-brand-ice transition-colors duration-300">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-bold">Contact Developer</span>
+                    <i class="fa-brands fa-discord text-xl"></i>
+                </a>
+            </div>
+        </div> 
+
+        <!-- BOTTOM BAR - Centered -->
+        <div class="mt-24 pt-10 border-t border-white/5 flex flex-col items-center gap-4">
+            <div class="text-[9px] uppercase tracking-[0.4em] text-brand-blue/20">
+            </div>
+            <div class="text-[9px] uppercase tracking-[0.3em] text-brand-blue/40 italic flex items-center gap-2">
+                Creat cu <i class="fa-solid fa-heart text-brand-magenta/50"></i> de Lost Soul
+            </div>
         </div>
     </div>
-    
-    <div class="grid grid-cols-2 gap-8 md:block md:col-span-2 md:grid-cols-none">
-         <div>
-            <h5 class="text-brand-ice text-[10px] uppercase tracking-widest mb-6 md:mb-10 font-bold">Navigation</h5>
-            <ul class="text-brand-blue/60 text-[10px] space-y-4 font-light tracking-[0.2em]">
-                <li class="hover:text-brand-ice cursor-pointer">THE VELVET SERIES</li>
-                <li class="hover:text-brand-ice cursor-pointer">BESPOKE ORDERS</li>
-                <li class="hover:text-brand-ice cursor-pointer">CARE GUIDE</li>
-            </ul>
-        </div>
-        <div class="hidden md:block mt-10"></div> 
-    </div>
-</div> 
-
-<div class="max-w-7xl mx-auto mt-20 md:mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-    <div class="text-[9px] uppercase tracking-[0.3em] text-brand-blue/20">MC HANDMADE MARRY • 2026</div>
-    <div class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/40 italic">From our studio to your soul.</div>
-</div>
 </footer>
 <!-- SCRIPTS -->
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
+    authDomain: "handmade-marry.firebaseapp.com",
+    projectId: "handmade-marry",
+    storageBucket: "handmade-marry.firebasestorage.app",
+    messagingSenderId: "30193148874",
+    appId: "1:30193148874:web:04c1b35f3e54ed43ee2533"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  window.authFunctions = {
+    loginWithGoogle: () => signInWithPopup(auth, provider).then(() => toggleAuthModal()),
+    handleEmailAuth: (e) => {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value, pass = document.getElementById('auth-pass').value;
+        const isReg = document.getElementById('auth-title').innerText.includes('Cont');
+        (isReg ? createUserWithEmailAndPassword(auth, email, pass) : signInWithEmailAndPassword(auth, email, pass))
+        .then(() => toggleAuthModal()).catch(err => alert(err.message));
+    }
+  };
+
+  document.getElementById('authForm').addEventListener('submit', window.authFunctions.handleEmailAuth);
+  onAuthStateChanged(auth, user => {
+    document.querySelectorAll('.login-trigger-text').forEach(btn => btn.innerText = user ? "CONT" : "LOG IN");
+  });
+</script>
+
+
 <script>
     const initSite = () => {
         gsap.registerPlugin(ScrollTrigger);
@@ -658,6 +829,20 @@ function toggleMenu() {
             body.style.overflow = 'auto';     // Unlock scroll
         }
     }
+
+
+function toggleAuthModal() {
+    const modal = document.getElementById('authModal');
+    modal.classList.toggle('hidden');
+    if(!modal.classList.contains('hidden')) gsap.from("#authModal > div:last-child", { opacity: 0, scale: 0.9, duration: 0.4 });
+}
+
+function toggleAuthMode() {
+    const title = document.getElementById('auth-title'), btn = document.getElementById('auth-toggle-btn');
+    const isLogin = title.innerText === 'Autentificare';
+    title.innerText = isLogin ? 'Cont Nou' : 'Autentificare';
+    btn.innerText = isLogin ? 'Am deja cont' : 'Creează Cont';
+}
 </script>
 </body>
 </html>
