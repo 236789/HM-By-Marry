@@ -340,35 +340,29 @@
         alt="MC Logo" 
     />
 </div>
-<!-- NAVIGATION -->
+
+
 <nav class="fixed w-full z-50 px-6 md:px-10 py-6 transition-all duration-500 flex items-center justify-between" id="main-nav">
     <!-- 1. Logo (Left) -->
-    <div class="flex-shrink-0 w-32">
-        <img 
-            src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F58e030c9-f51d-4b5f-abb2-8b88ea0f9507.png?alt=media&token=abbedc81-126b-44a2-b492-66eac45a447d" 
-            class="h-12 w-auto object-contain" 
-            alt="MC Logo" 
-        />
+    <div class="flex-shrink-0 w-32 md:w-44">
+        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F58e030c9-f51d-4b5f-abb2-8b88ea0f9507.png?alt=media&token=abbedc81-126b-44a2-b492-66eac45a447d" class="h-12 w-auto object-contain" alt="MC Logo" />
     </div>
     
     <!-- 2. Desktop Links (Center) -->
     <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-12 text-[11px] uppercase tracking-[0.3em] font-medium text-brand-alabaster/70">
-        <a href="#home" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Home</a>
-        <a href="#philosophy" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Philosophy</a>
-        <a href="#collection" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Collection</a>
-        <a href="#bespoke" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Bespoke</a>
-
-<a href="javascript:void(0)" onclick="toggleAuthModal()" class="hover:text-brand-ice hover:scale-105 transition-all login-trigger-text text-brand-magenta">Log In</a>
+        <a href="#home" class="hover:text-brand-ice transition-all">Home</a>
+        <a href="#philosophy" class="hover:text-brand-ice transition-all">Philosophy</a>
+        <a href="#collection" class="hover:text-brand-ice transition-all">Collection</a>
+        <a href="#bespoke" class="hover:text-brand-ice transition-all">Bespoke</a>
     </div>
 
-
-
-    <!-- 3. Mobile Hamburger (Right) - Visible on Mobile only -->
-    <div class="flex-shrink-0 w-32 flex justify-end">
+    <!-- 3. Auth Button + Hamburger (Right) -->
+    <div class="flex-shrink-0 w-32 md:w-44 flex justify-end items-center gap-4">
+        <button onclick="handleAccountClick()" class="login-trigger-text hidden md:block border border-brand-magenta/40 px-6 py-2 rounded-full text-[9px] font-bold tracking-[0.2em] uppercase text-brand-ice hover:bg-brand-magenta hover:text-white hover:shadow-[0_0_20px_rgba(228,103,218,0.6)] transition-all duration-300">
+            Log In
+        </button>
         <div class="hamburger md:hidden" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </div>
     </div>
 </nav>
@@ -394,6 +388,27 @@
     </div>
 </div>
 
+
+<!-- USER PROFILE MODAL -->
+<div id="userModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-brand-dark/95 backdrop-blur-xl" onclick="toggleUserModal()"></div>
+    <div class="relative bg-[#1a0f2e] border border-brand-blue/20 p-10 w-full max-w-sm rounded-lg shadow-2xl text-center">
+        <div class="relative w-24 h-24 mx-auto mb-6">
+            <div class="absolute inset-0 bg-brand-magenta blur-2xl opacity-20 rounded-full"></div>
+            <img id="user-img" src="" class="relative w-full h-full rounded-full border-2 border-brand-magenta object-cover shadow-2xl">
+        </div>
+        <h3 id="user-name" class="text-brand-ice font-serif text-2xl mb-1 italic">Utilizator</h3>
+        <p id="user-email" class="text-brand-blue/50 text-[10px] uppercase tracking-widest mb-8">email@exemplu.com</p>
+        
+        <div class="space-y-4">
+            <button onclick="window.authFunctions.logout()" class="w-full bg-transparent border border-red-500/30 text-red-400 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all rounded-sm">
+                Log Out
+            </button>
+            <button onclick="toggleUserModal()" class="w-full text-brand-blue/40 text-[9px] uppercase tracking-widest hover:text-brand-ice">Închide</button>
+        </div>
+    </div>
+</div>
+
 <!-- MOBILE MENU OVERLAY -->
 <div class="mobile-menu" id="mobileMenu">
     <!-- Close Button (X) - Top Right -->
@@ -407,7 +422,9 @@
     <a href="#philosophy" class="mobile-link italic" onclick="toggleMenu()">Philosophy</a>
     <a href="#collection" class="mobile-link italic" onclick="toggleMenu()">Collection</a>
     <a href="#bespoke" class="mobile-link italic" onclick="toggleMenu()">Bespoke</a>
-<a href="javascript:void(0)" class="mobile-link italic login-trigger-text text-brand-magenta" onclick="toggleAuthModal()">Log In</a>
+<button onclick="handleAccountClick()" class="login-trigger-text mobile-link bg-brand-magenta/10 border border-brand-magenta/20 px-10 py-4 rounded-full text-sm font-bold tracking-[0.2em] uppercase text-brand-ice mt-4">
+    Log In
+</button>
     
     <div class="mt-12 opacity-0 mobile-link text-center">
         <p class="text-[10px] uppercase tracking-widest text-brand-blue mb-4">Follow Us</p>
@@ -708,36 +725,70 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
     authDomain: "handmade-marry.firebaseapp.com",
     projectId: "handmade-marry",
     storageBucket: "handmade-marry.firebasestorage.app",
     messagingSenderId: "30193148874",
     appId: "1:30193148874:web:04c1b35f3e54ed43ee2533"
-  };
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-  window.authFunctions = {
-    loginWithGoogle: () => signInWithPopup(auth, provider).then(() => toggleAuthModal()),
+// Salvare în Firestore
+const saveUserToDb = async (user) => {
+    await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || "Utilizator",
+        photoURL: user.photoURL || "https://i.pravatar.cc/150",
+        lastLogin: serverTimestamp()
+    }, { merge: true });
+};
+
+window.authFunctions = {
+    loginWithGoogle: () => {
+        signInWithPopup(auth, provider)
+            .then(async (result) => {
+                await saveUserToDb(result.user);
+                toggleAuthModal();
+            }).catch(err => console.log("Login anulat sau eroare"));
+    },
+    logout: () => signOut(auth).then(() => toggleUserModal()),
     handleEmailAuth: (e) => {
         e.preventDefault();
         const email = document.getElementById('auth-email').value, pass = document.getElementById('auth-pass').value;
         const isReg = document.getElementById('auth-title').innerText.includes('Cont');
-        (isReg ? createUserWithEmailAndPassword(auth, email, pass) : signInWithEmailAndPassword(auth, email, pass))
-        .then(() => toggleAuthModal()).catch(err => alert(err.message));
+        
+        const action = isReg ? createUserWithEmailAndPassword(auth, email, pass) : signInWithEmailAndPassword(auth, email, pass);
+        action.then(async (res) => {
+            await saveUserToDb(res.user);
+            toggleAuthModal();
+        }).catch(err => alert("Eroare: " + err.message));
     }
-  };
+};
 
-  document.getElementById('authForm').addEventListener('submit', window.authFunctions.handleEmailAuth);
-  onAuthStateChanged(auth, user => {
-    document.querySelectorAll('.login-trigger-text').forEach(btn => btn.innerText = user ? "CONT" : "LOG IN");
-  });
+document.getElementById('authForm').addEventListener('submit', window.authFunctions.handleEmailAuth);
+
+onAuthStateChanged(auth, user => {
+    const btns = document.querySelectorAll('.login-trigger-text');
+    if (user) {
+        btns.forEach(btn => { btn.innerText = "ACCOUNT"; btn.classList.add('border-brand-ice'); });
+        document.getElementById('user-img').src = user.photoURL || "https://i.pravatar.cc/150";
+        document.getElementById('user-email').innerText = user.email;
+        document.getElementById('user-name').innerText = user.displayName || "Client MC";
+    } else {
+        btns.forEach(btn => { btn.innerText = "LOG IN"; btn.classList.remove('border-brand-ice'); });
+    }
+    window.currentUser = user;
+});
 </script>
 
 
@@ -830,19 +881,38 @@ function toggleMenu() {
         }
     }
 
-
-function toggleAuthModal() {
+// FUNCȚII UI GLOBALE
+window.toggleAuthModal = function() {
     const modal = document.getElementById('authModal');
     modal.classList.toggle('hidden');
-    if(!modal.classList.contains('hidden')) gsap.from("#authModal > div:last-child", { opacity: 0, scale: 0.9, duration: 0.4 });
-}
+    if(!modal.classList.contains('hidden')) {
+        gsap.from("#authModal > div:last-child", { opacity: 0, scale: 0.9, duration: 0.4, ease: "back.out(1.7)" });
+    }
+};
 
-function toggleAuthMode() {
-    const title = document.getElementById('auth-title'), btn = document.getElementById('auth-toggle-btn');
+window.toggleUserModal = function() {
+    const modal = document.getElementById('userModal');
+    modal.classList.toggle('hidden');
+    if(!modal.classList.contains('hidden')) {
+        gsap.from("#userModal > div:last-child", { opacity: 0, y: 20, duration: 0.4, ease: "power2.out" });
+    }
+};
+
+window.toggleAuthMode = function() {
+    const title = document.getElementById('auth-title');
+    const btn = document.getElementById('auth-toggle-btn');
     const isLogin = title.innerText === 'Autentificare';
     title.innerText = isLogin ? 'Cont Nou' : 'Autentificare';
     btn.innerText = isLogin ? 'Am deja cont' : 'Creează Cont';
-}
+};
+
+window.handleAccountClick = function() {
+    if (window.currentUser) {
+        window.toggleUserModal();
+    } else {
+        window.toggleAuthModal();
+    }
+};
 </script>
 </body>
 </html>
