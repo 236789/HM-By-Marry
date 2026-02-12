@@ -303,6 +303,26 @@
         flex-shrink: 0;
         scroll-snap-align: center;
     }
+
+
+
+#homeReviewsContainer {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 20px;
+        padding: 20px 0;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* IE/Edge */
+    }
+    #homeReviewsContainer::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    
+    .review-item {
+        min-width: 280px;
+        max-width: 320px;
+        flex-shrink: 0;
+        scroll-snap-align: start;
+    }
 </style>
 </head>
 <body>
@@ -771,7 +791,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc,query, serverTimestamp, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 const firebaseConfig = {
     apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
     authDomain: "handmade-marry.firebaseapp.com",
@@ -981,34 +1001,40 @@ window.handleAccountClick = function() {
 
 // FETCH TOP REVIEWS FOR HOME PAGE
 async function loadHomeReviews() {
-    const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"), limit(6));
-    const snap = await getDocs(q);
     const container = document.getElementById('homeReviewsContainer');
     if(!container) return;
-    container.innerHTML = "";
 
-    snap.forEach(d => {
-        const data = d.data();
-        const isOwner = data.email === 'hancimaria39@gmail.com';
+    try {
+        const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"), limit(6));
+        const snap = await getDocs(q);
         
-        container.innerHTML += `
-            <div class="review-item indigo-frame rounded-2xl p-8 text-left flex flex-col justify-between hover:scale-[1.02] transition-all duration-500 border border-white/5">
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <img src="${data.photo || 'https://i.pravatar.cc/150'}" class="w-10 h-10 rounded-full border border-brand-magenta/30">
-                        <div>
-                            <p class="text-brand-ice font-bold text-[10px] uppercase tracking-widest flex items-center gap-2">
-                                ${data.name}
-                                ${isOwner ? '<span class="text-[7px] bg-brand-magenta text-white px-1.5 py-0.5 rounded-full">OWNER</span>' : ''}
-                            </p>
-                            <p class="text-brand-magenta text-[10px]">${'★'.repeat(data.rating)}</p>
+        container.innerHTML = ""; // Ștergem placeholder-ul
+
+        snap.forEach(d => {
+            const data = d.data();
+            const isOwner = data.email === 'hancimaria39@gmail.com';
+            
+            container.innerHTML += `
+                <div class="review-item indigo-frame rounded-2xl p-6 text-left flex flex-col justify-between hover:border-brand-magenta/50 transition-all duration-500">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <img src="${data.photo || 'https://i.pravatar.cc/150'}" class="w-10 h-10 rounded-full border border-brand-magenta/30">
+                            <div>
+                                <p class="text-brand-ice font-bold text-[10px] uppercase tracking-widest flex items-center gap-2">
+                                    ${data.name}
+                                    ${isOwner ? '<span class="text-[7px] bg-brand-magenta text-white px-1.5 py-0.5 rounded-full">OWNER</span>' : ''}
+                                </p>
+                                <p class="text-brand-magenta text-[10px]">${'★'.repeat(data.rating)}</p>
+                            </div>
                         </div>
+                        <p class="text-brand-softpink/70 text-[11px] leading-relaxed italic">"${data.text.substring(0, 120)}${data.text.length > 120 ? '...' : ''}"</p>
                     </div>
-                    <p class="text-brand-softpink/70 text-xs leading-relaxed italic italic">"${data.text.substring(0, 140)}${data.text.length > 140 ? '...' : ''}"</p>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
+    } catch (e) {
+        console.error("Eroare la încărcarea recenziilor:", e);
+    }
 }
 loadHomeReviews();
 </script>
