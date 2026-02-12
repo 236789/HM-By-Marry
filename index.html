@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@100;200;300;400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fe52d7158148debb8ba1f8498f866a846~tplv-tiktokx-cropcenter_1080_1080.jpeg?alt=media&token=e0678a9e-17ed-4264-a124-284bce486fcf" />
+
     
     <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -76,11 +79,18 @@
         .text-stroke-blue { -webkit-text-stroke: 1px var(--blue); color: transparent; }
         .text-stroke-dark { -webkit-text-stroke: 1px var(--dark); color: transparent; }
 
-        /* Loader */
-        .loader {
-            position: fixed; inset: 0; background: #000;
-            z-index: 10000; display: flex; justify-content: center; align-items: center;
-        }
+/* REPLACE YOUR .loader CSS WITH THIS */
+.loader {
+    position: fixed; 
+    inset: 0; 
+    /* Deep Indigo Gradient matching your image */
+    background: radial-gradient(circle at center, #2E1065 0%, #0D071A 100%);
+    z-index: 10000; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    padding: 20px;
+}
 
         /* Technical Frames */
         .showcase-frame {
@@ -92,12 +102,19 @@
         .frame-peach::before { border-top: 2px solid var(--orchid); border-left: 2px solid var(--orchid); content: ""; position: absolute; top: -1px; left: -1px; width: 40px; height: 40px; }
         .frame-blue::before { border-top: 2px solid var(--ice); border-left: 2px solid var(--ice); content: ""; position: absolute; top: -1px; left: -1px; width: 40px; height: 40px; }
 
-        /* Navigation */
-        nav.scrolled {
-            background: rgba(19, 9, 37, 0.9);
-            backdrop-filter: blur(20px);
-            padding-top: 20px; padding-bottom: 20px;
-        }
+/* REPLACE YOUR nav.scrolled CSS WITH THIS */
+nav {
+    /* Always apply the Midnight Indigo Gradient */
+    background: radial-gradient(circle at center, #2E1065 0%, #0D071A 100%);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Adds depth so it separates from the page */
+    transition: padding 0.5s ease; /* Smooth resizing only */
+}
+
+/* On scroll, we only change the padding (size), not the color */
+nav.scrolled {
+    padding-top: 15px !important; 
+    padding-bottom: 15px !important;
+}
 
         .img-container { overflow: hidden; position: relative; border-radius: 4px; }
         .img-container img { transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -108,119 +125,236 @@
             position: absolute; width: 600px; height: 600px;
             filter: blur(150px); pointer-events: none; z-index: 0; opacity: 0.15;
         }
+
+
+/* New Indigo Gallery Styles */
+.indigo-frame {
+    position: relative;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(113, 140, 229, 0.2);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.indigo-frame::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border: 1px solid rgba(184, 244, 255, 0.1);
+    pointer-events: none;
+    transition: all 0.6s ease;
+}
+
+.indigo-frame:hover {
+    border-color: var(--ice);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.indigo-frame:hover::after {
+    inset: -12px;
+    border-color: var(--ice);
+    opacity: 0.5;
+}
+
+.parallax-img {
+    will-change: transform;
+}
+
+
+/* Update this specific class in your <style> block */
+.img-container { 
+    overflow: hidden; 
+    position: relative; 
+    border-radius: 4px; 
+    width: 100%;
+    height: 100%;
+}
+
+.img-container img { 
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This ensures images fill the box without stretching */
+    transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1);  
+}
     </style>
 </head>
 <body>
 
-    <!-- Loader -->
-    <div class="loader">
-        <h2 class="font-serif text-5xl italic tracking-[0.5em] text-brand-ice opacity-0" id="loader-text">MC. ETERNAL</h2>
+<!-- UPDATED LOADER: Indigo Gradient & Ice Text -->
+<div class="loader">
+    <h2 class="font-serif text-4xl md:text-6xl italic font-light tracking-widest text-brand-ice opacity-0 text-center leading-snug" id="loader-text">
+        MC Handmade <br /> Marry
+    </h2>
+</div>
+<!-- REPLACE YOUR NAV SECTION WITH THIS -->
+<nav class="fixed w-full z-50 px-6 md:px-10 py-6 transition-all duration-500 flex items-center justify-between" id="main-nav">
+    
+    <!-- 1. Logo (Left) -->
+    <div class="flex-shrink-0 w-32">
+        <span class="text-2xl md:text-3xl font-serif font-bold text-brand-alabaster">MC<span class="text-brand-ice">.</span></span>
+    </div>
+    
+    <!-- 2. Links (Centered & Hidden on Mobile) -->
+    <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-12 text-[11px] uppercase tracking-[0.3em] font-medium text-brand-alabaster/70">
+        <a href="#home" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Home</a>
+        <a href="#philosophy" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Philosophy</a>
+        <a href="#collection" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Collection</a>
+        <a href="#bespoke" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Bespoke</a>
     </div>
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 px-10 py-10 flex justify-between items-center transition-all duration-500" id="main-nav">
-        <div class="flex items-center">
-            <span class="text-3xl font-serif font-bold text-brand-alabaster">MC<span class="text-brand-ice">.</span></span>
-        </div>
-        
-        <div class="hidden md:flex space-x-12 text-[10px] uppercase tracking-[0.4em] font-medium text-brand-alabaster/50">
-            <a href="#home" class="hover:text-brand-alabaster transition-all">Home</a>
-            <a href="#philosophy" class="hover:text-brand-orchid transition-all">Philosophy</a>
-            <a href="#collection" class="hover:text-brand-blue transition-all">Collection</a>
-            <a href="#bespoke" class="hover:text-brand-magenta transition-all">Bespoke</a>
-        </div>
-
-        <a href="#" class="px-10 py-3 bg-brand-alabaster text-brand-dark text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-brand-ice transition-all">
+    <!-- 3. Button (Right) - Updated to match screenshot -->
+    <div class="flex-shrink-0 w-32 flex justify-end">
+        <a href="#" class="px-8 py-3 bg-brand-alabaster text-brand-dark text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-brand-ice hover:scale-105 transition-all shadow-lg">
             Atelier
         </a>
-    </nav>
+    </div>
+</nav>
 
-    <!-- HERO: ICE & DARK -->
-    <header id="home" class="relative w-full h-screen flex items-center justify-center overflow-hidden bg-brand-dark text-center">
-        <div class="glow-soft" style="background: var(--blue); top: -100px; left: -100px;"></div>
+<!-- HERO: ICE & DARK -->
+<header id="home" class="relative w-full h-screen flex items-center justify-center overflow-hidden bg-brand-dark text-center px-4">
+    <div class="glow-soft" style="background: var(--blue); top: -100px; left: -100px;"></div>
+    
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-brand-dark/50 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=2000" class="w-full h-full object-cover hero-img" alt="Hero" />
+    </div>
+
+    <div class="relative z-20 max-w-4xl mx-auto">
+        <p class="reveal-on-load font-sans text-[10px] md:text-xs tracking-[0.5em] md:tracking-[1em] uppercase text-brand-ice mb-6 md:mb-8 opacity-0">
+            MC Handmade Marry
+        </p>
         
-        <div class="absolute inset-0 z-0">
-            <div class="absolute inset-0 bg-brand-dark/50 z-10"></div>
-            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=2000" class="w-full h-full object-cover hero-img" alt="Hero" />
-        </div>
-
-        <div class="relative z-20">
-            <p class="reveal-on-load font-sans text-xs tracking-[1em] uppercase text-brand-ice mb-8 opacity-0">Bespoke Soap Artistry</p>
-            <h1 class="reveal-on-load text-6xl md:text-[9rem] font-serif font-light leading-none mb-10 text-brand-alabaster opacity-0">
-                Petale care <br /> <span class="text-stroke-blue italic">nu se ofilesc.</span>
-            </h1>
-            <div class="reveal-on-load h-24 w-[1px] bg-brand-ice mx-auto opacity-0"></div>
-        </div>
-    </header>
+        <!-- Responsive Text Sizes: text-5xl on mobile, text-9xl on desktop -->
+        <h1 class="reveal-on-load text-5xl md:text-[8rem] lg:text-[9rem] font-serif font-light leading-[1.1] md:leading-none mb-8 md:mb-10 text-brand-alabaster opacity-0">
+            Petale care <br /> <span class="text-stroke-blue italic">nu se ofilesc.</span>
+        </h1>
+        
+        <div class="reveal-on-load h-16 md:h-24 w-[1px] bg-brand-ice mx-auto opacity-0"></div>
+    </div>
+</header>
 
     <main>
-        <!-- SECTION 1: PHILOSOPHY (PEACH & ORCHID - LUX SKINCARE VIBE) -->
-        <section id="philosophy" class="py-40 bg-brand-peach relative text-brand-dark">
-            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
-                
-                <div data-reveal="left">
-                    <span class="text-brand-magenta text-[10px] uppercase tracking-[0.6em] mb-6 block font-bold">The Concept</span>
-                    <h2 class="text-6xl md:text-8xl font-serif leading-none mb-10">
-                        O atingere <br /> <span class="italic">perpetuă.</span>
-                    </h2>
-                    <p class="text-brand-dark/70 text-lg font-light leading-relaxed max-w-lg mb-12">
-                        În atelierul nostru, timpul se oprește. Folosim tonuri de <span class="text-brand-orchid font-bold">Orchid Pink</span> pentru a reda viața petalelor, transformând un simplu săpun într-o operă de artă sculpturală.
-                    </p>
-                    <div class="flex gap-12">
-                        <div class="border-b border-brand-dark/10 pb-4">
-                            <span class="block text-4xl font-serif text-brand-magenta italic">Hand</span>
-                            <span class="text-[9px] uppercase tracking-widest font-bold">Sculpted</span>
-                        </div>
-                        <div class="border-b border-brand-dark/10 pb-4">
-                            <span class="block text-4xl font-serif text-brand-magenta italic">Natural</span>
-                            <span class="text-[9px] uppercase tracking-widest font-bold">Essences</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative" data-reveal="right">
-                    <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
-                        <div class="img-container h-[550px] shadow-2xl">
-                            <img src="https://images.unsplash.com/photo-1591880911703-997577884d85?q=80&w=1200" class="w-full h-full object-cover" alt="Detail" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 2: COLLECTION (BLUE & ICE - MIDNIGHT GARDEN) -->
-        <section id="collection" class="py-40 bg-brand-dark relative overflow-hidden">
-            <div class="glow-soft" style="background: var(--purple); bottom: -100px; left: -100px; opacity: 0.3;"></div>
+<!-- SECTION 1: PHILOSOPHY -->
+<section id="philosophy" class="py-20 md:py-40 bg-brand-peach relative text-brand-dark">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
+        
+        <div data-reveal="left" class="order-2 lg:order-1">
+            <span class="text-brand-magenta text-[10px] uppercase tracking-[0.6em] mb-6 block font-bold">The Concept</span>
             
-            <div class="max-w-7xl mx-auto px-6 relative z-10">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-24">
-                    <div>
-                        <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-6 block font-bold">The Gallery</span>
-                        <h2 class="text-6xl md:text-8xl font-serif text-brand-ice italic">Celestial <br/> Indigo</h2>
-                    </div>
-                    <p class="text-brand-blue text-[10px] uppercase tracking-[0.3em] font-light max-w-xs text-right leading-loose">
-                        Explorăm latura mistică a botanicii prin pigmenți <span class="text-brand-ice italic">Ice Blue</span>, creați pentru a ilumina spațiile întunecate.
-                    </p>
+            <!-- Responsive Heading -->
+            <h2 class="text-4xl md:text-8xl font-serif leading-none mb-6 md:mb-10">
+                O atingere <br /> <span class="italic">perpetuă.</span>
+            </h2>
+            
+            <p class="text-brand-dark/70 text-base md:text-lg font-light leading-relaxed max-w-lg mb-10 md:mb-12">
+                În atelierul nostru, timpul se oprește. Folosim tonuri de <span class="text-brand-orchid font-bold">Orchid Pink</span> pentru a reda viața petalelor, transformând un simplu săpun într-o operă de artă sculpturală.
+            </p>
+            
+            <div class="flex gap-8 md:gap-12">
+                <div class="border-b border-brand-dark/10 pb-4">
+                    <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Hand</span>
+                    <span class="text-[9px] uppercase tracking-widest font-bold">Sculpted</span>
                 </div>
-
-                <!-- Bento Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                    <div class="md:col-span-8 h-[750px] img-container shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)]" data-reveal="up">
-                        <img src="https://images.unsplash.com/photo-1490312278390-ab6414ef3692?q=80&w=1200" class="w-full h-full object-cover" alt="C1" />
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent"></div>
-                    </div>
-                    <div class="md:col-span-4 flex flex-col gap-8">
-                        <div class="h-[360px] img-container" data-reveal="up">
-                            <img src="https://images.unsplash.com/photo-1550301143-65910904037a?q=80&w=800" class="w-full h-full object-cover" alt="C2" />
-                        </div>
-                        <div class="h-[360px] bg-brand-indigo/20 p-12 border border-brand-blue/10 flex flex-col justify-end" data-reveal="up">
-                            <h4 class="text-brand-ice text-3xl font-serif italic mb-4">Cornflower Deep</h4>
-                            <p class="text-brand-blue text-[10px] uppercase tracking-widest leading-relaxed">Ediție Limitată de Iarnă</p>
-                        </div>
-                    </div>
+                <div class="border-b border-brand-dark/10 pb-4">
+                    <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Natural</span>
+                    <span class="text-[9px] uppercase tracking-widest font-bold">Essences</span>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <div class="relative order-1 lg:order-2" data-reveal="right">
+            <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
+                <!-- Height is auto on mobile (based on aspect ratio), fixed on desktop -->
+                <div class="img-container aspect-square md:h-[550px] shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1591880911703-997577884d85?q=80&w=1200" class="w-full h-full object-cover" alt="Detail" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: THE MIDNIGHT INDIGO COLLECTION -->
+<section id="collection" class="py-24 md:py-40 bg-brand-dark relative overflow-hidden">
+    <!-- Background Glow -->
+    <div class="glow-soft" style="background: var(--purple); top: 10px; right: -100px; opacity: 0.2;"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <!-- Section Header -->
+        <div class="mb-24 text-center md:text-left">
+            <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-6 block font-bold">The Signature Gallery</span>
+            <h2 class="text-5xl md:text-8xl font-serif text-brand-ice italic mb-6">Midnight <br/> Indigo Collection</h2>
+            <p class="text-brand-blue/60 text-[11px] uppercase tracking-[0.3em] font-light max-w-xl leading-loose">
+                A curation of our most intricate sculptures, bathed in deep pigments and celestial light.
+            </p>
+        </div>
+
+        <!-- STAGGERED GRID LAYOUT -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+            
+            <!-- COLUMN 1 (Left) -->
+            <div class="flex flex-col gap-12">
+                
+                <!-- Image: Pink/Peach Basket (Soft) -->
+                <div class="indigo-frame reveal-gallery" data-speed="0.9">
+                    <div class="img-container aspect-[3/4]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" alt="Soft Peach Basket" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Velvet Morning</p>
+                </div>
+
+                <!-- Image: Red Basket (Vibrant) -->
+                <div class="indigo-frame reveal-gallery" data-speed="1.1">
+                    <div class="img-container aspect-[1/1]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" alt="Crimson Basket" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Crimson Passion</p>
+                </div>
+            </div>
+
+            <!-- COLUMN 2 (Middle - Pushed Down on Desktop) -->
+            <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
+                
+                <!-- Image: Yellow Basket (Bright) -->
+                <div class="indigo-frame reveal-gallery" data-speed="1.2">
+                    <div class="img-container aspect-[3/4]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" alt="Yellow Sunshine" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Golden Hour</p>
+                </div>
+
+                <!-- Image: Pink Hoop Basket (Structural) -->
+                <div class="indigo-frame reveal-gallery" data-speed="0.8">
+                    <div class="img-container aspect-[4/5]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" alt="Pink Hoop" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Eternal Loop</p>
+                </div>
+            </div> 
+
+            <!-- COLUMN 3 (Right - Slight Push on Desktop) -->
+            <div class="flex flex-col gap-12 lg:mt-16">
+                
+                <!-- Image: White Basket Held by Hand (Elegant) -->
+                <div class="indigo-frame reveal-gallery" data-speed="1.3">
+                    <div class="img-container aspect-[3/4]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" alt="Hand Holding Basket" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Touch of Grace</p>
+                </div>
+
+                <!-- Image: Blue Candles in Box (Landscape/Wide) -->
+                <div class="indigo-frame reveal-gallery" data-speed="1.0">
+                    <div class="img-container aspect-[4/3]">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" alt="Blue Candles Box" />
+                    </div>
+                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Indigo Box Set</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
 
         <!-- SECTION 3: BESPOKE (ALABASTER & MAGENTA - PEARL LUXE) -->
         <section id="bespoke" class="py-40 bg-brand-alabaster text-brand-dark relative">
@@ -245,49 +379,46 @@
         </section>
     </main>
 
-    <!-- FOOTER: DEEP INDIGO BLACK (No License text) -->
-    <footer class="bg-[#0D071A] py-32 px-10 border-t border-brand-blue/10">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20">
-            <div class="md:col-span-2">
-                <span class="text-4xl font-serif font-bold text-brand-alabaster block mb-8">MC<span class="text-brand-ice">.</span></span>
-                <p class="text-brand-blue/40 text-sm max-w-sm font-light leading-loose uppercase tracking-[0.2em]">
-                    Artă botanică românească. Flori care durează o viață, sculptate din ingrediente naturale și infuzate cu liniște.
-                </p>
-                <div class="flex space-x-6 mt-12">
-                    <a href="#" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-tiktok"></i></a>
-                </div>
+<!-- FOOTER -->
+<footer class="bg-[#0D071A] py-20 md:py-32 px-6 md:px-10 border-t border-brand-blue/10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-20">
+        <div class="md:col-span-2">
+            <span class="text-4xl font-serif font-bold text-brand-alabaster block mb-6 md:mb-8">MC<span class="text-brand-ice">.</span></span>
+            <p class="text-brand-blue/40 text-sm max-w-sm font-light leading-loose uppercase tracking-[0.2em]">
+                MC Handmade Marry. <br>
+                Artă botanică românească. Flori care durează o viață, sculptate din ingrediente naturale.
+            </p>
+            <div class="flex space-x-6 mt-8 md:mt-12">
+                <a href="#" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-tiktok"></i></a>
             </div>
-            
-            <div>
-                <h5 class="text-brand-ice text-[10px] uppercase tracking-widest mb-10 font-bold">Navigation</h5>
+        </div>
+        
+        <!-- Navigation Links -->
+        <div class="grid grid-cols-2 gap-8 md:block md:col-span-2 md:grid-cols-none">
+             <div>
+                <h5 class="text-brand-ice text-[10px] uppercase tracking-widest mb-6 md:mb-10 font-bold">Navigation</h5>
                 <ul class="text-brand-blue/60 text-[10px] space-y-4 font-light tracking-[0.2em]">
                     <li class="hover:text-brand-ice cursor-pointer">THE VELVET SERIES</li>
                     <li class="hover:text-brand-ice cursor-pointer">BESPOKE ORDERS</li>
                     <li class="hover:text-brand-ice cursor-pointer">CARE GUIDE</li>
-                    <li class="hover:text-brand-ice cursor-pointer">ATELIER CONTACT</li>
                 </ul>
             </div>
-
-            <div>
-                <h5 class="text-brand-ice text-[10px] uppercase tracking-widest mb-10 font-bold">Legal</h5>
-                <ul class="text-brand-blue/60 text-[10px] space-y-4 font-light tracking-[0.2em]">
-                    <li class="hover:text-brand-ice cursor-pointer">PRIVACY POLICY</li>
-                    <li class="hover:text-brand-ice cursor-pointer">TERMS OF SERVICE</li>
-                    <li class="hover:text-brand-ice cursor-pointer">COOKIE SETTINGS</li>
-                </ul>
-            </div>
+            <div class="hidden md:block mt-10">
+                 <!-- Spacing helper for desktop alignment -->
+            </div> 
         </div>
+    </div> 
 
-        <div class="max-w-7xl mx-auto mt-32 pt-10 border-t border-white/5 flex justify-between items-center">
-            <div class="text-[9px] uppercase tracking-[0.5em] text-brand-blue/20">
-                MC ETERNAL PETALS • 2026
-            </div>
-            <div class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/40 italic">
-                From our studio to your soul.
-            </div>
+    <div class="max-w-7xl mx-auto mt-20 md:mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+        <div class="text-[9px] uppercase tracking-[0.3em] text-brand-blue/20">
+            MC HANDMADE MARRY • 2026
         </div>
-    </footer>
+        <div class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/40 italic">
+            From our studio to your soul.
+        </div>
+    </div>
+</footer>
 
     <!-- SCRIPTS -->
     <script>
@@ -295,7 +426,8 @@
             gsap.registerPlugin(ScrollTrigger);
 
             const tl = gsap.timeline();
-            tl.to("#loader-text", { opacity: 1, y: 0, duration: 1.2, ease: "power2.out" })
+// This line in your existing script handles the fade in
+tl.to("#loader-text", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" })
               .to(".loader", { yPercent: -100, duration: 1.5, ease: "expo.inOut", delay: 0.5 })
               .to(".reveal-on-load", { opacity: 1, y: 0, stagger: 0.2, duration: 1.2, ease: "power3.out" }, "-=0.5")
               .to(".hero-img", { scale: 1.15, duration: 4, ease: "power2.out" }, "-=2");
@@ -320,13 +452,54 @@
                 });
             });
 
-            // Nav Scroll
-            const nav = document.getElementById('main-nav');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 100) nav.classList.add('scrolled');
-                else nav.classList.remove('scrolled');
-            });
+// Nav Scroll
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+});
         };
+
+
+// Add this inside your existing window.onload function
+
+// Add this inside your window.onload function, replacing the old gallery code
+
+// Gallery Parallax & Reveal
+gsap.utils.toArray('.reveal-gallery').forEach((item, i) => {
+    const speed = item.getAttribute('data-speed');
+    const img = item.querySelector('.parallax-img');
+    
+    // 1. Fade In Animation (Staggered based on column position)
+    gsap.from(item, {
+        y: 100,
+        opacity: 0,
+        duration: 1.5,
+        ease: "power3.out",
+        scrollTrigger: {
+            trigger: item,
+            start: "top 90%", 
+            toggleActions: "play none none reverse"
+        }
+    });
+
+    // 2. Parallax Image Movement (The image moves inside the frame)
+    if(img) {
+        gsap.fromTo(img, 
+            { scale: 1.2, y: -20 }, // Start slightly zoomed and higher
+            {
+                y: 20 * speed, // Move down based on speed
+                ease: "none",
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true
+                }
+            }
+        );
+    }
+});
     </script>
 </body>
 </html>
