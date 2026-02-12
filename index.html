@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>MC | Eternal Petals Artistry</title>
 
+<!-- CRITICAL: Preload Logo & Hero for Speed -->
+    <link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F58e030c9-f51d-4b5f-abb2-8b88ea0f9507.png?alt=media&token=abbedc81-126b-44a2-b492-66eac45a447d">
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=2000&auto=format&fit=crop">
+
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -349,7 +353,13 @@
 
 <div class="absolute inset-0 z-0">
     <div class="absolute inset-0 bg-brand-dark/50 z-10"></div>
-    <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=2000" class="w-full h-full object-cover hero-img" alt="Hero" />
+    <img 
+        src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=1600&auto=format&fit=crop" 
+        class="w-full h-full object-cover hero-img" 
+        alt="Hero" 
+        fetchpriority="high" 
+        decoding="sync"
+    />
 </div>
 
 <div class="relative z-20 max-w-4xl mx-auto">
@@ -363,39 +373,78 @@
 </div>
 </header>
 <main class="w-full overflow-hidden"> <!-- Added overflow-hidden here as extra safety -->
-    <!-- SECTION 1: PHILOSOPHY -->
+
+
+<!-- SECTION 1: PHILOSOPHY -->
     <section id="philosophy" class="py-20 md:py-40 bg-brand-peach relative text-brand-dark">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
+            
+            <div data-reveal="left" class="order-2 lg:order-1">
+                <!-- Small Tag -->
 
-<div data-reveal="left" class="order-2 lg:order-1">
-            <span class="text-brand-magenta text-[10px] uppercase tracking-[0.6em] mb-6 block font-bold">The Concept</span>
-            <h2 class="text-4xl md:text-8xl font-serif leading-none mb-6 md:mb-10">
-                O atingere <br /> <span class="italic">perpetuă.</span>
-            </h2>
-            <p class="text-brand-dark/70 text-base md:text-lg font-light leading-relaxed max-w-lg mb-10 md:mb-12">
-                În atelierul nostru, timpul se oprește. Folosim tonuri de <span class="text-brand-orchid font-bold">Orchid Pink</span> pentru a reda viața petalelor, transformând un simplu săpun într-o operă de artă sculpturală.
-            </p>
-            <div class="flex gap-8 md:gap-12">
-                <div class="border-b border-brand-dark/10 pb-4">
-                    <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Hand</span>
-                    <span class="text-[9px] uppercase tracking-widest font-bold">Sculpted</span>
+                
+                <!-- Main Headline -->
+                <h2 class="text-6xl md:text-8xl font-serif font-bold leading-[0.9] text-brand-dark mb-2">
+                    HANDMADE
+                </h2>
+                <h3 class="text-5xl md:text-7xl font-serif italic text-brand-magenta/80 mb-10">
+                    by Mary
+                </h3>
+                
+                <!-- Services Description -->
+                <div class="border-l-2 border-brand-magenta/20 pl-6 mb-10">
+                    <p class="text-xl md:text-2xl font-serif italic mb-4">Creații unice, create cu suflet.</p>
+                    
+                    <ul class="space-y-3 text-sm md:text-base font-medium uppercase tracking-wider opacity-80">
+                        <li class="flex items-center gap-3">
+                            <span class="w-1.5 h-1.5 bg-brand-magenta rounded-full"></span>
+                            Flori de săpun (Individuale & Buchete)
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="w-1.5 h-1.5 bg-brand-magenta rounded-full"></span>
+                            Lumânări Parfumate
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="w-1.5 h-1.5 bg-brand-magenta rounded-full"></span>
+                            Decor & Aranjamente
+                        </li>
+                    </ul>
                 </div>
-                <div class="border-b border-brand-dark/10 pb-4">
-                    <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Natural</span>
-                    <span class="text-[9px] uppercase tracking-widest font-bold">Essences</span>
+
+                <!-- Categories -->
+                <div class="flex flex-wrap gap-x-6 gap-y-2 text-[10px] uppercase tracking-[0.2em] font-bold text-brand-dark/50 mb-12">
+                    <span>Evenimente</span> • <span>Cadouri</span> • <span>Mărturii</span>
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex items-center gap-6">
+                    <a href="https://www.instagram.com/handmade.candles.mary?igsh=bDVldWphNHZscmhp" target="_blank" class="px-8 py-3 border border-brand-dark/20 rounded-full flex items-center gap-3 hover:bg-brand-magenta hover:text-white hover:border-transparent transition-all duration-300 group">
+                        <i class="fa-brands fa-instagram text-xl group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">Instagram</span>
+                    </a>
+                    <!-- TikTok -->
+                    <a href="https://www.tiktok.com/@handmade.candles.soap?_r=1&_t=ZG-93rQGoj8tWq" target="_blank" class="px-8 py-3 border border-brand-dark/20 rounded-full flex items-center gap-3 hover:bg-brand-magenta hover:text-white hover:border-transparent transition-all duration-300 group">
+                        <i class="fa-brands fa-tiktok text-xl group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">TikTok</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Image Side -->
+            <div class="relative order-1 lg:order-2" data-reveal="right">
+                <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
+                    <div class="img-container aspect-square md:h-[550px] shadow-2xl">
+                        <img 
+                            src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FCaptur%C4%83%20de%20ecran%202026-02-12%20192716.png?alt=media&token=89a9939e-38a7-4434-8fb6-58979eec3cc5" 
+                            class="w-full h-full object-cover" 
+                            alt="Handmade by Mary Detail" 
+                            loading="lazy"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="relative order-1 lg:order-2" data-reveal="right">
-            <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
-                <div class="img-container aspect-square md:h-[550px] shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1591880911703-997577884d85?q=80&w=1200" class="w-full h-full object-cover" alt="Detail" />
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
 <!-- SECTION 2: COLLECTION -->
 <section id="collection" class="py-24 md:py-40 bg-brand-dark relative overflow-hidden">
@@ -410,58 +459,57 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
-            
-            <!-- Col 1 -->
-            <div class="flex flex-col gap-12">
-                <div class="indigo-frame reveal-gallery" data-speed="0.9">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" alt="Soft Peach Basket" />
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+                
+                <!-- Col 1 -->
+                <div class="flex flex-col gap-12">
+                    <div class="indigo-frame reveal-gallery" data-speed="0.9">
+                        <div class="img-container aspect-[3/4]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" loading="lazy" decoding="async" alt="Velvet Morning" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Velvet Morning</p>
                     </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Velvet Morning</p>
-                </div>
-                <div class="indigo-frame reveal-gallery" data-speed="1.1">
-                    <div class="img-container aspect-[1/1]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" alt="Crimson Basket" />
+                    <div class="indigo-frame reveal-gallery" data-speed="1.1">
+                        <div class="img-container aspect-[1/1]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" loading="lazy" decoding="async" alt="Crimson Passion" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Crimson Passion</p>
                     </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Crimson Passion</p>
                 </div>
+
+                <!-- Col 2 -->
+                <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
+                    <div class="indigo-frame reveal-gallery" data-speed="1.2">
+                        <div class="img-container aspect-[3/4]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" loading="lazy" decoding="async" alt="Golden Hour" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Golden Hour</p>
+                    </div>
+                    <div class="indigo-frame reveal-gallery" data-speed="0.8">
+                        <div class="img-container aspect-[4/5]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" loading="lazy" decoding="async" alt="Eternal Loop" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Eternal Loop</p>
+                    </div>
+                </div> 
+
+                <!-- Col 3 -->
+                <div class="flex flex-col gap-12 lg:mt-16">
+                    <div class="indigo-frame reveal-gallery" data-speed="1.3">
+                        <div class="img-container aspect-[3/4]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" loading="lazy" decoding="async" alt="Touch of Grace" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Touch of Grace</p>
+                    </div>
+                    <div class="indigo-frame reveal-gallery" data-speed="1.0">
+                        <div class="img-container aspect-[4/3]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" loading="lazy" decoding="async" alt="Indigo Box Set" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Indigo Box Set</p>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- Col 2 -->
-            <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
-                <div class="indigo-frame reveal-gallery" data-speed="1.2">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" alt="Yellow Sunshine" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Golden Hour</p>
-                </div>
-                <div class="indigo-frame reveal-gallery" data-speed="0.8">
-                    <div class="img-container aspect-[4/5]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" alt="Pink Hoop" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Eternal Loop</p>
-                </div>
-            </div> 
-
-            <!-- Col 3 -->
-            <div class="flex flex-col gap-12 lg:mt-16">
-                <div class="indigo-frame reveal-gallery" data-speed="1.3">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" alt="Hand Holding Basket" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Touch of Grace</p>
-                </div>
-                <div class="indigo-frame reveal-gallery" data-speed="1.0">
-                    <div class="img-container aspect-[4/3]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" alt="Blue Candles Box" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Indigo Box Set</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
 </section>
 
 <!-- SECTION 3: BESPOKE -->
