@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@100;200;300;400;500;600&display=swap" rel="stylesheet" />
 
+    <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fe52d7158148debb8ba1f8498f866a846~tplv-tiktokx-cropcenter_1080_1080.jpeg?alt=media&token=e0678a9e-17ed-4264-a124-284bce486fcf" />
-
     
     <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -34,7 +34,7 @@
                             purple: "#9E4FE8",
                             indigo: "#462AC0",
                             dark: "#130925",
-                            alabaster: "#FDF2F5" /* NEW: În loc de alb pur */
+                            alabaster: "#FDF2F5"
                         },
                     },
                     fontFamily: {
@@ -57,7 +57,7 @@
             --purple: #9E4FE8;
             --indigo: #462AC0;
             --dark: #130925;
-            --alabaster: #FDF2F5; /* Perlat cald */
+            --alabaster: #FDF2F5;
         }
 
         /* Base & Scroll */
@@ -74,23 +74,28 @@
         ::-webkit-scrollbar-track { background: var(--dark); }
         ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 10px; }
 
-        /* Typography */
-        .text-stroke-magenta { -webkit-text-stroke: 1px var(--magenta); color: transparent; }
-        .text-stroke-blue { -webkit-text-stroke: 1px var(--blue); color: transparent; }
-        .text-stroke-dark { -webkit-text-stroke: 1px var(--dark); color: transparent; }
+        /* Loader Styles */
+        .loader {
+            position: fixed; 
+            inset: 0; 
+            background: radial-gradient(circle at center, #2E1065 0%, #0D071A 100%);
+            z-index: 10000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 20px;
+        }
 
-/* REPLACE YOUR .loader CSS WITH THIS */
-.loader {
-    position: fixed; 
-    inset: 0; 
-    /* Deep Indigo Gradient matching your image */
-    background: radial-gradient(circle at center, #2E1065 0%, #0D071A 100%);
-    z-index: 10000; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
-    padding: 20px;
-}
+        /* Nav Styles */
+        nav {
+            background: radial-gradient(circle at center, #2E1065 0%, #0D071A 100%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: padding 0.5s ease;
+        }
+        nav.scrolled {
+            padding-top: 15px !important; 
+            padding-bottom: 15px !important;
+        }
 
         /* Technical Frames */
         .showcase-frame {
@@ -100,102 +105,72 @@
             backdrop-filter: blur(15px);
         }
         .frame-peach::before { border-top: 2px solid var(--orchid); border-left: 2px solid var(--orchid); content: ""; position: absolute; top: -1px; left: -1px; width: 40px; height: 40px; }
-        .frame-blue::before { border-top: 2px solid var(--ice); border-left: 2px solid var(--ice); content: ""; position: absolute; top: -1px; left: -1px; width: 40px; height: 40px; }
-
-/* REPLACE YOUR nav.scrolled CSS WITH THIS */
-nav {
-    /* Always apply the Midnight Indigo Gradient */
-    background: radial-gradient(circle at center, #2E1065 0%, #0D071A 100%);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Adds depth so it separates from the page */
-    transition: padding 0.5s ease; /* Smooth resizing only */
-}
-
-/* On scroll, we only change the padding (size), not the color */
-nav.scrolled {
-    padding-top: 15px !important; 
-    padding-bottom: 15px !important;
-}
-
-        .img-container { overflow: hidden; position: relative; border-radius: 4px; }
-        .img-container img { transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .img-container:hover img { transform: scale(1.1); }
-
+        
         /* Glows */
         .glow-soft {
             position: absolute; width: 600px; height: 600px;
             filter: blur(150px); pointer-events: none; z-index: 0; opacity: 0.15;
         }
 
+        /* Indigo Gallery Styles */
+        .indigo-frame {
+            position: relative;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(113, 140, 229, 0.2);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .indigo-frame::after {
+            content: "";
+            position: absolute;
+            inset: -5px;
+            border: 1px solid rgba(184, 244, 255, 0.1);
+            pointer-events: none;
+            transition: all 0.6s ease;
+        }
+        .indigo-frame:hover {
+            border-color: var(--ice);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .indigo-frame:hover::after {
+            inset: -12px; border-color: var(--ice); opacity: 0.5;
+        }
 
-/* New Indigo Gallery Styles */
-.indigo-frame {
-    position: relative;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(113, 140, 229, 0.2);
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.indigo-frame::after {
-    content: "";
-    position: absolute;
-    inset: -5px;
-    border: 1px solid rgba(184, 244, 255, 0.1);
-    pointer-events: none;
-    transition: all 0.6s ease;
-}
-
-.indigo-frame:hover {
-    border-color: var(--ice);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-
-.indigo-frame:hover::after {
-    inset: -12px;
-    border-color: var(--ice);
-    opacity: 0.5;
-}
-
-.parallax-img {
-    will-change: transform;
-}
-
-
-/* Update this specific class in your <style> block */
-.img-container { 
-    overflow: hidden; 
-    position: relative; 
-    border-radius: 4px; 
-    width: 100%;
-    height: 100%;
-}
-
-.img-container img { 
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* This ensures images fill the box without stretching */
-    transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1);  
-}
+        /* Image Containers */
+        .img-container { 
+            overflow: hidden; 
+            position: relative; 
+            border-radius: 4px; 
+            width: 100%;
+            height: 100%;
+        }
+        .img-container img { 
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1);  
+        }
+        .img-container:hover img { transform: scale(1.1); }
+        .text-stroke-blue { -webkit-text-stroke: 1px var(--blue); color: transparent; }
+        .text-stroke-dark { -webkit-text-stroke: 1px var(--dark); color: transparent; }
     </style>
 </head>
 <body>
 
-<!-- UPDATED LOADER: Indigo Gradient & Ice Text -->
+<!-- LOADER -->
 <div class="loader">
     <h2 class="font-serif text-4xl md:text-6xl italic font-light tracking-widest text-brand-ice opacity-0 text-center leading-snug" id="loader-text">
         MC Handmade <br /> Marry
     </h2>
 </div>
-<!-- REPLACE YOUR NAV SECTION WITH THIS -->
+
+<!-- NAVIGATION -->
 <nav class="fixed w-full z-50 px-6 md:px-10 py-6 transition-all duration-500 flex items-center justify-between" id="main-nav">
-    
-    <!-- 1. Logo (Left) -->
     <div class="flex-shrink-0 w-32">
         <span class="text-2xl md:text-3xl font-serif font-bold text-brand-alabaster">MC<span class="text-brand-ice">.</span></span>
     </div>
     
-    <!-- 2. Links (Centered & Hidden on Mobile) -->
     <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-12 text-[11px] uppercase tracking-[0.3em] font-medium text-brand-alabaster/70">
         <a href="#home" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Home</a>
         <a href="#philosophy" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Philosophy</a>
@@ -203,7 +178,6 @@ nav.scrolled {
         <a href="#bespoke" class="hover:text-brand-ice hover:scale-105 transition-all duration-300">Bespoke</a>
     </div>
 
-    <!-- 3. Button (Right) - Updated to match screenshot -->
     <div class="flex-shrink-0 w-32 flex justify-end">
         <a href="#" class="px-8 py-3 bg-brand-alabaster text-brand-dark text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-brand-ice hover:scale-105 transition-all shadow-lg">
             Atelier
@@ -211,7 +185,7 @@ nav.scrolled {
     </div>
 </nav>
 
-<!-- HERO: ICE & DARK -->
+<!-- HERO -->
 <header id="home" class="relative w-full h-screen flex items-center justify-center overflow-hidden bg-brand-dark text-center px-4">
     <div class="glow-soft" style="background: var(--blue); top: -100px; left: -100px;"></div>
     
@@ -224,160 +198,132 @@ nav.scrolled {
         <p class="reveal-on-load font-sans text-[10px] md:text-xs tracking-[0.5em] md:tracking-[1em] uppercase text-brand-ice mb-6 md:mb-8 opacity-0">
             MC Handmade Marry
         </p>
-        
-        <!-- Responsive Text Sizes: text-5xl on mobile, text-9xl on desktop -->
         <h1 class="reveal-on-load text-5xl md:text-[8rem] lg:text-[9rem] font-serif font-light leading-[1.1] md:leading-none mb-8 md:mb-10 text-brand-alabaster opacity-0">
             Petale care <br /> <span class="text-stroke-blue italic">nu se ofilesc.</span>
         </h1>
-        
         <div class="reveal-on-load h-16 md:h-24 w-[1px] bg-brand-ice mx-auto opacity-0"></div>
     </div>
 </header>
 
-    <main>
-<!-- SECTION 1: PHILOSOPHY -->
-<section id="philosophy" class="py-20 md:py-40 bg-brand-peach relative text-brand-dark">
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
-        
-        <div data-reveal="left" class="order-2 lg:order-1">
-            <span class="text-brand-magenta text-[10px] uppercase tracking-[0.6em] mb-6 block font-bold">The Concept</span>
+<main>
+    <!-- SECTION 1: PHILOSOPHY -->
+    <section id="philosophy" class="py-20 md:py-40 bg-brand-peach relative text-brand-dark">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
             
-            <!-- Responsive Heading -->
-            <h2 class="text-4xl md:text-8xl font-serif leading-none mb-6 md:mb-10">
-                O atingere <br /> <span class="italic">perpetuă.</span>
-            </h2>
-            
-            <p class="text-brand-dark/70 text-base md:text-lg font-light leading-relaxed max-w-lg mb-10 md:mb-12">
-                În atelierul nostru, timpul se oprește. Folosim tonuri de <span class="text-brand-orchid font-bold">Orchid Pink</span> pentru a reda viața petalelor, transformând un simplu săpun într-o operă de artă sculpturală.
-            </p>
-            
-            <div class="flex gap-8 md:gap-12">
-                <div class="border-b border-brand-dark/10 pb-4">
-                    <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Hand</span>
-                    <span class="text-[9px] uppercase tracking-widest font-bold">Sculpted</span>
-                </div>
-                <div class="border-b border-brand-dark/10 pb-4">
-                    <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Natural</span>
-                    <span class="text-[9px] uppercase tracking-widest font-bold">Essences</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="relative order-1 lg:order-2" data-reveal="right">
-            <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
-                <!-- Height is auto on mobile (based on aspect ratio), fixed on desktop -->
-                <div class="img-container aspect-square md:h-[550px] shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1591880911703-997577884d85?q=80&w=1200" class="w-full h-full object-cover" alt="Detail" />
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- SECTION 2: THE MIDNIGHT INDIGO COLLECTION -->
-<section id="collection" class="py-24 md:py-40 bg-brand-dark relative overflow-hidden">
-    <!-- Background Glow -->
-    <div class="glow-soft" style="background: var(--purple); top: 10px; right: -100px; opacity: 0.2;"></div>
-    
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-        <!-- Section Header -->
-        <div class="mb-24 text-center md:text-left">
-            <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-6 block font-bold">The Signature Gallery</span>
-            <h2 class="text-5xl md:text-8xl font-serif text-brand-ice italic mb-6">Midnight <br/> Indigo Collection</h2>
-            <p class="text-brand-blue/60 text-[11px] uppercase tracking-[0.3em] font-light max-w-xl leading-loose">
-                A curation of our most intricate sculptures, bathed in deep pigments and celestial light.
-            </p>
-        </div>
-
-        <!-- STAGGERED GRID LAYOUT -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
-            
-            <!-- COLUMN 1 (Left) -->
-            <div class="flex flex-col gap-12">
-                
-                <!-- Image: Pink/Peach Basket (Soft) -->
-                <div class="indigo-frame reveal-gallery" data-speed="0.9">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" alt="Soft Peach Basket" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Velvet Morning</p>
-                </div>
-
-                <!-- Image: Red Basket (Vibrant) -->
-                <div class="indigo-frame reveal-gallery" data-speed="1.1">
-                    <div class="img-container aspect-[1/1]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" alt="Crimson Basket" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Crimson Passion</p>
-                </div>
-            </div>
-
-            <!-- COLUMN 2 (Middle - Pushed Down on Desktop) -->
-            <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
-                
-                <!-- Image: Yellow Basket (Bright) -->
-                <div class="indigo-frame reveal-gallery" data-speed="1.2">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" alt="Yellow Sunshine" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Golden Hour</p>
-                </div>
-
-                <!-- Image: Pink Hoop Basket (Structural) -->
-                <div class="indigo-frame reveal-gallery" data-speed="0.8">
-                    <div class="img-container aspect-[4/5]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" alt="Pink Hoop" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Eternal Loop</p>
-                </div>
-            </div> 
-
-            <!-- COLUMN 3 (Right - Slight Push on Desktop) -->
-            <div class="flex flex-col gap-12 lg:mt-16">
-                
-                <!-- Image: White Basket Held by Hand (Elegant) -->
-                <div class="indigo-frame reveal-gallery" data-speed="1.3">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" alt="Hand Holding Basket" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Touch of Grace</p>
-                </div>
-
-                <!-- Image: Blue Candles in Box (Landscape/Wide) -->
-                <div class="indigo-frame reveal-gallery" data-speed="1.0">
-                    <div class="img-container aspect-[4/3]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" alt="Blue Candles Box" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Indigo Box Set</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-        <!-- SECTION 3: BESPOKE (ALABASTER & MAGENTA - PEARL LUXE) -->
-        <section id="bespoke" class="py-40 bg-brand-alabaster text-brand-dark relative">
-            <div class="max-w-4xl mx-auto px-6 text-center">
-                <span class="text-brand-magenta text-[11px] uppercase tracking-[0.8em] mb-12 block font-bold">Custom Creation</span>
-                <h2 class="text-7xl md:text-[10rem] font-serif leading-[0.8] mb-16">
-                    Bespoke <br/> <span class="text-stroke-dark italic">Ritual.</span>
+            <div data-reveal="left" class="order-2 lg:order-1">
+                <span class="text-brand-magenta text-[10px] uppercase tracking-[0.6em] mb-6 block font-bold">The Concept</span>
+                <h2 class="text-4xl md:text-8xl font-serif leading-none mb-6 md:mb-10">
+                    O atingere <br /> <span class="italic">perpetuă.</span>
                 </h2>
-                <p class="text-brand-dark/60 text-lg font-light mb-16 max-w-xl mx-auto italic">
-                    "Fiecare cadou este o conversație tăcută. Noi sculptăm cuvintele pe care nu le poți spune."
+                <p class="text-brand-dark/70 text-base md:text-lg font-light leading-relaxed max-w-lg mb-10 md:mb-12">
+                    În atelierul nostru, timpul se oprește. Folosim tonuri de <span class="text-brand-orchid font-bold">Orchid Pink</span> pentru a reda viața petalelor, transformând un simplu săpun într-o operă de artă sculpturală.
                 </p>
-                
-                <div class="flex flex-col md:flex-row justify-center items-center gap-12">
-                    <a href="#" class="bg-brand-dark text-brand-alabaster px-16 py-6 font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-brand-magenta transition-all shadow-2xl rounded-sm">
-                        Design a Bouquet
-                    </a>
-                    <a href="#" class="text-brand-magenta border-b-2 border-brand-magenta/20 pb-2 text-[10px] uppercase tracking-[0.4em] hover:border-brand-magenta transition-all font-bold">
-                        Scent Profile
-                    </a>
+                <div class="flex gap-8 md:gap-12">
+                    <div class="border-b border-brand-dark/10 pb-4">
+                        <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Hand</span>
+                        <span class="text-[9px] uppercase tracking-widest font-bold">Sculpted</span>
+                    </div>
+                    <div class="border-b border-brand-dark/10 pb-4">
+                        <span class="block text-3xl md:text-4xl font-serif text-brand-magenta italic">Natural</span>
+                        <span class="text-[9px] uppercase tracking-widest font-bold">Essences</span>
+                    </div>
                 </div>
             </div>
-        </section>
-    </main>
+
+            <div class="relative order-1 lg:order-2" data-reveal="right">
+                <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
+                    <div class="img-container aspect-square md:h-[550px] shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1591880911703-997577884d85?q=80&w=1200" class="w-full h-full object-cover" alt="Detail" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: COLLECTION -->
+    <section id="collection" class="py-24 md:py-40 bg-brand-dark relative overflow-hidden">
+        <div class="glow-soft" style="background: var(--purple); top: 10px; right: -100px; opacity: 0.2;"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="mb-24 text-center md:text-left">
+                <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-6 block font-bold">The Signature Gallery</span>
+                <h2 class="text-5xl md:text-8xl font-serif text-brand-ice italic mb-6">Midnight <br/> Indigo Collection</h2>
+                <p class="text-brand-blue/60 text-[11px] uppercase tracking-[0.3em] font-light max-w-xl leading-loose">
+                    A curation of our most intricate sculptures, bathed in deep pigments and celestial light.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+                
+                <!-- Col 1 -->
+                <div class="flex flex-col gap-12">
+                    <div class="indigo-frame reveal-gallery" data-speed="0.9">
+                        <div class="img-container aspect-[3/4]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" alt="Soft Peach Basket" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Velvet Morning</p>
+                    </div>
+                    <div class="indigo-frame reveal-gallery" data-speed="1.1">
+                        <div class="img-container aspect-[1/1]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" alt="Crimson Basket" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Crimson Passion</p>
+                    </div>
+                </div>
+
+                <!-- Col 2 -->
+                <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
+                    <div class="indigo-frame reveal-gallery" data-speed="1.2">
+                        <div class="img-container aspect-[3/4]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" alt="Yellow Sunshine" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Golden Hour</p>
+                    </div>
+                    <div class="indigo-frame reveal-gallery" data-speed="0.8">
+                        <div class="img-container aspect-[4/5]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" alt="Pink Hoop" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Eternal Loop</p>
+                    </div>
+                </div> 
+
+                <!-- Col 3 -->
+                <div class="flex flex-col gap-12 lg:mt-16">
+                    <div class="indigo-frame reveal-gallery" data-speed="1.3">
+                        <div class="img-container aspect-[3/4]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" alt="Hand Holding Basket" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">Touch of Grace</p>
+                    </div>
+                    <div class="indigo-frame reveal-gallery" data-speed="1.0">
+                        <div class="img-container aspect-[4/3]">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" alt="Blue Candles Box" />
+                        </div>
+                        <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right">Indigo Box Set</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: BESPOKE -->
+    <section id="bespoke" class="py-40 bg-brand-alabaster text-brand-dark relative">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <span class="text-brand-magenta text-[11px] uppercase tracking-[0.8em] mb-12 block font-bold">Custom Creation</span>
+            <h2 class="text-7xl md:text-[10rem] font-serif leading-[0.8] mb-16">
+                Bespoke <br/> <span class="text-stroke-dark italic">Ritual.</span>
+            </h2>
+            <p class="text-brand-dark/60 text-lg font-light mb-16 max-w-xl mx-auto italic">
+                "Fiecare cadou este o conversație tăcută. Noi sculptăm cuvintele pe care nu le poți spune."
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-12">
+                <a href="#" class="bg-brand-dark text-brand-alabaster px-16 py-6 font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-brand-magenta transition-all shadow-2xl rounded-sm">Design a Bouquet</a>
+                <a href="#" class="text-brand-magenta border-b-2 border-brand-magenta/20 pb-2 text-[10px] uppercase tracking-[0.4em] hover:border-brand-magenta transition-all font-bold">Scent Profile</a>
+            </div>
+        </div>
+    </section>
+</main>
 
 <!-- FOOTER -->
 <footer class="bg-[#0D071A] py-20 md:py-32 px-6 md:px-10 border-t border-brand-blue/10">
@@ -394,7 +340,6 @@ nav.scrolled {
             </div>
         </div>
         
-        <!-- Navigation Links -->
         <div class="grid grid-cols-2 gap-8 md:block md:col-span-2 md:grid-cols-none">
              <div>
                 <h5 class="text-brand-ice text-[10px] uppercase tracking-widest mb-6 md:mb-10 font-bold">Navigation</h5>
@@ -404,102 +349,94 @@ nav.scrolled {
                     <li class="hover:text-brand-ice cursor-pointer">CARE GUIDE</li>
                 </ul>
             </div>
-            <div class="hidden md:block mt-10">
-                 <!-- Spacing helper for desktop alignment -->
-            </div> 
+            <div class="hidden md:block mt-10"></div> 
         </div>
     </div> 
 
     <div class="max-w-7xl mx-auto mt-20 md:mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-        <div class="text-[9px] uppercase tracking-[0.3em] text-brand-blue/20">
-            MC HANDMADE MARRY • 2026
-        </div>
-        <div class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/40 italic">
-            From our studio to your soul.
-        </div>
+        <div class="text-[9px] uppercase tracking-[0.3em] text-brand-blue/20">MC HANDMADE MARRY • 2026</div>
+        <div class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/40 italic">From our studio to your soul.</div>
     </div>
 </footer>
 
-    <!-- SCRIPTS -->
-    <script>
-        window.onload = () => {
-            gsap.registerPlugin(ScrollTrigger);
+<!-- SCRIPTS: CORRECTED & CONSOLIDATED -->
+<script>
+    // Initialize Animation Logic
+    const initSite = () => {
+        gsap.registerPlugin(ScrollTrigger);
+        const tl = gsap.timeline();
 
-            const tl = gsap.timeline();
-// This line in your existing script handles the fade in
-tl.to("#loader-text", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" })
-              .to(".loader", { yPercent: -100, duration: 1.5, ease: "expo.inOut", delay: 0.5 })
-              .to(".reveal-on-load", { opacity: 1, y: 0, stagger: 0.2, duration: 1.2, ease: "power3.out" }, "-=0.5")
-              .to(".hero-img", { scale: 1.15, duration: 4, ease: "power2.out" }, "-=2");
+        // 1. LOADER ANIMATION
+        tl.to("#loader-text", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" })
+          .to(".loader", { yPercent: -100, duration: 1.5, ease: "expo.inOut", delay: 0.5 })
+          .to(".reveal-on-load", { opacity: 1, y: 0, stagger: 0.2, duration: 1.2, ease: "power3.out" }, "-=0.5")
+          .to(".hero-img", { scale: 1.15, duration: 4, ease: "power2.out" }, "-=2");
 
-            // Scroll Reveals
-            gsap.utils.toArray('[data-reveal]').forEach(el => {
-                const direction = el.getAttribute('data-reveal');
-                let x = 0, y = 50;
-                if (direction === 'left') { x = -60; y = 0; }
-                if (direction === 'right') { x = 60; y = 0; }
-                if (direction === 'up') { x = 0; y = 100; }
+        // 2. SCROLL REVEALS (Titles & Text)
+        gsap.utils.toArray('[data-reveal]').forEach(el => {
+            const direction = el.getAttribute('data-reveal');
+            let x = 0, y = 50;
+            if (direction === 'left') { x = -60; y = 0; }
+            if (direction === 'right') { x = 60; y = 0; }
+            if (direction === 'up') { x = 0; y = 100; }
 
-                gsap.from(el, {
-                    x: x, y: y,
-                    opacity: 0,
-                    duration: 1.8,
-                    scrollTrigger: {
-                        trigger: el,
-                        start: "top 85%",
-                        toggleActions: "play none none reverse"
-                    }
-                });
+            gsap.from(el, {
+                x: x, y: y, 
+                opacity: 0,
+                duration: 1.8,
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+
+        // 3. GALLERY PARALLAX
+        gsap.utils.toArray('.reveal-gallery').forEach((item) => {
+            const speed = item.getAttribute('data-speed');
+            const img = item.querySelector('.parallax-img');
+            
+            // Fade In Frame
+            gsap.from(item, {
+                y: 100, opacity: 0, duration: 1.5, ease: "power3.out",
+                scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" }
             });
 
-// Nav Scroll
-const nav = document.getElementById('main-nav');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 100) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
-});
-        };
-
-
-// Add this inside your existing window.onload function
-
-// Add this inside your window.onload function, replacing the old gallery code
-
-// Gallery Parallax & Reveal
-gsap.utils.toArray('.reveal-gallery').forEach((item, i) => {
-    const speed = item.getAttribute('data-speed');
-    const img = item.querySelector('.parallax-img');
-    
-    // 1. Fade In Animation (Staggered based on column position)
-    gsap.from(item, {
-        y: 100,
-        opacity: 0,
-        duration: 1.5,
-        ease: "power3.out",
-        scrollTrigger: {
-            trigger: item,
-            start: "top 90%", 
-            toggleActions: "play none none reverse"
-        }
-    });
-
-    // 2. Parallax Image Movement (The image moves inside the frame)
-    if(img) {
-        gsap.fromTo(img, 
-            { scale: 1.2, y: -20 }, // Start slightly zoomed and higher
-            {
-                y: 20 * speed, // Move down based on speed
-                ease: "none",
-                scrollTrigger: {
-                    trigger: item,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: true
-                }
+            // Parallax Image Move
+            if(img) {
+                gsap.fromTo(img, 
+                    { scale: 1.2, y: -20 },
+                    { y: 20 * speed, ease: "none", scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true } }
+                );
             }
-        );
-    }
-});
-    </script>
+        });
+
+        // 4. NAV SCROLL LISTENER
+        const nav = document.getElementById('main-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+    };
+
+    // EXECUTE ON LOAD (With Failsafe)
+    let isLoaded = false;
+
+    // Normal Load
+    window.onload = () => {
+        if(!isLoaded) { isLoaded = true; initSite(); }
+    };
+
+    // Failsafe: If images take >3.5 seconds, force load anyway
+    setTimeout(() => {
+        if(!isLoaded) { 
+            console.log("Forcing load due to network delay"); 
+            isLoaded = true; 
+            initSite(); 
+        }
+    }, 3500);
+
+</script>
 </body>
 </html>
