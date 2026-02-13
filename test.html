@@ -439,13 +439,11 @@
     });
 
 document.getElementById('uploadBtn').onclick = async () => {
-    // Folosim ID-ul 'fileInput' exact cum ai tu în HTML
     const fileInput = document.getElementById('fileInput'); 
-const titleInput = document.getElementById('prodName'); // Changed from 'prodTitle'
+    const titleInput = document.getElementById('prodName'); 
     const priceInput = document.getElementById('prodPrice');
-const status = document.getElementById('status');       // Changed from 'uploadStatus'
+    const status = document.getElementById('status');
 
-    // Verificăm dacă fișierul este selectat
     if (!fileInput || fileInput.files.length === 0) {
         alert("Te rog alege o poză mai întâi!");
         return;
@@ -464,14 +462,16 @@ const status = document.getElementById('status');       // Changed from 'uploadS
     btn.disabled = true; 
     btn.innerText = "COMPRIMARE...";
 
-    // Folosim CompressorJS (asigură-te că ai scriptul compressor în HEAD)
     new Compressor(file, {
         quality: 0.6,
         maxWidth: 1200,
         success(result) {
+            // --- FIX AICI: NU facem result.name = ... ---
+            // Folosim variabila 'title' direct în calea de Storage de mai jos:
+            
             if(status) status.innerText = "SE ÎNCARCĂ ÎN FIREBASE...";
             
-            // Calea în Storage
+            // Creăm calea folosind titlul introdus de tine, nu proprietatea .name a fișierului
             const sRef = ref(storage, `collections/${COLLECTION_ID}/${Date.now()}_${title}`);
             const uploadTask = uploadBytesResumable(sRef, result);
 
@@ -482,13 +482,12 @@ const status = document.getElementById('status');       // Changed from 'uploadS
                 }, 
                 (error) => { 
                     console.error(error);
-                    alert("Eroare: Lipsă permisiuni. Asigură-te că ești logat cu nicaemmanuel433qe@gmail.com"); 
+                    alert("Eroare upload. Verifică regulile Storage."); 
                     btn.disabled = false; 
                 }, 
                 async () => {
                     const url = await getDownloadURL(uploadTask.snapshot.ref);
                     
-                    // Salvare în Firestore
                     await addDoc(collection(db, `products_${COLLECTION_ID}`), {
                         name: title, 
                         price: price, 
@@ -497,7 +496,7 @@ const status = document.getElementById('status');       // Changed from 'uploadS
                     });
                     
                     alert("Produs adăugat cu succes!");
-                    location.reload(); // Refresh pentru a vedea noul produs
+                    location.reload();
                 }
             );
         },
