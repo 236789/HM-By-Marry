@@ -372,22 +372,33 @@
     import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    const firebaseConfig = {
+    // --- CONFIG PENTRU CONTURI (HANDMADE MARRY) ---
+    const hmConfig = {
         apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
         authDomain: "handmade-marry.firebaseapp.com",
-        projectId: "handmade-marry",
-        storageBucket: "handmade-marry.firebasestorage.app",
-        messagingSenderId: "30193148874",
-        appId: "1:30193148874:web:04c1b35f3e54ed43ee2533"
+        projectId: "handmade-marry"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+    // --- CONFIG PENTRU FIȘIERE (KSDA) ---
+    const ksdaConfig = {
+        apiKey: "AIzaSyDoH80kffNrzFAcyRqsTVdifs-whUhwH9A", // API Key de la Pisici
+        projectId: "ksda-7546f",
+        storageBucket: "ksda-7546f.firebasestorage.app"
+    };
+
+    // Inițializăm ambele proiecte
+    const appHM = initializeApp(hmConfig);
+    const appKSDA = initializeApp(ksdaConfig, "ksdaStorageApp");
+
+    // Atribuim serviciile corect
+    const auth = getAuth(appHM);      // Logarea rămâne pe HM
+    const db = getFirestore(appHM);   // Baza de date rămâne pe HM
+    const storage = getStorage(appKSDA); // <--- AICI e secretul: Storage-ul e pe KSDA!
 
     const COLLECTION_ID = "marturii"; 
     const ADMIN_EMAIL = "nicaemmanuel433qe@gmail.com"; 
+
+    // Restul codului tău de mai jos rămâne IDENTIC...
 
     // 1. Verificare Admin & Afișare Panou
     onAuthStateChanged(auth, (user) => {
