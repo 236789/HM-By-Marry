@@ -427,58 +427,75 @@
         });
     });
 
-    // 3. Logică Upload (nicaemmanuel433qe@gmail.com)
-    document.getElementById('uploadBtn').onclick = async () => {
-        const file = document.getElementById('prodFiles').files[0];
-        const title = document.getElementById('prodTitle').value;
-        const price = document.getElementById('prodPrice').value;
-        const status = document.getElementById('uploadStatus');
+document.getElementById('uploadBtn').onclick = async () => {
+    // Folosim ID-ul 'fileInput' exact cum ai tu în HTML
+    const fileInput = document.getElementById('fileInput'); 
+    const titleInput = document.getElementById('prodTitle');
+    const priceInput = document.getElementById('prodPrice');
+    const status = document.getElementById('uploadStatus');
 
-        if(!file || !title || !price) {
-            alert("Te rog completează toate câmpurile: Poză, Nume și Preț.");
-            return;
+    // Verificăm dacă fișierul este selectat
+    if (!fileInput || fileInput.files.length === 0) {
+        alert("Te rog alege o poză mai întâi!");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const title = titleInput.value.trim();
+    const price = priceInput.value.trim();
+
+    if(!title || !price) {
+        alert("Te rog completează Numele și Prețul!");
+        return;
+    }
+
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = true; 
+    btn.innerText = "COMPRIMARE...";
+
+    // Folosim CompressorJS (asigură-te că ai scriptul compressor în HEAD)
+    new Compressor(file, {
+        quality: 0.6,
+        maxWidth: 1200,
+        success(result) {
+            if(status) status.innerText = "SE ÎNCARCĂ ÎN FIREBASE...";
+            
+            // Calea în Storage
+            const sRef = ref(storage, `collections/${COLLECTION_ID}/${Date.now()}_${title}`);
+            const uploadTask = uploadBytesResumable(sRef, result);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    if(status) status.innerText = "PROGRES: " + Math.round(progress) + "%";
+                }, 
+                (error) => { 
+                    console.error(error);
+                    alert("Eroare: Lipsă permisiuni. Asigură-te că ești logat cu nicaemmanuel433qe@gmail.com"); 
+                    btn.disabled = false; 
+                }, 
+                async () => {
+                    const url = await getDownloadURL(uploadTask.snapshot.ref);
+                    
+                    // Salvare în Firestore
+                    await addDoc(collection(db, `products_${COLLECTION_ID}`), {
+                        name: title, 
+                        price: price, 
+                        img: url, 
+                        createdAt: serverTimestamp()
+                    });
+                    
+                    alert("Produs adăugat cu succes!");
+                    location.reload(); // Refresh pentru a vedea noul produs
+                }
+            );
+        },
+        error(err) { 
+            console.error(err.message); 
+            btn.disabled = false; 
         }
-
-        const btn = document.getElementById('uploadBtn');
-        btn.disabled = true; 
-        btn.innerText = "COMPRIMARE...";
-
-        // Compresie Imagine (Max 1200px)
-        new Compressor(file, {
-            quality: 0.6,
-            maxWidth: 1200,
-            success(result) {
-                if(status) status.innerText = "SE ÎNCARCĂ...";
-                
-                // Cale Storage unică: collections/marturii/nume-produs.jpg
-                const sRef = ref(storage, `collections/${COLLECTION_ID}/${Date.now()}_${title}`);
-                const uploadTask = uploadBytesResumable(sRef, result);
-
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        if(status) status.innerText = "PROGRES: " + Math.round(progress) + "%";
-                    }, 
-                    (error) => { 
-                        console.error(error);
-                        alert("Eroare la upload: Asigură-te că ești logat și ai permisiuni."); 
-                        btn.disabled = false; 
-                    }, 
-                    async () => {
-                        const url = await getDownloadURL(uploadTask.snapshot.ref);
-                        await addDoc(collection(db, `products_${COLLECTION_ID}`), {
-                            name: title, 
-                            price: price, 
-                            img: url, 
-                            createdAt: serverTimestamp()
-                        });
-                        alert("Produs adăugat cu succes!");
-                        location.reload();
-                    }
-                );
-            }
-        });
-    };
+    });
+};
 
     window.openLightbox = async (id) => {
         const docSnap = await getDoc(doc(db, `products_${COLLECTION_ID}`, id));
