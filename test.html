@@ -217,6 +217,20 @@
             <input type="text" id="prodPrice" placeholder="Preț (ex: 25 RON)" class="bg-white/5 border border-white/10 px-4 py-2 text-xs w-32 outline-none text-brand-ice">
             <button id="uploadBtn" class="bg-brand-magenta text-white px-8 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-blue transition-all">2. Încarcă</button>
         </div>
+
+
+<!-- Preview wrapper (ascuns default) -->
+<div id="previewWrapper" class="hidden mb-6 flex flex-col items-center">
+    <div class="relative w-32 h-40 border border-brand-ice/20 p-1 bg-black/20">
+        <img id="imagePreview" src="" class="w-full h-full object-cover">
+        <button onclick="removeSelectedFile()" class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xl hover:bg-red-500 transition-colors">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <p class="text-[9px] text-brand-ice/40 mt-2 uppercase tracking-widest">Imagine selectată</p>
+</div>
+
+
         <div id="status" class="mt-4 text-[10px] text-brand-blue uppercase tracking-widest"></div>
     </div>
 
@@ -240,7 +254,7 @@
                 <p>• Detalii botanice ultra-realiste.</p>
                 <p>• Cadoul ideal care durează veșnic.</p>
             </div>
-            <a id="waBtn" href="#" target="_blank" class="btn-wa py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full flex items-center justify-center gap-3">
+            <a id="waBtn" href="https://api.whatsapp.com/send?phone=4917675891440" target="_blank" class="btn-wa py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full flex items-center justify-center gap-3">
                 <i class="fa-brands fa-whatsapp text-lg"></i> Comandă pe WhatsApp
             </a>
         </div>
@@ -249,6 +263,22 @@
 <!-- ============================================== -->
 <!-- END MAIN CONTENT -->
 <!-- ============================================== -->
+
+
+<div id="deleteModal" class="fixed inset-0 z-[250] hidden flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-brand-dark/95 backdrop-blur-md" onclick="closeDeleteModal()"></div>
+    <div class="relative bg-[#1a0f2e] border border-red-500/30 p-8 w-full max-w-sm rounded-sm text-center shadow-2xl">
+        <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-trash-can text-red-500 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-serif italic text-brand-ice mb-2">Ștergi acest produs?</h3>
+        <p class="text-[10px] text-brand-softpink/50 uppercase tracking-widest mb-10 leading-loose">Această acțiune este permanentă și nu poate fi anulată.</p>
+        <div class="flex gap-4">
+            <button onclick="closeDeleteModal()" class="flex-1 border border-white/10 py-3 text-[9px] font-bold uppercase tracking-widest hover:bg-white/5 text-brand-ice">Anulează</button>
+            <button id="confirmDeleteBtn" class="flex-1 bg-red-600 py-3 text-[9px] font-bold uppercase tracking-widest hover:bg-red-500 transition-all text-white">Confirmă</button>
+        </div>
+    </div>
+</div>
 
 <!-- AUTH MODALS -->
 <div id="authModal" class="fixed inset-0 z-[120] hidden flex items-center justify-center px-4">
@@ -533,6 +563,47 @@ document.getElementById('waBtn').href = `https://wa.me/...`; // Changed from 'wa
             await deleteDoc(doc(db, `products_${COLLECTION_ID}`, id));
         }
     };
+
+
+
+// --- LOGICĂ PREVIEW ---
+document.getElementById('fileInput').onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            document.getElementById('imagePreview').src = ev.target.result;
+            document.getElementById('previewWrapper').classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+};
+
+window.removeSelectedFile = () => {
+    document.getElementById('fileInput').value = "";
+    document.getElementById('previewWrapper').classList.add('hidden');
+};
+
+// --- LOGICĂ ȘTERGERE CUSTOM ---
+let prodToDelete = null;
+window.deleteProd = (id) => {
+    prodToDelete = id;
+    document.getElementById('deleteModal').classList.remove('hidden');
+};
+
+window.closeDeleteModal = () => {
+    document.getElementById('deleteModal').classList.add('hidden');
+    prodToDelete = null;
+};
+
+document.getElementById('confirmDeleteBtn').onclick = async () => {
+    if(prodToDelete) {
+        await deleteDoc(doc(db, `products_${COLLECTION_ID}`, prodToDelete));
+        closeDeleteModal();
+    }
+};
+
+
 </script>
 
 <!-- SCRIPTS: UI INTERACTIONS -->
