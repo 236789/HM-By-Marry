@@ -430,9 +430,9 @@
 document.getElementById('uploadBtn').onclick = async () => {
     // Folosim ID-ul 'fileInput' exact cum ai tu în HTML
     const fileInput = document.getElementById('fileInput'); 
-    const titleInput = document.getElementById('prodTitle');
+const titleInput = document.getElementById('prodName'); // Changed from 'prodTitle'
     const priceInput = document.getElementById('prodPrice');
-    const status = document.getElementById('uploadStatus');
+const status = document.getElementById('status');       // Changed from 'uploadStatus'
 
     // Verificăm dacă fișierul este selectat
     if (!fileInput || fileInput.files.length === 0) {
@@ -502,12 +502,12 @@ document.getElementById('uploadBtn').onclick = async () => {
         if(!docSnap.exists()) return;
         const p = docSnap.data();
 
-        document.getElementById('lbImage').src = p.img;
+document.getElementById('lbImg').src = p.img;     // Changed from 'lbImage'
         document.getElementById('lbTitle').innerText = p.name;
         document.getElementById('lbPrice').innerText = `${p.price} RON`;
         
         const msg = encodeURIComponent(`Bună! Sunt interesat de produsul "${p.name}" din colecția ${COLLECTION_ID}. Îmi poți oferi mai multe detalii?`);
-        document.getElementById('waOrderBtn').href = `https://wa.me/4917675891440?text=${msg}`;
+document.getElementById('waBtn').href = `https://wa.me/...`; // Changed from 'waOrderBtn'
 
         document.getElementById('productLightbox').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
