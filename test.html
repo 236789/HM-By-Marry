@@ -18,6 +18,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
 
     <!-- Tailwind Config -->
     <script>
@@ -126,6 +127,20 @@
 
 /* Admin Panel Styling */
 .admin-panel { background: rgba(19, 9, 37, 0.95); border: 1px dashed var(--ice); }
+
+
+/* Product UI */
+.product-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(113, 140, 229, 0.1); transition: all 0.4s ease; position: relative; }
+.product-card:hover { border-color: var(--ice); transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.img-zoom { transition: transform 1.2s ease; }
+.product-card:hover .img-zoom { transform: scale(1.1); }
+
+/* Admin Panel */
+.admin-panel { background: rgba(19, 9, 37, 0.8); border: 1px dashed var(--ice); backdrop-filter: blur(10px); }
+
+/* Luxury Button */
+.btn-wa { background: linear-gradient(135deg, #E467DA 0%, #718ce5 100%); color: white; transition: 0.3s; }
+.btn-wa:hover { transform: scale(1.02); filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -181,55 +196,51 @@
 </div>
 
 <main class="flex-grow pt-32 pb-20 px-6 max-w-7xl mx-auto w-full relative">
-    
     <!-- Background Glow -->
     <div class="glow-soft" style="background: var(--magenta); top: 100px; left: 50%; transform: translateX(-50%); opacity: 0.1;"></div>
 
-    <!-- Header Colecție -->
+    <!-- Header -->
     <div class="text-center mb-16 relative z-10" data-reveal="up">
+        <!-- Collection Logo -->
         <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2Fbotezuri.png?alt=media&token=6387fec3-ccbd-40a3-90c0-d52a9f59aa7d" 
              class="text-logo-crop h-20 mx-auto mb-6" alt="Mărturii Botez">
         <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-brand-magenta to-transparent mx-auto"></div>
     </div>
 
-    <!-- PANOU ADMIN (Apare doar pentru tine) -->
-    <div id="adminUploadPanel" class="hidden admin-panel p-8 rounded-sm mb-12 relative z-20 text-center">
+    <!-- ADMIN UPLOAD PANEL (Only shows for you) -->
+    <div id="adminPanel" class="hidden admin-panel p-8 rounded-sm mb-16 text-center relative z-20">
         <h3 class="font-serif italic text-2xl text-brand-ice mb-6">Manager Colecție (Admin)</h3>
-        <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
-            <input type="file" id="prodFiles" class="hidden" accept="image/*">
-            <button onclick="document.getElementById('prodFiles').click()" class="border border-brand-ice/30 px-6 py-2 text-[9px] uppercase tracking-widest hover:bg-brand-ice/10 text-brand-ice">Alege Poză</button>
-            <input type="text" id="prodTitle" placeholder="Nume Produs" class="bg-brand-dark border border-brand-blue/20 px-4 py-2 text-xs w-64 text-brand-ice outline-none">
-            <input type="text" id="prodPrice" placeholder="Preț (RON)" class="bg-brand-dark border border-brand-blue/20 px-4 py-2 text-xs w-32 text-brand-ice outline-none">
-            <button id="uploadBtn" class="bg-brand-magenta text-white px-8 py-2 text-[9px] font-bold uppercase tracking-widest">Adaugă în Colecție</button>
+        <div class="flex flex-col md:flex-row gap-4 justify-center items-center font-sans">
+            <input type="file" id="fileInput" class="hidden" accept="image/*">
+            <button onclick="document.getElementById('fileInput').click()" class="border border-brand-ice/30 px-6 py-2 text-[10px] uppercase tracking-widest hover:bg-brand-ice/10 text-brand-ice">1. Alege Poză</button>
+            <input type="text" id="prodName" placeholder="Nume Produs" class="bg-white/5 border border-white/10 px-4 py-2 text-xs w-64 outline-none text-brand-ice">
+            <input type="text" id="prodPrice" placeholder="Preț (ex: 25 RON)" class="bg-white/5 border border-white/10 px-4 py-2 text-xs w-32 outline-none text-brand-ice">
+            <button id="uploadBtn" class="bg-brand-magenta text-white px-8 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-blue transition-all">2. Încarcă</button>
         </div>
-        <div id="uploadStatus" class="mt-4 text-[10px] text-brand-blue"></div>
+        <div id="status" class="mt-4 text-[10px] text-brand-blue uppercase tracking-widest"></div>
     </div>
 
-    <!-- Grid Produse -->
+    <!-- PRODUCTS GRID -->
     <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative z-10">
-        <!-- Produsele se încarcă aici -->
+        <!-- Products load here -->
     </div>
 </main>
 
-<!-- LIGHTBOX PROFESIONAL -->
+<!-- PRODUCT LIGHTBOX -->
 <div id="productLightbox" class="fixed inset-0 z-[200] hidden flex items-center justify-center px-4">
     <div class="absolute inset-0 bg-brand-dark/98 backdrop-blur-xl" onclick="closeLightbox()"></div>
-    <div class="relative bg-[#1a0f2e] border border-brand-blue/20 max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden rounded-sm shadow-2xl">
+    <div class="relative bg-[#1a0f2e] border border-brand-blue/20 max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-sm shadow-2xl">
         <button onclick="closeLightbox()" class="absolute top-4 right-4 text-brand-ice/50 hover:text-white z-10"><i class="fa-solid fa-xmark text-2xl"></i></button>
-        
-        <div class="aspect-[4/5] bg-black">
-            <img id="lbImage" src="" class="w-full h-full object-cover">
-        </div>
-        
+        <div class="aspect-[4/5] bg-black"><img id="lbImg" src="" class="w-full h-full object-cover"></div>
         <div class="p-8 md:p-12 flex flex-col justify-center">
-            <h2 id="lbTitle" class="text-4xl font-serif italic text-brand-ice mb-4">Nume Produs</h2>
-            <p id="lbPrice" class="text-2xl text-brand-magenta mb-8 font-light">-- RON</p>
-            <div class="space-y-4 mb-10 text-sm text-brand-softpink/70 leading-relaxed font-light">
-                <p>• Realizat manual din ceară de soia naturală.</p>
-                <p>• Parfum premium, non-toxic.</p>
-                <p>• Timp de execuție: 3-5 zile lucrătoare.</p>
+            <h2 id="lbTitle" class="text-4xl font-serif italic text-brand-ice mb-4 italic">Nume</h2>
+            <p id="lbPrice" class="text-2xl text-brand-magenta font-light mb-8 italic">-- RON</p>
+            <div class="space-y-4 mb-10 text-sm text-brand-softpink/60 font-light leading-relaxed">
+                <p>• Sculptat manual din ceară de soia 100% naturală.</p>
+                <p>• Detalii botanice ultra-realiste.</p>
+                <p>• Cadoul ideal care durează veșnic.</p>
             </div>
-            <a id="waOrderBtn" href="#" target="_blank" class="btn-wa py-4 px-8 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+            <a id="waBtn" href="#" target="_blank" class="btn-wa py-4 px-8 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full flex items-center justify-center gap-3">
                 <i class="fa-brands fa-whatsapp text-lg"></i> Comandă pe WhatsApp
             </a>
         </div>
@@ -358,10 +369,9 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    // Configurația ta Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
         authDomain: "handmade-marry.firebaseapp.com",
@@ -376,21 +386,24 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // --- CONFIGURAȚIE PAGINĂ ---
-    const COLLECTION_ID = "marturii"; // Schimbă în "valentines", "cadouri" pe celelalte pagini
+    // --- CONFIGURAȚIE COLECȚIE ---
+    // Schimbă aici: "marturii", "valentines", "cadouri", "primavara", "toamna", "about-you"
+    const COLLECTION_ID = "marturii"; 
     const ADMIN_EMAIL = "nicaemmanuel433qe@gmail.com"; 
 
-    // Verificăm dacă userul este Admin
+    // 1. Verificare Admin & Afișare Panou
     onAuthStateChanged(auth, (user) => {
         if (user && user.email === ADMIN_EMAIL) {
-            document.getElementById('adminUploadPanel').classList.remove('hidden');
+            const panel = document.getElementById('adminUploadPanel');
+            if(panel) panel.classList.remove('hidden');
         }
     });
 
-    // Încărcare Galerie
+    // 2. Afișare Produse în timp real (Folder specific: products_nume)
     const q = query(collection(db, `products_${COLLECTION_ID}`), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
         const grid = document.getElementById('productsGrid');
+        if(!grid) return;
         grid.innerHTML = '';
         snapshot.forEach((docSnap) => {
             const p = docSnap.data();
@@ -407,7 +420,7 @@
                         ` : ''}
                     </div>
                     <div class="text-center">
-                        <h3 class="font-serif italic text-2xl text-brand-ice group-hover:text-brand-magenta transition-colors">${p.name}</h3>
+                        <h3 class="font-serif italic text-2xl text-brand-ice group-hover:text-brand-magenta transition-colors italic">${p.name}</h3>
                         <p class="text-[10px] text-brand-blue/60 uppercase tracking-widest mt-2">${p.price} RON</p>
                     </div>
                 </div>
@@ -415,31 +428,55 @@
         });
     });
 
-    // Logica Upload
+    // 3. Logică Upload cu Compresie Automată (ca la pisici)
     document.getElementById('uploadBtn').onclick = async () => {
         const file = document.getElementById('prodFiles').files[0];
         const title = document.getElementById('prodTitle').value;
         const price = document.getElementById('prodPrice').value;
+        const status = document.getElementById('uploadStatus');
 
-        if(!file || !title || !price) return alert("Toate câmpurile sunt obligatorii!");
+        if(!file || !title || !price) return alert("Completează toate câmpurile!");
 
         const btn = document.getElementById('uploadBtn');
-        btn.disabled = true; btn.innerText = "Se încarcă...";
+        btn.disabled = true; 
+        btn.innerText = "COMPRIMARE...";
 
-        const sRef = ref(storage, `products/${COLLECTION_ID}/${Date.now()}_${file.name}`);
-        const uploadTask = uploadBytesResumable(sRef, file);
+        // Compresie Imagine înainte de upload (max 1200px lățime, calitate 60%)
+        new Compressor(file, {
+            quality: 0.6,
+            maxWidth: 1200,
+            success(result) {
+                if(status) status.innerText = "SE ÎNCARCĂ ÎN FIREBASE...";
+                
+                // Cale Storage: collections/nume_colectie/imagine.jpg
+                const sRef = ref(storage, `collections/${COLLECTION_ID}/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(sRef, result);
 
-        uploadTask.on('state_changed', null, null, async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            await addDoc(collection(db, `products_${COLLECTION_ID}`), {
-                name: title, price: price, img: url, createdAt: new Date()
-            });
-            alert("Produs adăugat!");
-            location.reload();
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        if(status) status.innerText = "PROGRES: " + Math.round(progress) + "%";
+                    }, 
+                    (error) => { alert("Eroare upload: " + error.message); btn.disabled = false; }, 
+                    async () => {
+                        const url = await getDownloadURL(uploadTask.snapshot.ref);
+                        // Salvare în Firestore: products_nume_colectie
+                        await addDoc(collection(db, `products_${COLLECTION_ID}`), {
+                            name: title, 
+                            price: price, 
+                            img: url, 
+                            createdAt: serverTimestamp()
+                        });
+                        alert("Produs adăugat cu succes!");
+                        location.reload();
+                    }
+                );
+            },
+            error(err) { console.error(err.message); btn.disabled = false; }
         });
     };
 
-    // Funcții Globale
+    // 4. Funcții Globale (Lightbox & Delete)
     window.openLightbox = async (id) => {
         const docSnap = await getDoc(doc(db, `products_${COLLECTION_ID}`, id));
         if(!docSnap.exists()) return;
@@ -449,7 +486,8 @@
         document.getElementById('lbTitle').innerText = p.name;
         document.getElementById('lbPrice').innerText = `${p.price} RON`;
         
-        const msg = encodeURIComponent(`Bună! Sunt interesat de produsul "${p.name}" din colecția ${COLLECTION_ID}. Îmi poți oferi detalii?`);
+        // Generare mesaj WhatsApp automat
+        const msg = encodeURIComponent(`Bună! Sunt interesat de produsul "${p.name}" din colecția ${COLLECTION_ID}. Îmi poți oferi mai multe detalii?`);
         document.getElementById('waOrderBtn').href = `https://wa.me/4917675891440?text=${msg}`;
 
         document.getElementById('productLightbox').classList.remove('hidden');
@@ -462,7 +500,7 @@
     };
 
     window.deleteProd = async (id) => {
-        if(confirm("Ștergi acest produs?")) {
+        if(confirm("Ești sigur că vrei să ștergi acest produs din colecție?")) {
             await deleteDoc(doc(db, `products_${COLLECTION_ID}`, id));
         }
     };
