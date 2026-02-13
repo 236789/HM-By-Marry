@@ -386,20 +386,19 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // --- CONFIGURAȚIE COLECȚIE ---
-    // Schimbă aici: "marturii", "valentines", "cadouri", "primavara", "toamna", "about-you"
     const COLLECTION_ID = "marturii"; 
     const ADMIN_EMAIL = "nicaemmanuel433qe@gmail.com"; 
 
     // 1. Verificare Admin & Afișare Panou
     onAuthStateChanged(auth, (user) => {
-        if (user && user.email === ADMIN_EMAIL) {
-            const panel = document.getElementById('adminUploadPanel');
+        if (user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+            console.log("Admin logat: Acces activat");
+            const panel = document.getElementById('adminPanel');
             if(panel) panel.classList.remove('hidden');
         }
     });
 
-    // 2. Afișare Produse în timp real (Folder specific: products_nume)
+    // 2. Afișare Produse
     const q = query(collection(db, `products_${COLLECTION_ID}`), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
         const grid = document.getElementById('productsGrid');
@@ -413,7 +412,7 @@
                     <div class="aspect-[4/5] overflow-hidden mb-6 relative">
                         <img src="${p.img}" class="w-full h-full object-cover img-zoom" loading="lazy">
                         <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all"></div>
-                        ${auth.currentUser?.email === ADMIN_EMAIL ? `
+                        ${auth.currentUser?.email.toLowerCase() === ADMIN_EMAIL ? `
                             <button onclick="event.stopPropagation(); deleteProd('${id}')" class="absolute top-4 right-4 bg-red-500/80 text-white p-2 text-xs rounded-sm hover:bg-red-600 transition-colors">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
@@ -428,28 +427,31 @@
         });
     });
 
-    // 3. Logică Upload cu Compresie Automată (ca la pisici)
+    // 3. Logică Upload (nicaemmanuel433qe@gmail.com)
     document.getElementById('uploadBtn').onclick = async () => {
         const file = document.getElementById('prodFiles').files[0];
         const title = document.getElementById('prodTitle').value;
         const price = document.getElementById('prodPrice').value;
         const status = document.getElementById('uploadStatus');
 
-        if(!file || !title || !price) return alert("Completează toate câmpurile!");
+        if(!file || !title || !price) {
+            alert("Te rog completează toate câmpurile: Poză, Nume și Preț.");
+            return;
+        }
 
         const btn = document.getElementById('uploadBtn');
         btn.disabled = true; 
         btn.innerText = "COMPRIMARE...";
 
-        // Compresie Imagine înainte de upload (max 1200px lățime, calitate 60%)
+        // Compresie Imagine (Max 1200px)
         new Compressor(file, {
             quality: 0.6,
             maxWidth: 1200,
             success(result) {
-                if(status) status.innerText = "SE ÎNCARCĂ ÎN FIREBASE...";
+                if(status) status.innerText = "SE ÎNCARCĂ...";
                 
-                // Cale Storage: collections/nume_colectie/imagine.jpg
-                const sRef = ref(storage, `collections/${COLLECTION_ID}/${Date.now()}_${file.name}`);
+                // Cale Storage unică: collections/marturii/nume-produs.jpg
+                const sRef = ref(storage, `collections/${COLLECTION_ID}/${Date.now()}_${title}`);
                 const uploadTask = uploadBytesResumable(sRef, result);
 
                 uploadTask.on('state_changed', 
@@ -457,10 +459,13 @@
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         if(status) status.innerText = "PROGRES: " + Math.round(progress) + "%";
                     }, 
-                    (error) => { alert("Eroare upload: " + error.message); btn.disabled = false; }, 
+                    (error) => { 
+                        console.error(error);
+                        alert("Eroare la upload: Asigură-te că ești logat și ai permisiuni."); 
+                        btn.disabled = false; 
+                    }, 
                     async () => {
                         const url = await getDownloadURL(uploadTask.snapshot.ref);
-                        // Salvare în Firestore: products_nume_colectie
                         await addDoc(collection(db, `products_${COLLECTION_ID}`), {
                             name: title, 
                             price: price, 
@@ -471,12 +476,10 @@
                         location.reload();
                     }
                 );
-            },
-            error(err) { console.error(err.message); btn.disabled = false; }
+            }
         });
     };
 
-    // 4. Funcții Globale (Lightbox & Delete)
     window.openLightbox = async (id) => {
         const docSnap = await getDoc(doc(db, `products_${COLLECTION_ID}`, id));
         if(!docSnap.exists()) return;
@@ -486,7 +489,6 @@
         document.getElementById('lbTitle').innerText = p.name;
         document.getElementById('lbPrice').innerText = `${p.price} RON`;
         
-        // Generare mesaj WhatsApp automat
         const msg = encodeURIComponent(`Bună! Sunt interesat de produsul "${p.name}" din colecția ${COLLECTION_ID}. Îmi poți oferi mai multe detalii?`);
         document.getElementById('waOrderBtn').href = `https://wa.me/4917675891440?text=${msg}`;
 
@@ -500,7 +502,7 @@
     };
 
     window.deleteProd = async (id) => {
-        if(confirm("Ești sigur că vrei să ștergi acest produs din colecție?")) {
+        if(confirm("Ștergi acest produs?")) {
             await deleteDoc(doc(db, `products_${COLLECTION_ID}`, id));
         }
     };
