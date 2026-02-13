@@ -335,11 +335,90 @@
 
 <!-- FOOTER -->
 <footer class="bg-[#0D071A] pt-24 pb-12 px-6 md:px-10 border-t border-brand-blue/10 relative overflow-hidden">
-    <div class="max-w-7xl mx-auto text-center flex flex-col items-center gap-8">
-        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F58e030c9-f51d-4b5f-abb2-8b88ea0f9507.png?alt=media&token=abbedc81-126b-44a2-b492-66eac45a447d" class="w-32 opacity-80" />
-        <div class="text-[9px] uppercase tracking-[0.4em] text-brand-blue/20">© 2026 MC HANDMADE MARRY • Toate drepturile rezervate</div>
-        <div class="text-[9px] uppercase tracking-[0.3em] text-brand-blue/40 italic">Creat de Lost Soul</div>
-    </div>
+    <!-- Fundal subtil cu reflexii -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-96 bg-brand-purple/5 blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto text-center">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-12 items-start">
+            
+            <!-- 1. BRAND COLUMN - Centered -->
+            <div class="flex flex-col items-center space-y-8 order-1">
+                <img 
+                    src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F58e030c9-f51d-4b5f-abb2-8b88ea0f9507.png?alt=media&token=abbedc81-126b-44a2-b492-66eac45a447d" 
+                    alt="MC Logo" 
+                    class="w-32 md:w-40 opacity-90 hover:scale-105 transition-transform duration-500"
+                />
+                <p class="text-brand-blue/50 text-[11px] md:text-xs max-w-xs font-light leading-loose uppercase tracking-[0.2em]">
+                    MC Handmade Marry. <br>
+                    Artă botanică românească. Flori care nu se ofilesc niciodată, sculptate manual pentru momente de neuitat.
+                </p>
+                <div class="flex justify-center space-x-5">
+                    <a href="https://www.instagram.com/handmade.candles.mary" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@handmade.candles.soap" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-tiktok text-lg"></i>
+                    </a>
+                    <a href="https://api.whatsapp.com/send?phone=4917675891440" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. NAVIGATION COLUMN - Centered -->
+            <div class="flex flex-col items-center order-2 md:order-2">
+                <h5 class="text-brand-ice text-[10px] uppercase tracking-[0.4em] mb-8 font-bold">Navigare</h5>
+                <ul class="text-brand-blue/60 text-[10px] space-y-5 font-medium tracking-[0.2em]">
+                    <li><a href="#home" class="hover:text-brand-magenta transition-colors">ACASĂ</a></li>
+                    <li><a href="#philosophy" class="hover:text-brand-magenta transition-colors">DESPRE BRAND</a></li>
+                    <li><a href="#collection" class="hover:text-brand-magenta transition-colors">GALERIE PRODUSE</a></li>
+                    <li><a href="#bespoke" class="hover:text-brand-magenta transition-colors">COMENZI SPECIALE</a></li>
+                </ul>
+            </div>
+
+<!-- 3. DEVELOPER COLUMN - Centered with Tri-Contact -->
+            <div class="flex flex-col items-center order-3 md:order-3">
+                <div class="relative group">
+                    <!-- Glow Effect -->
+                    <div class="absolute inset-0 bg-brand-ice/20 blur-2xl rounded-full group-hover:bg-brand-magenta/30 transition-all duration-700"></div>
+                    
+                    <!-- Creator Avatar -->
+                    <a href="https://www.tiktok.com/@lost_soul_zzz" target="_blank" class="relative block w-24 h-24 mb-6 rounded-full border-2 border-brand-ice/30 p-1 overflow-hidden transition-transform duration-500 group-hover:scale-110 group-hover:border-brand-magenta">
+                        <img 
+                            src="https://iili.io/f1ddIfe.png" 
+                            alt="Lost Soul" 
+                            class="w-full h-full object-cover rounded-full bg-[#0D071A]"
+                        />
+                    </a>
+                </div>
+                
+                <h6 class="text-brand-ice/80 text-[10px] uppercase tracking-[0.3em] font-bold mb-2">Website realizat de</h6>
+                <p class="text-brand-magenta font-serif italic text-xl mb-4">Lost Soul / Nica Emmanuel</p>
+                
+                <!-- Contact Links Container -->
+                <div class="flex flex-col items-center gap-3">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-blue/50">Contact Developer</span>
+                    
+                    <div class="flex items-center gap-6">
+                        <!-- Discord -->
+                        <a href="https://discord.com/users/1063511180376817755" target="_blank" class="text-brand-blue/50 hover:text-[#5865F2] hover:scale-125 transition-all duration-300" title="Discord">
+                            <i class="fa-brands fa-discord text-2xl"></i>
+                        </a>
+                        
+                        <!-- WhatsApp -->
+                        <a href="https://wa.link/anjgnu" target="_blank" class="text-brand-blue/50 hover:text-[#25D366] hover:scale-125 transition-all duration-300" title="WhatsApp">
+                            <i class="fa-brands fa-whatsapp text-2xl"></i>
+                        </a>
+
+                        <!-- TikTok -->
+                        <a href="https://www.tiktok.com/@lost_soul_zzz" target="_blank" class="text-brand-blue/50 hover:text-[#FE2C55] hover:scale-125 transition-all duration-300" title="TikTok">
+                            <i class="fa-brands fa-tiktok text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
 </footer>
 
 <!-- SCRIPTS: FIREBASE -->
