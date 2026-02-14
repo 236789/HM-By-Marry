@@ -326,6 +326,54 @@ html, body {
         <!-- Grid -->
         <div id="tombola-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-3 max-w-4xl mx-auto"></div>
     </div>
+
+
+<!-- Grid -->
+        <div id="tombola-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-3 max-w-4xl mx-auto"></div>
+
+        <!-- NEW: Participation Details Trigger -->
+        <div class="text-center mt-12 pb-10">
+            <button onclick="toggleDetailsModal()" class="text-[9px] uppercase tracking-[0.4em] text-brand-ice/40 hover:text-brand-magenta transition-all border-b border-brand-ice/10 hover:border-brand-magenta pb-2">
+                <i class="fa-solid fa-circle-info mr-2"></i> Detalii pentru înscriere
+            </button>
+        </div>
+    </div> <!-- End of active-tombola-container -->
+
+    <!-- NEW: Participation Details Popup -->
+    <div id="detailsModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-brand-dark/95 backdrop-blur-md" onclick="toggleDetailsModal()"></div>
+        <div class="relative bg-[#1a0f2e] border border-brand-blue/20 p-8 md:p-12 w-full max-w-lg rounded-sm shadow-2xl">
+             <button onclick="toggleDetailsModal()" class="absolute top-4 right-4 text-brand-blue/50 hover:text-brand-magenta transition-all"><i class="fa-solid fa-xmark text-2xl"></i></button>
+             
+             <h2 class="text-2xl font-serif text-brand-ice mb-8 text-center italic">Ghid Participare</h2>
+             
+             <div class="space-y-6 text-brand-blue/80 text-xs md:text-sm leading-relaxed mb-10">
+                 <div class="flex items-start gap-4">
+                     <span class="w-1.5 h-1.5 rounded-full bg-brand-magenta mt-2 flex-shrink-0"></span>
+                     <p>Alege locul/locurile preferate din grila de participare de mai sus.</p>
+                 </div>
+                 <div class="flex items-start gap-4">
+                     <span class="w-1.5 h-1.5 rounded-full bg-brand-magenta mt-2 flex-shrink-0"></span>
+                     <p>Contactează-ne pe WhatsApp pentru a valida locurile și a efectua plata.</p>
+                 </div>
+                 <div class="flex items-start gap-4">
+                     <span class="w-1.5 h-1.5 rounded-full bg-brand-magenta mt-2 flex-shrink-0"></span>
+                     <p>După confirmare, vei apărea automat în tabel cu imaginea ta de profil.</p>
+                 </div>
+                 <p class="text-brand-magenta font-bold pt-4 text-center italic">Extragerea are loc live imediat ce toate locurile sunt ocupate!</p>
+             </div>
+
+<a href="https://api.whatsapp.com/send?phone=4917675891440" target="_blank" class="w-full btn-wa flex items-center justify-center gap-4 py-5 rounded-full transition-all">
+    <i class="fa-brands fa-whatsapp text-3xl"></i>
+    <div class="flex flex-col items-start text-left text-[9px] font-bold uppercase tracking-[0.2em] leading-tight">
+        <span>Contactează-ne</span>
+        <span>pentru înscriere</span>
+    </div>
+</a>
+             
+             <p class="text-[8px] uppercase tracking-widest text-center mt-6 text-brand-ice/30">Transport rapid în toată România</p>
+        </div>
+    </div>
 </main>
 
 
@@ -559,6 +607,12 @@ if(createForm) {
     });
 }
 
+// NEW: Toggle Details Modal
+window.toggleDetailsModal = () => {
+    document.getElementById('detailsModal').classList.toggle('hidden');
+};
+
+// UPDATE: loadActiveTombola to check for winners instantly
 function loadActiveTombola() {
     onSnapshot(doc(db, "raffle", "active"), (snap) => {
         const container = document.getElementById('active-tombola-container');
@@ -578,17 +632,15 @@ function loadActiveTombola() {
         if(createForm) createForm.classList.add('hidden');
         if(adminControls) adminControls.classList.remove('hidden');
 
-        const displayTitle = document.getElementById('display-t-title');
-        const displayDesc = document.getElementById('display-t-desc');
-        const displayImg = document.getElementById('display-t-image');
-
-        if(displayTitle) displayTitle.innerText = data.title;
-        if(displayDesc) displayDesc.innerText = data.description;
-        if(displayImg) displayImg.src = data.image;
+        document.getElementById('display-t-title').innerText = data.title;
+        document.getElementById('display-t-desc').innerText = data.description;
+        document.getElementById('display-t-image').src = data.image;
 
         renderGrid(data.spots, data.entries);
         
+        // INSTANT CHECK: If winners exist, stop everything and show winners
         if (data.winners) {
+            if(window.tombolaTimer) clearInterval(window.tombolaTimer);
             if(countdownEl) countdownEl.innerText = "EXTRAGERE FINALIZATĂ";
             highlightWinners(data.winners, data.entries);
         } else {
@@ -596,6 +648,7 @@ function loadActiveTombola() {
         }
     });
 }
+
 
 function renderGrid(total, entries) {
     const grid = document.getElementById('tombola-grid');
@@ -766,6 +819,7 @@ if(confirmBtn) {
     };
 }
 
+// UPDATE: startCountdown with explicit end-check
 function startCountdown(end) {
     const el = document.getElementById('countdown');
     if(!el) return;
@@ -784,7 +838,7 @@ function startCountdown(end) {
         el.innerText = `${h}:${m}:${s}`;
     };
     
-    update();
+    update(); // Run once immediately
     window.tombolaTimer = setInterval(update, 1000);
 }
 
