@@ -459,6 +459,37 @@
     justify-content: center;
     filter: drop-shadow(0 0 5px var(--magenta));
 }
+
+
+
+/* --- COLLECTION GRID STYLES --- */
+.text-logo-crop {
+    clip-path: inset(0 10% 0 10%); /* Cuts 10% off sides */
+    transform: scale(1.25);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    transition: all 0.5s ease;
+}
+
+.group:hover .text-logo-crop {
+    transform: scale(1.35);
+    filter: drop-shadow(0 0 15px rgba(228, 103, 218, 0.6));
+}
+
+.indigo-frame .text-center {
+    border: none !important;
+}
+
+/* Ensure images fade correctly */
+.slide-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 1s ease-in-out, transform 2s ease;
+}
 </style>
 </head>
 <body>
@@ -806,80 +837,126 @@
     <div class="divider-line"></div>
 </div>
 
-<!-- SECTION 2: COLLECTION PREVIEW -->
-<section id="collection" class="py-24 md:py-40 bg-brand-dark relative overflow-hidden">
+<!-- SECTION 2: COLLECTION GRID (SMALLER ON PC) -->
+<section id="collection" class="py-24 md:py-32 bg-brand-dark relative overflow-hidden">
+    <!-- Background Glow -->
     <div class="glow-soft" style="background: var(--purple); top: 10px; right: -100px; opacity: 0.2;"></div>
     
     <div class="max-w-7xl mx-auto px-6 relative z-10">
-        <!-- HEADER: Changed to reflect a variety of collections -->
-        <div class="mb-24 text-center md:text-left">
+        
+        <!-- HEADER -->
+        <div class="mb-16 text-center" data-reveal="up">
             <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-6 block font-bold">Explorați Arta Noastră</span>
-            <h2 class="text-5xl md:text-8xl font-serif text-brand-ice italic mb-6">Galerie de <br/> Semnătură</h2>
-            <p class="text-brand-blue/60 text-[11px] uppercase tracking-[0.3em] font-light max-w-xl leading-loose">
-                O selecție curată din cele mai apreciate creații. De la tonuri dramatice de indigo la nuanțe calde, fiecare piesă este sculptată manual pentru a capta un moment de eternitate.
+            <h2 class="text-5xl md:text-7xl font-serif text-brand-ice italic mb-6">Colecțiile Noastre</h2>
+            <p class="text-brand-blue/60 text-[11px] uppercase tracking-[0.3em] font-light max-w-xl mx-auto leading-loose">
+                Fiecare piesă este sculptată manual pentru a capta un moment de eternitate.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
-            <!-- Col 1 -->
-            <div class="flex flex-col gap-12">
-                <div class="indigo-frame reveal-gallery" data-speed="0.9">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_04_43.png?alt=media&token=3d01fc5b-77ae-4cf0-bfc6-36da6cc54809" class="parallax-img" loading="lazy" alt="Velvet Morning" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right"> </p>
-                </div>
-                <div class="indigo-frame reveal-gallery" data-speed="1.1">
-                    <div class="img-container aspect-[1/1]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=e4795b10-a020-4eea-bbc1-8f7b0ff58b49" class="parallax-img" loading="lazy" alt="Crimson Passion" />
-                    </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic"> </p>
-                </div>
-            </div>
+        <!-- THE 6 COLLECTIONS GRID -->
+        <!-- CHANGE HERE: Added 'max-w-5xl mx-auto' to shrink the grid width on PC -->
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
 
-            <!-- Col 2 -->
-            <div class="flex flex-col gap-12 md:mt-16 lg:mt-32">
-                <div class="indigo-frame reveal-gallery" data-speed="1.2">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_06_51.png?alt=media&token=f20a8d06-de2e-47b4-af12-be5e6a8cf4b8" class="parallax-img" loading="lazy" alt="Golden Hour" />
+            <!-- 1. MĂRTURII BOTEZ -->
+            <a href="marturii.html" class="group block h-full reveal-item">
+                <div class="indigo-frame h-full flex flex-col p-6"> <!-- Reduced padding slightly -->
+                    <div class="img-container aspect-[3/4] mb-6 relative overflow-hidden slideshow-marturii">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Feedcf612-d4c8-430a-855f-5981d6daca9a.png?alt=media&token=417d6c91-6806-46d4-a1fb-76642d787e7b" class="slide-img opacity-100 group-hover:scale-110" />
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Feedcf612-d4c8-430a-855f-5981d6daca9a.png44.png?alt=media&token=c0f7929e-4219-49b4-99bf-3f2436386eb8" class="slide-img opacity-0 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-all duration-500 z-10"></div>
                     </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic"> </p>
-                </div>
-                <div class="indigo-frame reveal-gallery" data-speed="0.8">
-                    <div class="img-container aspect-[4/5]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="parallax-img" loading="lazy" alt="Eternal Loop" />
+                    <div class="text-center mt-auto relative z-20">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2Fbotezuri.png?alt=media&token=6387fec3-ccbd-40a3-90c0-d52a9f59aa7d" class="text-logo-crop h-10 object-contain" alt="Botezuri">
+                        <p class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/50 mt-4">Amintiri pentru cei dragi</p>
                     </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right"> </p>
                 </div>
-            </div> 
+            </a>
 
-            <!-- Col 3 -->
-            <div class="flex flex-col gap-12 lg:mt-16">
-                <div class="indigo-frame reveal-gallery" data-speed="1.3">
-                    <div class="img-container aspect-[3/4]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="parallax-img" loading="lazy" alt="Touch of Grace" />
+            <!-- 2. VALENTINES DAY -->
+            <a href="valentines.html" class="group block h-full reveal-item">
+                <div class="indigo-frame h-full flex flex-col p-6">
+                    <div class="img-container aspect-[3/4] mb-6 relative overflow-hidden slideshow-valentines">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="slide-img opacity-100 group-hover:scale-110" />
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352" class="slide-img opacity-0 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-all duration-500 z-10"></div>
                     </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic">  </p>
-                </div>
-                <div class="indigo-frame reveal-gallery" data-speed="1.0">
-                    <div class="img-container aspect-[4/3]">
-                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8" class="parallax-img" loading="lazy" alt="Indigo Box Set" />
+                    <div class="text-center mt-auto relative z-20">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2FValentains%20day.png?alt=media&token=2714856a-e784-4c8f-9100-a01b7cc28d36" class="text-logo-crop h-10 object-contain" alt="Valentine's">
+                        <p class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/50 mt-4">Love Edition</p>
                     </div>
-                    <p class="mt-4 text-[9px] tracking-[0.4em] text-brand-ice/50 uppercase italic text-right"></p>
                 </div>
-            </div>
+            </a>
+
+            <!-- 3. CADOURI -->
+            <a href="cadouri.html" class="group block h-full reveal-item">
+                <div class="indigo-frame h-full flex flex-col p-6">
+                    <div class="img-container aspect-[3/4] mb-6 relative overflow-hidden slideshow-cadouri">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028" class="slide-img opacity-100 group-hover:scale-110" />
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=4ef1128f-abf0-4927-91db-60fa4ef92d6a" class="slide-img opacity-0 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-all duration-500 z-10"></div>
+                    </div>
+                    <div class="text-center mt-auto relative z-20">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2Fcadouri.png?alt=media&token=68a7deba-2057-40cc-be16-6063fd0a619d" class="text-logo-crop h-10 object-contain" alt="Cadouri">
+                        <p class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/50 mt-4">Gesturi care contează</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 4. PRIMĂVARĂ -->
+            <a href="primavara.html" class="group block h-full reveal-item">
+                <div class="indigo-frame h-full flex flex-col p-6">
+                    <div class="img-container aspect-[3/4] mb-6 relative overflow-hidden slideshow-primavara">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fa5c8bff7-a0ab-43a7-9441-f3cd8c16f08c.png?alt=media&token=0a0bfdf5-2cae-4e23-8d11-f2a794790d9a" class="slide-img opacity-100 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-all duration-500 z-10"></div>
+                    </div>
+                    <div class="text-center mt-auto relative z-20">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2Fprimavara.png?alt=media&token=8e9a3aac-7ba4-44e6-a573-6e9bb0b8c364" class="text-logo-crop h-10 object-contain" alt="Primăvară">
+                        <p class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/50 mt-4">Renașterea Naturii</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 5. TOAMNĂ DULCE -->
+            <a href="toamna.html" class="group block h-full reveal-item">
+                <div class="indigo-frame h-full flex flex-col p-6">
+                    <div class="img-container aspect-[3/4] mb-6 relative overflow-hidden slideshow-toamna">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F53a5fe13-c761-4347-9ea0-eebe804876bb.png?alt=media&token=cc7a387b-0039-4b4d-9143-0e89a272cedb" class="slide-img opacity-100 group-hover:scale-110" />
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F4a037ff8-c3a4-4822-9bf8-1a2239c64700.png?alt=media&token=d05d2a2e-54e7-42f5-92bc-e66a93a56c61" class="slide-img opacity-0 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-all duration-500 z-10"></div>
+                    </div>
+                    <div class="text-center mt-auto relative z-20">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2Ftoamna%20dulce.png?alt=media&token=62ec14e7-d1ff-493f-847e-d653f7ce7867" class="text-logo-crop h-10 object-contain" alt="Toamna Dulce">
+                        <p class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/50 mt-4">Arome și culori calde</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 6. ABOUT YOU -->
+            <a href="about-you.html" class="group block h-full reveal-item">
+                <div class="indigo-frame h-full flex flex-col p-6">
+                    <div class="img-container aspect-[3/4] mb-6 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1000&auto=format&fit=crop" class="slide-img opacity-100 group-hover:scale-110" alt="About You" />
+                        <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-all duration-500 z-10"></div>
+                    </div>
+                    <div class="text-center mt-auto relative z-20">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2Fabout%20you.png?alt=media&token=d50d5d61-b8f6-4131-8207-ce45b12691ef" class="text-logo-crop h-10 object-contain" alt="About You">
+                        <p class="text-[9px] uppercase tracking-[0.2em] text-brand-blue/50 mt-4">Creat pentru tine</p>
+                    </div>
+                </div>
+            </a>
+            
         </div>
 
-<!-- NEW BUTTON: View Collections -->
-<div class="mt-24 flex justify-center" data-reveal="up">
-    <a href="Colecții.html" class="group relative px-12 py-5 border border-brand-ice/20 flex items-center gap-4 transition-all duration-500 hover:border-brand-ice">
-        <span class="text-brand-ice text-[10px] uppercase tracking-[0.6em] font-bold">Vezi Colecțiile</span>
-        <i class="fa-solid fa-arrow-right-long text-brand-ice text-sm transform transition-transform duration-500 group-hover:translate-x-2"></i>
-    </a>
-</div>
+        <!-- BUTTON -->
+        <div class="mt-24 flex justify-center" data-reveal="up">
+            <a href="Colecții.html" class="group relative px-12 py-5 border border-brand-ice/20 flex items-center gap-4 transition-all duration-500 hover:border-brand-ice">
+                <span class="text-brand-ice text-[10px] uppercase tracking-[0.6em] font-bold">Vezi Toate Detaliile</span>
+                <i class="fa-solid fa-arrow-right-long text-brand-ice text-sm transform transition-transform duration-500 group-hover:translate-x-2"></i>
+            </a>
+        </div>
 
+    </div>
 </section>
-
 
 <!-- DIVIDER: Collection -> Bespoke -->
 <div class="section-divider bg-brand-dark" style="padding-bottom: 40px;">
@@ -916,8 +993,8 @@
                 <span>Culori la alegere</span> • <span>Mărturii Evenimente</span> • <span>Cadouri Corporate</span>
             </div>
         </div>
-    </div>
-</section>
+    </div> 
+</section> 
 
 
 </main>
@@ -1297,7 +1374,53 @@ window.handleAccountClick = function() {
     }
 };
 
+ // --- SLIDESHOW LOGIC FOR COLLECTIONS ---
+    function startSlideshow(selector, intervalTime) {
+        const container = document.querySelector(selector);
+        if (!container) return; 
 
+        const slides = container.querySelectorAll('.slide-img');
+        let currentSlide = 0;
+
+        if (slides.length > 1) {
+            setInterval(() => {
+                slides[currentSlide].classList.remove('opacity-100');
+                slides[currentSlide].classList.add('opacity-0');
+                
+                currentSlide = (currentSlide + 1) % slides.length;
+                
+                slides[currentSlide].classList.remove('opacity-0');
+                slides[currentSlide].classList.add('opacity-100');
+            }, intervalTime);
+        }
+    }
+
+    // Initialize Animations & Slideshows
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Start Slideshows
+        startSlideshow('.slideshow-marturii', 3000);
+        startSlideshow('.slideshow-valentines', 3200); // Slightly offset times
+        startSlideshow('.slideshow-cadouri', 3500);
+        startSlideshow('.slideshow-toamna', 3700);
+        startSlideshow('.slideshow-primavara', 3100);
+
+        // 2. Register GSAP Animations for the new Grid Items
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray('.reveal-item').forEach((item, i) => {
+            gsap.from(item, {
+                y: 50, 
+                opacity: 0, 
+                duration: 1, 
+                delay: i * 0.1, // Stagger effect
+                ease: "power2.out",
+                scrollTrigger: { 
+                    trigger: item, 
+                    start: "top 90%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+    });
 
 </script>
 </body>
