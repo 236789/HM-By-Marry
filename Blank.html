@@ -290,7 +290,8 @@ html, body {
                     <textarea id="t-desc" placeholder="Descriere..." class="md:col-span-2 bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs h-20"></textarea>
                 </div>
             </div>
-            <button type="submit" class="w-full bg-brand-magenta py-4 text-[10px] font-bold uppercase tracking-widest text-white">2. Lansează Tombola</button>
+<button type="submit" class="w-full bg-brand-magenta py-4 text-[10px] font-bold uppercase tracking-widest text-white">2. Lansează Tombola</button>
+<div id="t-status" class="text-center text-[10px] text-brand-magenta uppercase tracking-widest mt-4"></div>
         </form>
 
         <!-- Active Control (Shown if active) -->
@@ -468,30 +469,18 @@ const db = getFirestore(appHM);
 const storage = getStorage(appKSDA);
 
 const ADMIN_EMAILS = ["nicaemmanuel433qe@gmail.com", "hancimaria39@gmail.com"];
+const PLACEHOLDER_IMG = "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/Clicker%2Fddf0110aa19f445687b737679eec9cb2.jpg?alt=media&token=82e56c76-0791-4f87-9aae-834014c496d8";
+
 let selectedSlot = null;
 let allUsersList = [];
-
-// PREVIEW IMAGINE
-const tImageInput = document.getElementById('t-image');
-if(tImageInput) {
-    tImageInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('image-preview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-}
 
 // AUTH FUNCTIONS
 window.authFunctions = {
     loginWithGoogle: async () => {
         const provider = new GoogleAuthProvider();
         await signInWithPopup(auth, provider);
-        document.getElementById('authModal').classList.add('hidden');
+        const modal = document.getElementById('authModal');
+        if(modal) modal.classList.add('hidden');
     },
     logout: async () => { await signOut(auth); location.reload(); }
 };
@@ -503,7 +492,7 @@ onAuthStateChanged(auth, async (user) => {
         const userImg = document.getElementById('user-img');
         const userName = document.getElementById('user-name');
         const userEmail = document.getElementById('user-email');
-        if(userImg) userImg.src = user.photoURL || "";
+        if(userImg) userImg.src = user.photoURL || PLACEHOLDER_IMG;
         if(userName) userName.innerText = user.displayName || "Utilizator";
         if(userEmail) userEmail.innerText = user.email || "";
 
@@ -542,11 +531,12 @@ if(createForm) {
         const winners = parseInt(document.getElementById('t-winners').value);
         const desc = document.getElementById('t-desc').value;
         const duration = document.getElementById('t-duration').value;
+        const statusEl = document.getElementById('t-status');
 
         if (!file || !title) return alert("Poza și Titlul sunt obligatorii!");
 
         try {
-            document.getElementById('t-status').innerText = "Se încarcă...";
+            if(statusEl) statusEl.innerText = "Se încarcă...";
             const sRef = ref(storage, `tombola/${Date.now()}_prize`);
             const task = await uploadBytesResumable(sRef, file);
             const url = await getDownloadURL(task.ref);
@@ -558,92 +548,17 @@ if(createForm) {
                 title, spots, winnersCount: winners, description: desc, image: url,
                 expiresAt: expire.getTime(), entries: {}
             });
-            document.getElementById('t-status').innerText = "Tombolă activată!";
+            if(statusEl) statusEl.innerText = "Tombolă activată!";
         } catch (err) { alert(err.message); }
     });
 }
 
-window.endTombolaNow = async () => {
-    const docRef = doc(db, "raffle", "active");
-    
-    // One-time fetch to get current data safely
-    const unsub = onSnapshot(docRef, (snap) => {
-        unsub(); 
-        const data = snap.data();
-        if(!data || data.winners) return;
-
-        const participants = Object.keys(data.entries || {});
-        if(participants.length < data.winnersCount) {
-            return alert(`Eroare: Sunt doar ${participants.length} participanți. Ai nevoie de minim ${data.winnersCount}.`);
-        }
-
-        if(confirm("Începem extragerea live? Toți utilizatorii vor vedea animația.")) {
-            runSickAnimation(data);
-        }
-    });
-};
-
-async function runSickAnimation(data) {
-    const participantIds = Object.keys(data.entries);
-    const winnersCount = data.winnersCount;
-    let winners = [];
-    
-    // 1. Determine winners logic-side first
-    let pool = [...participantIds];
-    for(let i=0; i<winnersCount; i++) {
-        const index = Math.floor(Math.random() * pool.length);
-        winners.push(pool.splice(index, 1)[0]);
-    }
-
-    const occupiedSlots = document.querySelectorAll('.slot-occupied');
-    const delay = (ms) => new Promise(res => setTimeout(res, ms));
-
-    // 2. PHASE 1: High-Speed Random Flashing (3 seconds of tension)
-    for(let i=0; i<35; i++) {
-        document.querySelectorAll('.slot-highlight').forEach(el => el.classList.remove('slot-highlight'));
-        const randomSlot = occupiedSlots[Math.floor(Math.random() * occupiedSlots.length)];
-        randomSlot.classList.add('slot-highlight');
-        await delay(70); 
-    }
-    document.querySelectorAll('.slot-highlight').forEach(el => el.classList.remove('slot-highlight'));
-
-    // 3. PHASE 2: Slow Sequential Reveal
-    // We shuffle the reveal order so people don't know who is next
-    const revealOrder = [...participantIds].sort(() => Math.random() - 0.5);
-
-    for (const id of revealOrder) {
-        const el = document.getElementById(`slot-${id}`);
-        
-        // Highlight square with white outline
-        el.classList.add('slot-highlight');
-        await delay(500); // Wait half a second so everyone sees who is being checked
-        
-        el.classList.remove('slot-highlight');
-        
-        if (winners.includes(id)) {
-            el.classList.add('slot-winner');
-            await delay(1000); // Stay longer on winners for celebration
-        } else {
-            el.classList.add('slot-eliminated');
-            await delay(200); // Faster move on for losers
-        }
-    }
-
-    // 4. Sync the result to Database so it's permanent
-    await updateDoc(doc(db, "raffle", "active"), { 
-        winners: winners,
-        expiresAt: Date.now() 
-    });
-}
-
-// Add this placeholder URL constant at the top of your script
-
-// UPDATE: loadActiveTombola to handle Admin UI Visibility
 function loadActiveTombola() {
     onSnapshot(doc(db, "raffle", "active"), (snap) => {
         const container = document.getElementById('active-tombola-container');
         const createForm = document.getElementById('createTombolaForm');
         const adminControls = document.getElementById('admin-active-controls');
+        const countdownEl = document.getElementById('countdown');
 
         if (!snap.exists()) {
             if(container) container.classList.add('hidden');
@@ -653,21 +568,22 @@ function loadActiveTombola() {
         }
 
         const data = snap.data();
-        container.classList.remove('hidden');
-        
-        // Hide creation form if raffle is active
+        if(container) container.classList.remove('hidden');
         if(createForm) createForm.classList.add('hidden');
         if(adminControls) adminControls.classList.remove('hidden');
 
-        document.getElementById('display-t-title').innerText = data.title;
-        document.getElementById('display-t-desc').innerText = data.description;
-        document.getElementById('display-t-image').src = data.image;
+        const displayTitle = document.getElementById('display-t-title');
+        const displayDesc = document.getElementById('display-t-desc');
+        const displayImg = document.getElementById('display-t-image');
+
+        if(displayTitle) displayTitle.innerText = data.title;
+        if(displayDesc) displayDesc.innerText = data.description;
+        if(displayImg) displayImg.src = data.image;
 
         renderGrid(data.spots, data.entries);
         
-        // If raffle already has winners, don't start countdown, show results
         if (data.winners) {
-            document.getElementById('countdown').innerText = "EXTRAGERE FINALIZATĂ";
+            if(countdownEl) countdownEl.innerText = "EXTRAGERE FINALIZATĂ";
             highlightWinners(data.winners, data.entries);
         } else {
             startCountdown(data.expiresAt);
@@ -675,10 +591,6 @@ function loadActiveTombola() {
     });
 }
 
-// 1. Set your placeholder at the top of the logic section
-const PLACEHOLDER_IMG = "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/Clicker%2Fddf0110aa19f445687b737679eec9cb2.jpg?alt=media&token=82e56c76-0791-4f87-9aae-834014c496d8";
-
-// 2. Updated renderGrid to use the placeholder correctly
 function renderGrid(total, entries) {
     const grid = document.getElementById('tombola-grid');
     if(!grid) return;
@@ -687,7 +599,6 @@ function renderGrid(total, entries) {
         const entry = entries && entries[i];
         const slot = document.createElement('div');
         slot.id = `slot-${i}`;
-        
         slot.className = `aspect-square flex flex-col items-center justify-center border transition-all duration-500 p-1 overflow-hidden slot-default ${entry ? 'slot-occupied' : ''}`;
 
         if (entry) {
@@ -703,53 +614,82 @@ function renderGrid(total, entries) {
         slot.onclick = () => {
             if (window.currentUser && ADMIN_EMAILS.includes(window.currentUser.email)) {
                 selectedSlot = i;
-                document.getElementById('selected-slot-num').innerText = i;
-                document.getElementById('assignUserModal').classList.remove('hidden');
+                const slotNumEl = document.getElementById('selected-slot-num');
+                if(slotNumEl) slotNumEl.innerText = i;
+                const modal = document.getElementById('assignUserModal');
+                if(modal) modal.classList.remove('hidden');
             }
         };
         grid.appendChild(slot);
     }
 }
 
-// 3. FIXED: Winner Animation Logic (Removed the broken fetch)
 window.endTombolaNow = async () => {
-    // We get the data from the active document properly using getDocs or just access the global state
     const docRef = doc(db, "raffle", "active");
-    
-    // Using an anonymous listener to get data once safely
     const unsub = onSnapshot(docRef, (snap) => {
-        unsub(); // Stop listening immediately after getting data
+        unsub(); 
         const data = snap.data();
         if(!data || data.winners) return;
 
         const participants = Object.keys(data.entries || {});
         if(participants.length < data.winnersCount) {
-            return alert(`Nu sunt suficienți participanți! Nevoie de ${data.winnersCount}, avem ${participants.length}.`);
+            return alert(`Eroare: Sunt doar ${participants.length} participanți. Nevoie de minim ${data.winnersCount}.`);
         }
 
-        if(confirm("Ești sigur că vrei să pornești extragerea?")) {
+        if(confirm("Începem extragerea live? Toți utilizatorii vor vedea animația.")) {
             runSickAnimation(data);
         }
     });
 };
 
+async function runSickAnimation(data) {
+    const participantIds = Object.keys(data.entries);
+    const winnersCount = data.winnersCount;
+    let winners = [];
+    
+    let pool = [...participantIds];
+    for(let i=0; i<winnersCount; i++) {
+        const index = Math.floor(Math.random() * pool.length);
+        winners.push(pool.splice(index, 1)[0]);
+    }
 
+    const occupiedSlots = document.querySelectorAll('.slot-occupied');
+    const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-async function finalizeResults(winners, allIds) {
-    // Show visual results immediately
-    allIds.forEach(id => {
+    // Phase 1: Tension Shuffle
+    for(let i=0; i<30; i++) {
+        document.querySelectorAll('.slot-highlight').forEach(el => el.classList.remove('slot-highlight'));
+        const randomSlot = occupiedSlots[Math.floor(Math.random() * occupiedSlots.length)];
+        if(randomSlot) randomSlot.classList.add('slot-highlight');
+        await delay(70); 
+    }
+    document.querySelectorAll('.slot-highlight').forEach(el => el.classList.remove('slot-highlight'));
+
+    // Phase 2: SLOW SEQUENTIAL REVEAL
+    const revealOrder = [...participantIds].sort(() => Math.random() - 0.5);
+
+    for (const id of revealOrder) {
         const el = document.getElementById(`slot-${id}`);
-        if(winners.includes(id)) {
-            el.classList.add('slot-winner');
+        if(!el) continue;
+        
+        // Glow white outline
+        el.classList.add('slot-highlight');
+        await delay(600); // Wait so they can see who it is
+        
+        el.classList.remove('slot-highlight');
+        
+        if (winners.includes(id)) {
+            el.classList.add('slot-winner'); // Turns Green
+            await delay(1200); 
         } else {
-            el.classList.add('slot-eliminated');
+            el.classList.add('slot-eliminated'); // Turns Red
+            await delay(300); 
         }
-    });
+    }
 
-    // Save to Firestore so everyone sees the result
     await updateDoc(doc(db, "raffle", "active"), { 
         winners: winners,
-        expiresAt: Date.now() // Set time to expired
+        expiresAt: Date.now() 
     });
 }
 
@@ -767,11 +707,11 @@ function highlightWinners(winners, entries) {
     });
 }
 
-// Add these back at the bottom of your logic section
 const confirmBtn = document.getElementById('confirmAssignBtn');
 if(confirmBtn) {
     confirmBtn.onclick = async () => {
-        const uid = document.getElementById('user-selector').value;
+        const selector = document.getElementById('user-selector');
+        const uid = selector ? selector.value : null;
         const user = allUsersList.find(u => u.id === uid);
         if(!user) return alert("Alege un user!");
         
@@ -789,7 +729,6 @@ if(confirmBtn) {
 function startCountdown(end) {
     const el = document.getElementById('countdown');
     if(!el) return;
-    // Clear any existing intervals to prevent multiple timers running
     if(window.tombolaTimer) clearInterval(window.tombolaTimer);
     
     window.tombolaTimer = setInterval(() => {
@@ -799,10 +738,10 @@ function startCountdown(end) {
             clearInterval(window.tombolaTimer);
             return;
         }
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        el.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        const h = Math.floor(diff / 3600000).toString().padStart(2,'0');
+        const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2,'0');
+        const s = Math.floor((diff % 60000) / 1000).toString().padStart(2,'0');
+        el.innerText = `${h}:${m}:${s}`;
     }, 1000);
 }
 
@@ -810,6 +749,22 @@ window.closeAssignModal = () => {
     const modal = document.getElementById('assignUserModal');
     if(modal) modal.classList.add('hidden');
 };
+
+// PREVIEW IMAGINE
+const tImgInput = document.getElementById('t-image');
+if(tImgInput) {
+    tImgInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById('image-preview');
+                if(preview) preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
 </script>
 
 <script>
