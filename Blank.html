@@ -227,15 +227,95 @@ html, body {
 
 </div>
 
-<!-- ADD THIS BACK SO YOUR CONTENT HAS SPACE -->
 <main class="flex-grow pt-32 pb-20 px-6 max-w-7xl mx-auto w-full relative min-h-screen">
-    <!-- WRITE YOUR NEW CONTENT HERE -->
-    <h1 class="text-white text-center">Titlu Pagina Noua</h1>
+    
+    <!-- MANAGER TOMBOLĂ (Vizibil doar pt Admin) -->
+    <div id="admin-tombola-section" class="hidden mb-12 p-8 border border-dashed border-brand-ice/30 bg-[#130925]/80 rounded-sm">
+        <h2 class="text-center font-serif italic text-2xl text-brand-ice mb-8">Manager Tombolă (Admin)</h2>
+        
+        <form id="createTombolaForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <!-- 1. Alege Poză -->
+                <div class="relative">
+                    <input type="file" id="t-image" class="hidden" accept="image/*">
+                    <button type="button" onclick="document.getElementById('t-image').click()" class="w-full border border-brand-blue/30 py-3 text-[10px] font-bold uppercase tracking-widest text-brand-ice hover:bg-brand-blue/10 transition-all">
+                        1. Alege Poză
+                    </button>
+                </div>
+
+                <!-- Nume/Titlu -->
+                <input type="text" id="t-title" placeholder="Titlu Tombolă" class="bg-[#1a0f2e] border border-brand-blue/20 p-3 text-white text-xs outline-none focus:border-brand-magenta transition-all">
+
+                <!-- Locuri -->
+                <select id="t-spots" class="bg-[#1a0f2e] border border-brand-blue/20 p-3 text-white text-xs outline-none focus:border-brand-magenta">
+                    <option value="10">10 Locuri</option>
+                    <option value="25">25 Locuri</option>
+                    <option value="50">50 Locuri</option>
+                    <option value="100">100 Locuri</option>
+                </select>
+
+                <!-- 2. Încarcă -->
+                <button type="submit" class="bg-brand-magenta py-3 text-[10px] font-bold uppercase tracking-widest text-white hover:brightness-110 transition-all shadow-[0_0_15px_rgba(228,103,218,0.4)]">
+                    2. Lansează Tombola
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <textarea id="t-desc" placeholder="Descriere premiu..." class="bg-[#1a0f2e] border border-brand-blue/20 p-3 text-white text-xs h-20 outline-none focus:border-brand-magenta"></textarea>
+                <div class="flex flex-col justify-center">
+                    <label class="text-[9px] uppercase tracking-widest text-brand-blue/60 mb-2 font-bold">Durată (Ex: 24h, 1h, 30m)</label>
+                    <input type="text" id="t-duration" placeholder="Ex: 24h" class="bg-[#1a0f2e] border border-brand-blue/20 p-3 text-white text-xs outline-none focus:border-brand-magenta">
+                </div>
+            </div>
+        </form>
+        <div id="t-status" class="mt-4 text-[10px] text-center uppercase tracking-widest text-brand-magenta"></div>
+    </div>
+
+    <!-- AFIȘARE TOMBOLĂ ACTIVĂ -->
+    <div id="active-tombola-container" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            
+            <!-- Detalii Premiu -->
+            <div class="space-y-6">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-brand-magenta to-brand-blue opacity-25 blur transition duration-1000 group-hover:opacity-50"></div>
+                    <img id="display-t-image" src="" class="relative w-full aspect-square object-cover border border-brand-blue/20" alt="Premiu">
+                </div>
+                <div>
+                    <h1 id="display-t-title" class="font-serif italic text-4xl text-brand-ice mb-2"></h1>
+                    <p id="display-t-desc" class="text-brand-blue/60 text-sm leading-relaxed"></p>
+                    <div class="mt-6 flex items-center gap-4">
+                        <span class="text-[10px] uppercase tracking-widest text-brand-magenta font-bold">Timp Rămas:</span>
+                        <span id="countdown" class="font-mono text-2xl text-brand-ice tracking-tighter">00:00:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grila de Locuri -->
+            <div class="bg-black/20 p-6 border border-brand-blue/10 rounded-sm">
+                <h3 class="text-center text-[10px] uppercase tracking-[0.4em] text-brand-ice mb-8">Alege un loc în tombolă</h3>
+                <div id="tombola-grid" class="grid grid-cols-5 md:grid-cols-10 gap-2">
+                    <!-- Patratele se generează aici -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </main>
 
-<!-- ============================================== -->
-<!-- END MAIN CONTENT -->
-<!-- ============================================== -->
+<!-- MODAL ADMIN: ADAUGĂ UTILIZATOR PE LOC -->
+<div id="assignUserModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-brand-dark/95 backdrop-blur-sm" onclick="closeAssignModal()"></div>
+    <div class="relative bg-[#1a0f2e] border border-brand-blue/30 p-8 w-full max-w-md text-center">
+        <h3 class="text-brand-ice font-serif text-xl mb-6">Alocă locul <span id="selected-slot-num"></span></h3>
+        <select id="user-selector" class="w-full bg-brand-dark border border-brand-blue/20 p-4 text-brand-ice text-sm mb-6 outline-none">
+            <option value="">Alege un utilizator...</option>
+            <!-- Lista useri aici -->
+        </select>
+        <button id="confirmAssignBtn" class="w-full bg-brand-magenta py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-blue transition-all">Confirmă Alocarea</button>
+    </div>
+</div>
 
 
 <!-- AUTH MODALS -->
@@ -413,6 +493,112 @@ onAuthStateChanged(auth, (user) => {
         }
     });
 
+
+
+
+// --- LOGICĂ TOMBOLĂ ---
+let selectedSlot = null;
+
+// 1. Verificare Admin pt afișare Manager
+onAuthStateChanged(auth, async (user) => {
+    if (user && ADMIN_EMAILS.includes(user.email)) {
+        document.getElementById('admin-tombola-section')?.classList.remove('hidden');
+        loadAllUsersForAdmin(); // Încărcăm userii sitului pentru dropdown
+    }
+    loadActiveTombola(); // Încarcă tombola pt toată lumea
+});
+
+// 2. Creare Tombolă Nouă
+const createTombolaForm = document.getElementById('createTombolaForm');
+createTombolaForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('t-status');
+    const imageFile = document.getElementById('t-image').files[0];
+    const title = document.getElementById('t-title').value;
+    const spots = parseInt(document.getElementById('t-spots').value);
+    const desc = document.getElementById('t-desc').value;
+    const durationStr = document.getElementById('t-duration').value; // ex: 24h
+
+    if (!imageFile || !title) return alert("Completează titlul și alege o poză!");
+
+    try {
+        status.innerText = "Se lansează tombola...";
+        
+        // Upload imagine
+        const storageRef = ref(storage, `tombola/${Date.now()}_prize`);
+        await uploadBytesResumable(storageRef, imageFile);
+        const imgUrl = await getDownloadURL(storageRef);
+
+        // Calcul dată expirare
+        let endTime = new Date();
+        if(durationStr.includes('h')) endTime.setHours(endTime.getHours() + parseInt(durationStr));
+        if(durationStr.includes('d')) endTime.setDate(endTime.getDate() + parseInt(durationStr));
+
+        // Salvare în Firestore (Colecția 'active_raffle')
+        const raffleData = {
+            title,
+            spots,
+            description: desc,
+            image: imgUrl,
+            expiresAt: endTime.getTime(),
+            createdAt: serverTimestamp(),
+            entries: {} // Aici vom salva cine e pe ce loc
+        };
+
+        // Folosim un ID fix 'current' pentru a avea o singură tombolă activă
+        await setDoc(doc(db, "raffle", "active"), raffleData);
+        
+        status.innerText = "TOMBOLĂ LANSAȚĂ!";
+        createTombolaForm.reset();
+    } catch (err) {
+        console.error(err);
+        status.innerText = "Eroare!";
+    }
+});
+
+// 3. Încărcare și Randare Grilă
+async function loadActiveTombola() {
+    const docRef = doc(db, "raffle", "active");
+    onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById('active-tombola-container').classList.remove('hidden');
+            document.getElementById('display-t-title').innerText = data.title;
+            document.getElementById('display-t-desc').innerText = data.description;
+            document.getElementById('display-t-image').src = data.image;
+
+            renderGrid(data.spots, data.entries);
+            startCountdown(data.expiresAt);
+        }
+    });
+}
+
+function renderGrid(totalSpots, entries) {
+    const grid = document.getElementById('tombola-grid');
+    grid.innerHTML = '';
+    
+    for (let i = 1; i <= totalSpots; i++) {
+        const slot = document.createElement('div');
+        const isTaken = entries && entries[i];
+        
+        slot.className = `aspect-square flex items-center justify-center text-[10px] font-bold border transition-all cursor-pointer
+            ${isTaken ? 'bg-brand-magenta border-transparent text-white' : 'border-brand-blue/20 text-brand-blue/50 hover:border-brand-ice hover:text-brand-ice'}`;
+        
+        // Afișăm inițialele dacă locul e ocupat, altfel numărul
+        slot.innerText = isTaken ? (entries[i].name.substring(0, 2).toUpperCase()) : i;
+        
+        // Dacă e admin, poate da click să adauge user
+        slot.onclick = () => {
+            if (window.currentUser && ADMIN_EMAILS.includes(window.currentUser.email)) {
+                openAssignModal(i);
+            } else if (isTaken) {
+                alert(`Acest loc este ocupat de ${entries[i].name}`);
+            }
+        };
+        
+        grid.appendChild(slot);
+    }
+}
 </script>
 <!-- SCRIPTS: UI INTERACTIONS -->
 <script>
