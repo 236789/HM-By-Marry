@@ -435,170 +435,178 @@ html, body {
 </footer>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, setDoc, updateDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    const hmConfig = {
-        apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
-        authDomain: "handmade-marry.firebaseapp.com",
-        projectId: "handmade-marry"
-    };
+const hmConfig = {
+    apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
+    authDomain: "handmade-marry.firebaseapp.com",
+    projectId: "handmade-marry"
+};
 
-    const ksdaConfig = {
-        apiKey: "AIzaSyDoH80kffNrzFAcyRqsTVdifs-whUhwH9A",
-        projectId: "ksda-7546f",
-        storageBucket: "ksda-7546f.firebasestorage.app"
-    };
+const ksdaConfig = {
+    apiKey: "AIzaSyDoH80kffNrzFAcyRqsTVdifs-whUhwH9A",
+    projectId: "ksda-7546f",
+    storageBucket: "ksda-7546f.firebasestorage.app"
+};
 
-    const appHM = initializeApp(hmConfig);
-    const appKSDA = initializeApp(ksdaConfig, "ksdaStorageApp");
+const appHM = initializeApp(hmConfig);
+const appKSDA = initializeApp(ksdaConfig, "ksdaStorageApp");
 
-    const auth = getAuth(appHM);
-    const db = getFirestore(appHM);
-    const storage = getStorage(appKSDA);
+const auth = getAuth(appHM);
+const db = getFirestore(appHM);
+const storage = getStorage(appKSDA);
 
-    const ADMIN_EMAILS = ["nicaemmanuel433qe@gmail.com", "hancimaria39@gmail.com"];
-
-    // --- LOGICA AUTH ---
-    window.authFunctions = {
-        loginWithGoogle: async () => {
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-                document.getElementById('authModal').classList.add('hidden');
-            } catch (error) { alert("Eroare la logare!"); }
-        },
-        logout: async () => {
-            await signOut(auth);
-            location.reload();
-        }
-    };
-
-onAuthStateChanged(auth, (user) => {
-        window.currentUser = user; 
-        
-        // Selectăm toate textele din butoanele de login (desktop + mobil)
-        const loginTexts = document.querySelectorAll('.login-trigger-text span');
-
-        if (user) {
-            // Schimbăm textul butoanelor în "Contul meu"
-            loginTexts.forEach(el => el.innerText = "Contul meu");
-
-            document.getElementById('user-img').src = user.photoURL || "";
-            document.getElementById('user-name').innerText = user.displayName;
-            document.getElementById('user-email').innerText = user.email;
-
-        }
-    });
-
-
-
-
-// --- LOGICĂ TOMBOLĂ ---
+const ADMIN_EMAILS = ["nicaemmanuel433qe@gmail.com", "hancimaria39@gmail.com"];
 let selectedSlot = null;
 
-// 1. Verificare Admin pt afișare Manager
+// --- LOGICA AUTH & SALVARE USERI ---
+window.authFunctions = {
+    loginWithGoogle: async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            document.getElementById('authModal').classList.add('hidden');
+        } catch (error) { alert("Eroare la logare!"); }
+    },
+    logout: async () => { await signOut(auth); location.reload(); }
+};
+
 onAuthStateChanged(auth, async (user) => {
-    if (user && ADMIN_EMAILS.includes(user.email)) {
-        document.getElementById('admin-tombola-section')?.classList.remove('hidden');
-        loadAllUsersForAdmin(); // Încărcăm userii sitului pentru dropdown
+    window.currentUser = user; 
+    const loginTexts = document.querySelectorAll('.login-trigger-text span');
+
+    if (user) {
+        loginTexts.forEach(el => el.innerText = "Contul meu");
+        document.getElementById('user-img').src = user.photoURL || "";
+        document.getElementById('user-name').innerText = user.displayName;
+        document.getElementById('user-email').innerText = user.email;
+
+        // Pas crucial: Salvăm userul în DB pentru a-l vedea în lista de tombolă
+        await setDoc(doc(db, "users", user.uid), {
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL
+        }, { merge: true });
+
+        if (ADMIN_EMAILS.includes(user.email)) {
+            document.getElementById('admin-tombola-section').classList.remove('hidden');
+            loadAllUsersForAdmin();
+        }
     }
-    loadActiveTombola(); // Încarcă tombola pt toată lumea
+    loadActiveTombola();
 });
 
-// 2. Creare Tombolă Nouă
+// --- MANAGER TOMBOLĂ ---
+
+// 1. Încarcă utilizatorii în dropdown-ul adminului
+async function loadAllUsersForAdmin() {
+    const selector = document.getElementById('user-selector');
+    if(!selector) return;
+    const querySnapshot = await getDocs(collection(db, "users"));
+    selector.innerHTML = '<option value="">Alege un utilizator...</option>';
+    querySnapshot.forEach((doc) => {
+        const u = doc.data();
+        selector.innerHTML += `<option value="${doc.id}" data-name="${u.name}">${u.name}</option>`;
+    });
+}
+
+// 2. Creare Tombolă (Butonul "Încarcă")
 const createTombolaForm = document.getElementById('createTombolaForm');
 createTombolaForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const status = document.getElementById('t-status');
-    const imageFile = document.getElementById('t-image').files[0];
+    const file = document.getElementById('t-image').files[0];
     const title = document.getElementById('t-title').value;
     const spots = parseInt(document.getElementById('t-spots').value);
     const desc = document.getElementById('t-desc').value;
-    const durationStr = document.getElementById('t-duration').value; // ex: 24h
+    const duration = document.getElementById('t-duration').value;
 
-    if (!imageFile || !title) return alert("Completează titlul și alege o poză!");
+    if (!file || !title) return alert("Poza și Titlul sunt obligatorii!");
 
     try {
-        status.innerText = "Se lansează tombola...";
-        
-        // Upload imagine
+        document.getElementById('t-status').innerText = "Se încarcă...";
+        // Upload în folderul 'tombola' (verificat cu regulile tale)
         const storageRef = ref(storage, `tombola/${Date.now()}_prize`);
-        await uploadBytesResumable(storageRef, imageFile);
-        const imgUrl = await getDownloadURL(storageRef);
+        const uploadTask = await uploadBytesResumable(storageRef, file);
+        const url = await getDownloadURL(uploadTask.ref);
 
-        // Calcul dată expirare
-        let endTime = new Date();
-        if(durationStr.includes('h')) endTime.setHours(endTime.getHours() + parseInt(durationStr));
-        if(durationStr.includes('d')) endTime.setDate(endTime.getDate() + parseInt(durationStr));
+        let expireDate = new Date();
+        expireDate.setHours(expireDate.getHours() + parseInt(duration) || 24);
 
-        // Salvare în Firestore (Colecția 'active_raffle')
-        const raffleData = {
-            title,
-            spots,
-            description: desc,
-            image: imgUrl,
-            expiresAt: endTime.getTime(),
-            createdAt: serverTimestamp(),
-            entries: {} // Aici vom salva cine e pe ce loc
-        };
+        await setDoc(doc(db, "raffle", "active"), {
+            title, spots, description: desc, image: url,
+            expiresAt: expireDate.getTime(),
+            entries: {} 
+        });
 
-        // Folosim un ID fix 'current' pentru a avea o singură tombolă activă
-        await setDoc(doc(db, "raffle", "active"), raffleData);
-        
-        status.innerText = "TOMBOLĂ LANSAȚĂ!";
-        createTombolaForm.reset();
-    } catch (err) {
-        console.error(err);
-        status.innerText = "Eroare!";
-    }
+        document.getElementById('t-status').innerText = "Tombolă lansată!";
+    } catch (err) { alert("Eroare: " + err.message); }
 });
 
-// 3. Încărcare și Randare Grilă
-async function loadActiveTombola() {
-    const docRef = doc(db, "raffle", "active");
-    onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            document.getElementById('active-tombola-container').classList.remove('hidden');
-            document.getElementById('display-t-title').innerText = data.title;
-            document.getElementById('display-t-desc').innerText = data.description;
-            document.getElementById('display-t-image').src = data.image;
+// 3. Afișare Grilă și Date Tombolă
+function loadActiveTombola() {
+    onSnapshot(doc(db, "raffle", "active"), (docSnap) => {
+        if (!docSnap.exists()) return;
+        const data = docSnap.data();
+        
+        document.getElementById('active-tombola-container').classList.remove('hidden');
+        document.getElementById('display-t-title').innerText = data.title;
+        document.getElementById('display-t-desc').innerText = data.description;
+        document.getElementById('display-t-image').src = data.image;
 
-            renderGrid(data.spots, data.entries);
-            startCountdown(data.expiresAt);
-        }
+        renderGrid(data.spots, data.entries);
+        startCountdown(data.expiresAt);
     });
 }
 
-function renderGrid(totalSpots, entries) {
+function renderGrid(total, entries) {
     const grid = document.getElementById('tombola-grid');
     grid.innerHTML = '';
-    
-    for (let i = 1; i <= totalSpots; i++) {
-        const slot = document.createElement('div');
+    for (let i = 1; i <= total; i++) {
         const isTaken = entries && entries[i];
+        const btn = document.createElement('div');
+        btn.className = `aspect-square flex items-center justify-center text-[10px] border cursor-pointer transition-all ${isTaken ? 'bg-brand-magenta border-transparent text-white' : 'border-brand-blue/20 text-brand-blue'}`;
+        btn.innerText = isTaken ? entries[i].name.substring(0,2).toUpperCase() : i;
         
-        slot.className = `aspect-square flex items-center justify-center text-[10px] font-bold border transition-all cursor-pointer
-            ${isTaken ? 'bg-brand-magenta border-transparent text-white' : 'border-brand-blue/20 text-brand-blue/50 hover:border-brand-ice hover:text-brand-ice'}`;
-        
-        // Afișăm inițialele dacă locul e ocupat, altfel numărul
-        slot.innerText = isTaken ? (entries[i].name.substring(0, 2).toUpperCase()) : i;
-        
-        // Dacă e admin, poate da click să adauge user
-        slot.onclick = () => {
+        btn.onclick = () => {
             if (window.currentUser && ADMIN_EMAILS.includes(window.currentUser.email)) {
-                openAssignModal(i);
-            } else if (isTaken) {
-                alert(`Acest loc este ocupat de ${entries[i].name}`);
+                selectedSlot = i;
+                document.getElementById('selected-slot-num').innerText = i;
+                document.getElementById('assignUserModal').classList.remove('hidden');
             }
         };
-        
-        grid.appendChild(slot);
+        grid.appendChild(btn);
     }
 }
+
+// 4. Confirmare Alocare Loc (Admin)
+document.getElementById('confirmAssignBtn').onclick = async () => {
+    const sel = document.getElementById('user-selector');
+    const uid = sel.value;
+    const name = sel.options[sel.selectedIndex].getAttribute('data-name');
+    
+    if(!uid) return;
+    await updateDoc(doc(db, "raffle", "active"), {
+        [`entries.${selectedSlot}`]: { uid, name }
+    });
+    document.getElementById('assignUserModal').classList.add('hidden');
+};
+
+function startCountdown(end) {
+    const el = document.getElementById('countdown');
+    setInterval(() => {
+        const diff = end - Date.now();
+        if (diff <= 0) return el.innerText = "EXPIRAT";
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        el.innerText = `${h}h ${m}m ${s}s`;
+    }, 1000);
+}
+
+window.closeAssignModal = () => document.getElementById('assignUserModal').classList.add('hidden');
 </script>
 <!-- SCRIPTS: UI INTERACTIONS -->
 <script>
