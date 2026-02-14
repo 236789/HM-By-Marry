@@ -616,9 +616,15 @@ if(confirmBtn) {
         const user = allUsersList.find(u => u.id === uid);
         if(!user) return alert("Alege un user!");
         
-        await updateDoc(doc(db, "raffle", "active"), {
-            [`entries.${selectedSlot}`]: { uid: user.id, name: user.name, photo: user.photo }
-        });
+await updateDoc(doc(db, "raffle", "active"), {
+    [`entries.${selectedSlot}`]: { 
+        uid: user.id, 
+        // Use the email or a default string if name is missing
+        name: user.name || user.email || "Utilizator", 
+        // Use an empty string if photo is missing
+        photo: user.photo || "" 
+    }
+});
         closeAssignModal();
     };
 }
