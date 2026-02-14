@@ -168,6 +168,39 @@ html, body {
     width: 100vw;
     overflow-x: hidden;
 }
+
+
+
+/* Fix Description Wrapping */
+#display-t-desc {
+    word-break: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+}
+
+/* Slot Styles */
+.slot-default { border: 1px solid rgba(113, 140, 229, 0.1); background: rgba(19, 9, 37, 0.4); }
+.slot-occupied { border: 1px solid rgba(228, 103, 218, 0.4); }
+
+/* Animation States */
+.slot-highlight { 
+    border-color: #fff !important; 
+    box-shadow: 0 0 15px #fff;
+    z-index: 10;
+    transform: scale(1.1);
+}
+
+.slot-winner { 
+    border-color: #22c55e !important; 
+    color: #22c55e !important;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+.slot-eliminated { 
+    border-color: #ef4444 !important; 
+    color: #ef4444 !important;
+    opacity: 0.6;
+}
     </style>
 </head>
 <body>
@@ -229,76 +262,60 @@ html, body {
 
 <main class="flex-grow pt-32 pb-20 px-6 max-w-7xl mx-auto w-full relative min-h-screen">
     
-    <!-- MANAGER TOMBOLĂ (Admin Area) - Vizibil doar pentru admin -->
+    <!-- MANAGER TOMBOLĂ (Admin Area) -->
     <div id="admin-tombola-section" class="hidden mb-12 p-8 border border-dashed border-brand-ice/20 bg-brand-dark/40 backdrop-blur-md rounded-lg">
-        <h2 class="text-center font-serif italic text-2xl text-brand-ice mb-8">Manager Tombolă (Admin)</h2>
+        <h2 class="text-center font-serif italic text-2xl text-brand-ice mb-8">Manager Tombolă</h2>
         
+        <!-- Creation Form (Hidden if active) -->
         <form id="createTombolaForm" class="space-y-6">
             <div class="flex flex-col md:flex-row gap-8 items-start">
-                <!-- Preview & Upload -->
                 <div class="w-full md:w-1/3">
                     <div id="image-preview" class="w-full aspect-square border border-brand-blue/20 bg-black/20 flex items-center justify-center overflow-hidden">
                         <span class="text-[10px] uppercase text-brand-blue/40">Fără imagine</span>
                     </div>
                     <input type="file" id="t-image" class="hidden" accept="image/*">
-                    <button type="button" onclick="document.getElementById('t-image').click()" class="w-full mt-2 border border-brand-blue/30 py-2 text-[9px] font-bold uppercase tracking-widest text-brand-ice hover:bg-brand-blue/10 transition-all">
-                        1. Alege Poză
-                    </button>
+                    <button type="button" onclick="document.getElementById('t-image').click()" class="w-full mt-2 border border-brand-blue/30 py-2 text-[9px] font-bold uppercase tracking-widest text-brand-ice hover:bg-brand-blue/10">1. Alege Poză</button>
                 </div>
-
-                <!-- Setări -->
                 <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="t-title" placeholder="Titlu Tombolă" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs outline-none">
-                    <input type="text" id="t-duration" placeholder="Durată (ex: 24h, 1h)" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs outline-none">
-                    
-                    <select id="t-spots" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs outline-none">
-                        <option value="10">10 Locuri</option>
-                        <option value="25">25 Locuri</option>
-                        <option value="50">50 Locuri</option>
+                    <input type="text" id="t-title" placeholder="Titlu Tombolă" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs">
+                    <input type="text" id="t-duration" placeholder="Durată (ex: 1 = 1 oră)" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs">
+                    <select id="t-spots" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs">
+                        <option value="10">10 Locuri</option><option value="25">25 Locuri</option><option value="50">50 Locuri</option>
                     </select>
-
-                    <select id="t-winners" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs outline-none">
-                        <option value="1">1 Câștigător</option>
-                        <option value="2">2 Câștigători</option>
-                        <option value="3">3 Câștigători</option>
+                    <select id="t-winners" class="bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs">
+                        <option value="1">1 Câștigător</option><option value="2">2 Câștigători</option><option value="3">3 Câștigători</option>
                     </select>
-
-                    <textarea id="t-desc" placeholder="Descriere..." class="md:col-span-2 bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs h-20 outline-none"></textarea>
+                    <textarea id="t-desc" placeholder="Descriere..." class="md:col-span-2 bg-brand-dark border border-brand-blue/20 p-3 text-white text-xs h-20"></textarea>
                 </div>
             </div>
-
-            <div class="flex gap-4">
-                <button type="submit" class="flex-1 bg-brand-magenta py-4 text-[10px] font-bold uppercase tracking-widest text-white hover:brightness-110 transition-all">
-                    2. Lansează Tombola
-                </button>
-                <button type="button" onclick="endTombolaNow()" class="border border-red-500/50 text-red-500 px-6 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 transition-all">
-                    Termină Acum
-                </button>
-            </div>
-            <div id="t-status" class="text-center text-[10px] text-brand-magenta uppercase tracking-widest mt-4"></div>
+            <button type="submit" class="w-full bg-brand-magenta py-4 text-[10px] font-bold uppercase tracking-widest text-white">2. Lansează Tombola</button>
         </form>
+
+        <!-- Active Control (Shown if active) -->
+        <div id="admin-active-controls" class="hidden text-center py-10">
+            <p class="text-brand-magenta text-xs uppercase tracking-[0.3em] mb-6">O tombolă este în curs de desfășurare</p>
+            <button onclick="endTombolaNow()" class="border border-red-500 text-red-500 px-12 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
+                Oprește și Extrage Câștigătorii
+            </button>
+        </div>
     </div>
 
-    <!-- AFIȘARE TOMBOLĂ ACTIVĂ -->
+    <!-- AFIȘARE TOMBOLĂ -->
     <div id="active-tombola-container" class="hidden">
-        <!-- 1. GRILA (Sus) -->
-        <div class="max-w-4xl mx-auto mb-16">
-            <h3 class="text-center text-[10px] uppercase tracking-[0.5em] text-brand-ice/60 mb-8 italic">Locuri disponibile în tombolă</h3>
-            <div id="tombola-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-2 md:gap-3">
-                <!-- Conținut generat prin JS -->
+        <h3 class="text-center text-[10px] uppercase tracking-[0.5em] text-brand-ice/60 mb-8 italic">Locuri disponibile în tombolă</h3>
+
+        <!-- Prize Details (Now moved here) -->
+        <div class="max-w-4xl mx-auto mb-12 flex flex-col md:flex-row gap-8 items-center bg-black/40 p-6 border border-brand-blue/10 rounded-lg">
+            <img id="display-t-image" src="" class="w-40 h-40 object-cover border border-brand-blue/20">
+            <div class="flex-1 text-center md:text-left">
+                <div id="countdown" class="text-brand-magenta font-mono text-3xl mb-2">00:00:00</div>
+                <h1 id="display-t-title" class="font-serif italic text-3xl text-brand-ice mb-3"></h1>
+                <p id="display-t-desc" class="text-brand-blue/60 text-[11px] uppercase tracking-widest leading-relaxed"></p>
             </div>
         </div>
 
-        <!-- 2. DETALII (Dedesubt) -->
-        <div class="max-w-2xl mx-auto flex flex-col md:flex-row gap-8 items-center bg-black/20 p-8 border border-brand-blue/10 rounded-sm">
-            <img id="display-t-image" src="" class="w-32 h-32 object-cover border border-brand-blue/20 shadow-2xl">
-            <div class="text-center md:text-left flex-1">
-                <div id="countdown" class="text-brand-magenta font-mono text-2xl mb-2">00:00:00</div>
-                <h1 id="display-t-title" class="font-serif italic text-3xl text-brand-ice mb-2"></h1>
-                <p id="display-t-desc" class="text-brand-blue/60 text-xs leading-relaxed uppercase tracking-widest"></p>
-                <div id="winners-info" class="mt-4 text-[9px] text-brand-magenta/80 font-bold uppercase tracking-[0.2em]"></div>
-            </div>
-        </div>
+        <!-- Grid -->
+        <div id="tombola-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-3 max-w-4xl mx-auto"></div>
     </div>
 </main>
 
@@ -550,32 +567,47 @@ window.endTombolaNow = async () => {
     }
 };
 
-// AFIȘARE TOMBOLĂ
+// Add this placeholder URL constant at the top of your script
+const PLACEHOLDER_IMG = "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/avatar-placeholder.png?alt=media";
+
+// UPDATE: loadActiveTombola to handle Admin UI Visibility
 function loadActiveTombola() {
     onSnapshot(doc(db, "raffle", "active"), (snap) => {
         const container = document.getElementById('active-tombola-container');
+        const createForm = document.getElementById('createTombolaForm');
+        const adminControls = document.getElementById('admin-active-controls');
+
         if (!snap.exists()) {
             if(container) container.classList.add('hidden');
+            if(createForm) createForm.classList.remove('hidden');
+            if(adminControls) adminControls.classList.add('hidden');
             return;
         }
-        const data = snap.data();
-        if(container) container.classList.remove('hidden');
-        
-        const titleEl = document.getElementById('display-t-title');
-        const descEl = document.getElementById('display-t-desc');
-        const imgEl = document.getElementById('display-t-image');
-        const winEl = document.getElementById('winners-info');
 
-        if(titleEl) titleEl.innerText = data.title;
-        if(descEl) descEl.innerText = data.description;
-        if(imgEl) imgEl.src = data.image;
-        if(winEl) winEl.innerText = `${data.winnersCount} Câștigători vor fi extrași`;
+        const data = snap.data();
+        container.classList.remove('hidden');
+        
+        // Hide creation form if raffle is active
+        if(createForm) createForm.classList.add('hidden');
+        if(adminControls) adminControls.classList.remove('hidden');
+
+        document.getElementById('display-t-title').innerText = data.title;
+        document.getElementById('display-t-desc').innerText = data.description;
+        document.getElementById('display-t-image').src = data.image;
 
         renderGrid(data.spots, data.entries);
-        startCountdown(data.expiresAt);
+        
+        // If raffle already has winners, don't start countdown, show results
+        if (data.winners) {
+            document.getElementById('countdown').innerText = "EXTRAGERE FINALIZATĂ";
+            highlightWinners(data.winners, data.entries);
+        } else {
+            startCountdown(data.expiresAt);
+        }
     });
 }
 
+// UPDATE: renderGrid (Remove pink, add placeholder)
 function renderGrid(total, entries) {
     const grid = document.getElementById('tombola-grid');
     if(!grid) return;
@@ -583,30 +615,116 @@ function renderGrid(total, entries) {
     for (let i = 1; i <= total; i++) {
         const entry = entries && entries[i];
         const slot = document.createElement('div');
+        slot.id = `slot-${i}`;
         
-        slot.className = `aspect-square flex flex-col items-center justify-center border transition-all cursor-pointer p-1 overflow-hidden
-            ${entry ? 'bg-brand-magenta border-transparent shadow-[0_0_10px_rgba(228,103,218,0.3)]' : 'border-brand-blue/10 bg-brand-dark/30 hover:border-brand-ice'}`;
+        // Reset to dark theme
+        slot.className = `aspect-square flex flex-col items-center justify-center border transition-all duration-500 p-1 overflow-hidden slot-default ${entry ? 'slot-occupied' : ''}`;
 
         if (entry) {
-            slot.innerHTML = `
-                <img src="${entry.photo || ''}" class="w-7 h-7 md:w-9 md:h-9 rounded-full object-cover border border-white/20 mb-1">
-                <span class="text-[6px] md:text-[8px] uppercase font-bold text-white truncate w-full text-center">${entry.name ? entry.name.split(' ')[0] : 'User'}</span>
+const photo = entry.photo || "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/Clicker%2Fddf0110aa19f445687b737679eec9cb2.jpg?alt=media&token=82e56c76-0791-4f87-9aae-834014c496d8";  
+          slot.innerHTML = `
+                <img src="${photo}" onerror="this.src='${PLACEHOLDER_IMG}'" class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border border-brand-blue/20 mb-1">
+                <span class="text-[7px] md:text-[9px] uppercase font-bold text-brand-ice truncate w-full text-center">${entry.name ? entry.name.split(' ')[0] : 'User'}</span>
             `;
         } else {
-            slot.innerHTML = `<span class="text-[10px] md:text-xs text-brand-blue/40 font-bold">${i}</span>`;
+            slot.innerHTML = `<span class="text-[10px] md:text-xs text-brand-blue/30 font-bold">${i}</span>`;
         }
         
         slot.onclick = () => {
             if (window.currentUser && ADMIN_EMAILS.includes(window.currentUser.email)) {
                 selectedSlot = i;
-                const slotNumEl = document.getElementById('selected-slot-num');
-                if(slotNumEl) slotNumEl.innerText = i;
-                const modal = document.getElementById('assignUserModal');
-                if(modal) modal.classList.remove('hidden');
+                document.getElementById('selected-slot-num').innerText = i;
+                document.getElementById('assignUserModal').classList.remove('hidden');
             }
         };
         grid.appendChild(slot);
     }
+}
+
+// NEW: Winner Animation Logic
+window.endTombolaNow = async () => {
+    const snap = await getDocs(collection(db, "raffle"));
+    const docRef = doc(db, "raffle", "active");
+    const raffleData = (await (await fetch(docRef)).json()); // Simple check for demo purposes
+    
+    // In production use proper Firebase getDoc:
+    // const docSnap = await getDoc(docRef);
+    // const data = docSnap.data();
+
+    onSnapshot(doc(db, "raffle", "active"), async (snap) => {
+        const data = snap.data();
+        if(!data || data.winners) return;
+
+        const participants = Object.keys(data.entries);
+        if(participants.length < data.winnersCount) return alert("Nu sunt suficienți participanți!");
+
+        if(confirm("Ești sigur că vrei să pornești extragerea?")) {
+            runSickAnimation(data);
+        }
+    });
+};
+
+function runSickAnimation(data) {
+    const entries = data.entries;
+    const participantIds = Object.keys(entries);
+    const winnersCount = data.winnersCount;
+    let winners = [];
+    
+    // Random Pick
+    let pool = [...participantIds];
+    for(let i=0; i<winnersCount; i++) {
+        const index = Math.floor(Math.random() * pool.length);
+        winners.push(pool.splice(index, 1)[0]);
+    }
+
+    // Animation Steps
+    let current = 0;
+    const slots = document.querySelectorAll('.slot-occupied');
+    const totalSlots = slots.length;
+    
+    const interval = setInterval(() => {
+        // Remove highlight from all
+        document.querySelectorAll('.slot-highlight').forEach(el => el.classList.remove('slot-highlight'));
+        
+        // Add to current
+        const randomIdx = Math.floor(Math.random() * totalSlots);
+        slots[randomIdx].classList.add('slot-highlight');
+        
+        current++;
+        if(current > 40) { // Number of "glow" jumps
+            clearInterval(interval);
+            finalizeResults(winners, participantIds, data);
+        }
+    }, 100);
+}
+
+async function finalizeResults(winners, allIds, data) {
+    // UI Update
+    allIds.forEach(id => {
+        const el = document.getElementById(`slot-${id}`);
+        if(winners.includes(id)) {
+            el.classList.add('slot-winner');
+        } else {
+            el.classList.add('slot-eliminated');
+        }
+    });
+
+    // Save to Firestore so it persists
+    await updateDoc(doc(db, "raffle", "active"), { winners: winners });
+}
+
+function highlightWinners(winners, entries) {
+    winners.forEach(id => {
+        const el = document.getElementById(`slot-${id}`);
+        if(el) el.classList.add('slot-winner');
+    });
+    // Mark others as eliminated
+    Object.keys(entries).forEach(id => {
+        if(!winners.includes(id)) {
+            const el = document.getElementById(`slot-${id}`);
+            if(el) el.classList.add('slot-eliminated');
+        }
+    });
 }
 
 const confirmBtn = document.getElementById('confirmAssignBtn');
