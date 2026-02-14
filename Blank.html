@@ -731,6 +731,45 @@ function highlightWinners(winners, entries) {
     });
 }
 
+// Add these back at the bottom of your logic section
+const confirmBtn = document.getElementById('confirmAssignBtn');
+if(confirmBtn) {
+    confirmBtn.onclick = async () => {
+        const uid = document.getElementById('user-selector').value;
+        const user = allUsersList.find(u => u.id === uid);
+        if(!user) return alert("Alege un user!");
+        
+        await updateDoc(doc(db, "raffle", "active"), {
+            [`entries.${selectedSlot}`]: { 
+                uid: user.id, 
+                name: user.name || user.email || "Utilizator", 
+                photo: user.photo || "" 
+            }
+        });
+        closeAssignModal();
+    };
+}
+
+function startCountdown(end) {
+    const el = document.getElementById('countdown');
+    if(!el) return;
+    // Clear any existing intervals to prevent multiple timers running
+    if(window.tombolaTimer) clearInterval(window.tombolaTimer);
+    
+    window.tombolaTimer = setInterval(() => {
+        const diff = end - Date.now();
+        if (diff <= 0) {
+            el.innerText = "Timp Expirat";
+            clearInterval(window.tombolaTimer);
+            return;
+        }
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        el.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }, 1000);
+}
+
 window.closeAssignModal = () => {
     const modal = document.getElementById('assignUserModal');
     if(modal) modal.classList.add('hidden');
