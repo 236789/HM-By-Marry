@@ -568,7 +568,6 @@ window.endTombolaNow = async () => {
 };
 
 // Add this placeholder URL constant at the top of your script
-const PLACEHOLDER_IMG = "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/avatar-placeholder.png?alt=media";
 
 // UPDATE: loadActiveTombola to handle Admin UI Visibility
 function loadActiveTombola() {
@@ -607,7 +606,10 @@ function loadActiveTombola() {
     });
 }
 
-// UPDATE: renderGrid (Remove pink, add placeholder)
+// 1. Set your placeholder at the top of the logic section
+const PLACEHOLDER_IMG = "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/Clicker%2Fddf0110aa19f445687b737679eec9cb2.jpg?alt=media&token=82e56c76-0791-4f87-9aae-834014c496d8";
+
+// 2. Updated renderGrid to use the placeholder correctly
 function renderGrid(total, entries) {
     const grid = document.getElementById('tombola-grid');
     if(!grid) return;
@@ -617,12 +619,11 @@ function renderGrid(total, entries) {
         const slot = document.createElement('div');
         slot.id = `slot-${i}`;
         
-        // Reset to dark theme
         slot.className = `aspect-square flex flex-col items-center justify-center border transition-all duration-500 p-1 overflow-hidden slot-default ${entry ? 'slot-occupied' : ''}`;
 
         if (entry) {
-const photo = entry.photo || "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/Clicker%2Fddf0110aa19f445687b737679eec9cb2.jpg?alt=media&token=82e56c76-0791-4f87-9aae-834014c496d8";  
-          slot.innerHTML = `
+            const photo = entry.photo || PLACEHOLDER_IMG;  
+            slot.innerHTML = `
                 <img src="${photo}" onerror="this.src='${PLACEHOLDER_IMG}'" class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border border-brand-blue/20 mb-1">
                 <span class="text-[7px] md:text-[9px] uppercase font-bold text-brand-ice truncate w-full text-center">${entry.name ? entry.name.split(' ')[0] : 'User'}</span>
             `;
@@ -641,22 +642,21 @@ const photo = entry.photo || "https://firebasestorage.googleapis.com/v0/b/ksda-7
     }
 }
 
-// NEW: Winner Animation Logic
+// 3. FIXED: Winner Animation Logic (Removed the broken fetch)
 window.endTombolaNow = async () => {
-    const snap = await getDocs(collection(db, "raffle"));
+    // We get the data from the active document properly using getDocs or just access the global state
     const docRef = doc(db, "raffle", "active");
-    const raffleData = (await (await fetch(docRef)).json()); // Simple check for demo purposes
     
-    // In production use proper Firebase getDoc:
-    // const docSnap = await getDoc(docRef);
-    // const data = docSnap.data();
-
-    onSnapshot(doc(db, "raffle", "active"), async (snap) => {
+    // Using an anonymous listener to get data once safely
+    const unsub = onSnapshot(docRef, (snap) => {
+        unsub(); // Stop listening immediately after getting data
         const data = snap.data();
         if(!data || data.winners) return;
 
-        const participants = Object.keys(data.entries);
-        if(participants.length < data.winnersCount) return alert("Nu sunt suficienți participanți!");
+        const participants = Object.keys(data.entries || {});
+        if(participants.length < data.winnersCount) {
+            return alert(`Nu sunt suficienți participanți! Nevoie de ${data.winnersCount}, avem ${participants.length}.`);
+        }
 
         if(confirm("Ești sigur că vrei să pornești extragerea?")) {
             runSickAnimation(data);
@@ -665,41 +665,42 @@ window.endTombolaNow = async () => {
 };
 
 function runSickAnimation(data) {
-    const entries = data.entries;
-    const participantIds = Object.keys(entries);
+    const participantIds = Object.keys(data.entries);
     const winnersCount = data.winnersCount;
     let winners = [];
     
-    // Random Pick
+    // Pick winners randomly from the pool
     let pool = [...participantIds];
     for(let i=0; i<winnersCount; i++) {
         const index = Math.floor(Math.random() * pool.length);
         winners.push(pool.splice(index, 1)[0]);
     }
 
-    // Animation Steps
-    let current = 0;
-    const slots = document.querySelectorAll('.slot-occupied');
-    const totalSlots = slots.length;
+    let currentIteration = 0;
+    const occupiedSlots = document.querySelectorAll('.slot-occupied');
     
+    // The "Sick" Animation
     const interval = setInterval(() => {
-        // Remove highlight from all
+        // Clear previous highlights
         document.querySelectorAll('.slot-highlight').forEach(el => el.classList.remove('slot-highlight'));
         
-        // Add to current
-        const randomIdx = Math.floor(Math.random() * totalSlots);
-        slots[randomIdx].classList.add('slot-highlight');
+        // Pick a random occupied slot to highlight (visual effect)
+        const randomIdx = Math.floor(Math.random() * occupiedSlots.length);
+        occupiedSlots[randomIdx].classList.add('slot-highlight');
         
-        current++;
-        if(current > 40) { // Number of "glow" jumps
+        currentIteration++;
+        
+        // After ~4 seconds of flashing
+        if(currentIteration > 40) {
             clearInterval(interval);
-            finalizeResults(winners, participantIds, data);
+            document.querySelectorAll('.slot-highlight').forEach(el => el.classList.remove('slot-highlight'));
+            finalizeResults(winners, participantIds);
         }
     }, 100);
 }
 
-async function finalizeResults(winners, allIds, data) {
-    // UI Update
+async function finalizeResults(winners, allIds) {
+    // Show visual results immediately
     allIds.forEach(id => {
         const el = document.getElementById(`slot-${id}`);
         if(winners.includes(id)) {
@@ -709,59 +710,25 @@ async function finalizeResults(winners, allIds, data) {
         }
     });
 
-    // Save to Firestore so it persists
-    await updateDoc(doc(db, "raffle", "active"), { winners: winners });
+    // Save to Firestore so everyone sees the result
+    await updateDoc(doc(db, "raffle", "active"), { 
+        winners: winners,
+        expiresAt: Date.now() // Set time to expired
+    });
 }
 
 function highlightWinners(winners, entries) {
+    if(!winners || !entries) return;
     winners.forEach(id => {
         const el = document.getElementById(`slot-${id}`);
         if(el) el.classList.add('slot-winner');
     });
-    // Mark others as eliminated
     Object.keys(entries).forEach(id => {
         if(!winners.includes(id)) {
             const el = document.getElementById(`slot-${id}`);
             if(el) el.classList.add('slot-eliminated');
         }
     });
-}
-
-const confirmBtn = document.getElementById('confirmAssignBtn');
-if(confirmBtn) {
-    confirmBtn.onclick = async () => {
-        const uid = document.getElementById('user-selector').value;
-        const user = allUsersList.find(u => u.id === uid);
-        if(!user) return alert("Alege un user!");
-        
-await updateDoc(doc(db, "raffle", "active"), {
-    [`entries.${selectedSlot}`]: { 
-        uid: user.id, 
-        // Use the email or a default string if name is missing
-        name: user.name || user.email || "Utilizator", 
-        // Use an empty string if photo is missing
-        photo: user.photo || "" 
-    }
-});
-        closeAssignModal();
-    };
-}
-
-function startCountdown(end) {
-    const el = document.getElementById('countdown');
-    if(!el) return;
-    const timer = setInterval(() => {
-        const diff = end - Date.now();
-        if (diff <= 0) {
-            el.innerText = "Timp Expirat";
-            clearInterval(timer);
-            return;
-        }
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        el.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    }, 1000);
 }
 
 window.closeAssignModal = () => {
