@@ -495,9 +495,12 @@ html, body {
         }
     };
 
-    onAuthStateChanged(auth, (user) => {
-        window.currentUser = user; // Setează userul global pentru a funcționa butonul de cont
+onAuthStateChanged(auth, (user) => {
+        window.currentUser = user; 
+        const loginTexts = document.querySelectorAll('.login-trigger-text span');
+
         if (user) {
+            loginTexts.forEach(el => el.innerText = "Contul meu");
             document.getElementById('user-img').src = user.photoURL || "";
             document.getElementById('user-name').innerText = user.displayName;
             document.getElementById('user-email').innerText = user.email;
@@ -505,6 +508,9 @@ html, body {
             if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
                 document.getElementById('adminPanel').classList.remove('hidden');
             }
+        } else {
+            loginTexts.forEach(el => el.innerText = "Log In");
+            document.getElementById('adminPanel').classList.add('hidden');
         }
     });
 
