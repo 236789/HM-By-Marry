@@ -225,12 +225,17 @@ html, body {
 
 
 
+</div>
+
+<!-- ADD THIS BACK SO YOUR CONTENT HAS SPACE -->
+<main class="flex-grow pt-32 pb-20 px-6 max-w-7xl mx-auto w-full relative min-h-screen">
+    <!-- WRITE YOUR NEW CONTENT HERE -->
+    <h1 class="text-white text-center">Titlu Pagina Noua</h1>
+</main>
 
 <!-- ============================================== -->
 <!-- END MAIN CONTENT -->
 <!-- ============================================== -->
-
-
 
 
 <!-- AUTH MODALS -->
@@ -405,13 +410,6 @@ onAuthStateChanged(auth, (user) => {
             document.getElementById('user-name').innerText = user.displayName;
             document.getElementById('user-email').innerText = user.email;
 
-            if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
-                document.getElementById('adminPanel').classList.remove('hidden');
-            }
-        } else {
-            // Dacă se deloghează, textul revine la "Log In"
-            loginTexts.forEach(el => el.innerText = "Log In");
-            document.getElementById('adminPanel').classList.add('hidden');
         }
     });
 
