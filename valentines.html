@@ -453,143 +453,157 @@ html, body {
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    // --- CONFIG ---
+    // --- CONFIG PENTRU CONTURI (HANDMADE MARRY) ---
     const hmConfig = {
         apiKey: "AIzaSyBiZY4tIZGstiZhw_jiuhvNZ8ZtGCjQb5w",
         authDomain: "handmade-marry.firebaseapp.com",
         projectId: "handmade-marry"
     };
 
+    // --- CONFIG PENTRU FIȘIERE (KSDA) ---
     const ksdaConfig = {
-        apiKey: "AIzaSyDoH80kffNrzFAcyRqsTVdifs-whUhwH9A",
+        apiKey: "AIzaSyDoH80kffNrzFAcyRqsTVdifs-whUhwH9A", // API Key de la Pisici
         projectId: "ksda-7546f",
         storageBucket: "ksda-7546f.firebasestorage.app"
     };
 
+    // Inițializăm ambele proiecte
     const appHM = initializeApp(hmConfig);
     const appKSDA = initializeApp(ksdaConfig, "ksdaStorageApp");
 
-    const auth = getAuth(appHM);
-    const db = getFirestore(appHM);
-    const storage = getStorage(appKSDA);
+    // Atribuim serviciile corect
+    const auth = getAuth(appHM);      // Logarea rămâne pe HM
+    const db = getFirestore(appHM);   // Baza de date rămâne pe HM
+    const storage = getStorage(appKSDA); // <--- AICI e secretul: Storage-ul e pe KSDA!
 
     const COLLECTION_ID = "valentines";
-    const ADMIN_EMAILS = ["nicaemmanuel433qe@gmail.com", "hancimaria39@gmail.com"];
+const ADMIN_EMAILS = ["nicaemmanuel433qe@gmail.com", "hancimaria39@gmail.com"];
+    // Restul codului tău de mai jos rămâne IDENTIC...
 
-    // --- AUTH FUNCTIONS ---
-    window.authFunctions = {
-        loginWithGoogle: async () => {
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-                document.getElementById('authModal').classList.add('hidden');
-            } catch (error) {
-                console.error("Login failed", error);
-                alert("Eroare la autentificare.");
-            }
-        },
-        logout: async () => {
-            try {
-                await signOut(auth);
-                location.reload();
-            } catch (error) {
-                console.error("Logout failed", error);
-            }
-        }
-    };
-
-    // --- MONITORIZARE ADMIN ---
+    // 1. Verificare Admin & Afișare Panou
     onAuthStateChanged(auth, (user) => {
-        window.currentUser = user;
-        if (user) {
-            const userImg = document.getElementById('user-img');
-            const userName = document.getElementById('user-name');
-            const userEmail = document.getElementById('user-email');
-            
-            if(userImg) userImg.src = user.photoURL || "https://iili.io/f1ddIfe.png";
-            if(userName) userName.innerText = user.displayName || "Client";
-            if(userEmail) userEmail.innerText = user.email;
-
-            if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
-                const panel = document.getElementById('adminPanel');
-                if(panel) panel.classList.remove('hidden');
-            }
+// Change this line:
+${ADMIN_EMAILS.includes(auth.currentUser?.email?.toLowerCase()) ? `
+            console.log("Admin logat: Acces activat");
+            const panel = document.getElementById('adminPanel');
+            if(panel) panel.classList.remove('hidden');
         }
     });
 
-    // --- LOGICA DE INCARCARE PRODUSE (ADMIN) ---
-    const uploadBtn = document.getElementById('uploadBtn');
-    if (uploadBtn) {
-        uploadBtn.onclick = async () => {
-            const file = document.getElementById('fileInput').files[0];
-            const name = document.getElementById('prodName').value;
-            const price = document.getElementById('prodPrice').value;
-            const status = document.getElementById('status');
-
-            if (!file || !name || !price) return alert("Completează toate câmpurile!");
-
-            uploadBtn.disabled = true;
-            status.innerText = "Se încarcă...";
-
-            try {
-                const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-                const uploadTask = await uploadBytesResumable(storageRef, file);
-                const downloadURL = await getDownloadURL(uploadTask.ref);
-
-                await addDoc(collection(db, `products_${COLLECTION_ID}`), {
-                    name, price, img: downloadURL, createdAt: serverTimestamp()
-                });
-
-                status.innerText = "Succes!";
-                document.getElementById('prodName').value = "";
-                document.getElementById('prodPrice').value = "";
-                document.getElementById('previewWrapper').classList.add('hidden');
-                uploadBtn.disabled = false;
-            } catch (e) {
-                console.error(e);
-                status.innerText = "Eroare la încărcare.";
-                uploadBtn.disabled = false;
-            }
-        };
-    }
-
-    // --- AFIȘARE PRODUSE ÎN TIMP REAL ---
-    onSnapshot(query(collection(db, `products_${COLLECTION_ID}`), orderBy("createdAt", "desc")), (snap) => {
+    // 2. Afișare Produse
+    const q = query(collection(db, `products_${COLLECTION_ID}`), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
         const grid = document.getElementById('productsGrid');
-        grid.innerHTML = "";
-        snap.forEach(docSnap => {
+        if(!grid) return;
+        grid.innerHTML = '';
+        snapshot.forEach((docSnap) => {
             const p = docSnap.data();
-            const isAdmin = window.currentUser && ADMIN_EMAILS.includes(window.currentUser.email.toLowerCase());
-            
+            const id = docSnap.id;
             grid.innerHTML += `
-                <div class="product-card reveal-item group relative h-[500px]">
-                    ${isAdmin ? `<button onclick="deleteProd('${docSnap.id}')" class="absolute top-4 left-4 z-20 bg-red-600/80 text-white p-2 text-xs hover:bg-red-600 transition-colors"><i class="fa-solid fa-trash"></i></button>` : ''}
-                    <div class="img-container h-[400px] cursor-pointer" onclick="openLightbox('${docSnap.id}')">
-                        <img src="${p.img}" class="img-zoom" alt="${p.name}">
+                <div class="product-card p-4 group cursor-pointer reveal-item" onclick="openLightbox('${id}')">
+                    <div class="aspect-[4/5] overflow-hidden mb-6 relative">
+                        <img src="${p.img}" class="w-full h-full object-cover img-zoom" loading="lazy">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all"></div>
+                        ${auth.currentUser?.email.toLowerCase() === ADMIN_EMAIL ? `
+                            <button onclick="event.stopPropagation(); deleteProd('${id}')" class="absolute top-4 right-4 bg-red-500/80 text-white p-2 text-xs rounded-sm hover:bg-red-600 transition-colors">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        ` : ''}
                     </div>
-                    <div class="p-6 text-center">
-                        <h4 class="font-serif italic text-xl text-brand-ice mb-1">${p.name}</h4>
-                        <p class="text-brand-magenta font-light">${p.price} RON</p>
+                    <div class="text-center">
+                        <h3 class="font-serif italic text-2xl text-brand-ice group-hover:text-brand-magenta transition-colors italic">${p.name}</h3>
+                        <p class="text-[10px] text-brand-blue/60 uppercase tracking-widest mt-2">${p.price} RON</p>
                     </div>
                 </div>
             `;
         });
     });
 
-    // --- LIGHTBOX & DELETE ---
+document.getElementById('uploadBtn').onclick = async () => {
+    const fileInput = document.getElementById('fileInput'); 
+    const titleInput = document.getElementById('prodName'); 
+    const priceInput = document.getElementById('prodPrice');
+    const status = document.getElementById('status');
+
+    if (!fileInput || fileInput.files.length === 0) {
+        alert("Te rog alege o poză mai întâi!");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const title = titleInput.value.trim();
+    const price = priceInput.value.trim();
+
+    if(!title || !price) {
+        alert("Te rog completează Numele și Prețul!");
+        return;
+    }
+
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = true; 
+    btn.innerText = "COMPRIMARE...";
+
+    new Compressor(file, {
+        quality: 0.6,
+        maxWidth: 1200,
+        success(result) {
+            // --- FIX AICI: NU facem result.name = ... ---
+            // Folosim variabila 'title' direct în calea de Storage de mai jos:
+            
+            if(status) status.innerText = "SE ÎNCARCĂ ÎN FIREBASE...";
+            
+            // Creăm calea folosind titlul introdus de tine, nu proprietatea .name a fișierului
+            const sRef = ref(storage, `collections/${COLLECTION_ID}/${Date.now()}_${title}`);
+            const uploadTask = uploadBytesResumable(sRef, result);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    if(status) status.innerText = "PROGRES: " + Math.round(progress) + "%";
+                }, 
+                (error) => { 
+                    console.error(error);
+                    alert("Eroare upload. Verifică regulile Storage."); 
+                    btn.disabled = false; 
+                }, 
+                async () => {
+                    const url = await getDownloadURL(uploadTask.snapshot.ref);
+                    
+                    await addDoc(collection(db, `products_${COLLECTION_ID}`), {
+                        name: title, 
+                        price: price, 
+                        img: url, 
+                        createdAt: serverTimestamp()
+                    });
+                    
+                    alert("Produs adăugat cu succes!");
+                    location.reload();
+                }
+            );
+        },
+        error(err) { 
+            console.error(err.message); 
+            btn.disabled = false; 
+        }
+    });
+};
+
     window.openLightbox = async (id) => {
         const docSnap = await getDoc(doc(db, `products_${COLLECTION_ID}`, id));
         if(!docSnap.exists()) return;
         const p = docSnap.data();
-        document.getElementById('lbImg').src = p.img;
+
+document.getElementById('lbImg').src = p.img;     // Changed from 'lbImage'
         document.getElementById('lbTitle').innerText = p.name;
         document.getElementById('lbPrice').innerText = `${p.price} RON`;
-        const msg = encodeURIComponent(`Bună! Sunt interesat de produsul "${p.name}" din colecția ${COLLECTION_ID}.`);
-        document.getElementById('waBtn').href = `https://api.whatsapp.com/send?phone=4917675891440&text=${msg}`;
+        
+        const msg = encodeURIComponent(`Bună! Sunt interesat de produsul "${p.name}" din colecția ${COLLECTION_ID}. Îmi poți oferi mai multe detalii?`);
+// Replace the waBtn.href line with this:
+document.getElementById('waBtn').href = `https://api.whatsapp.com/send?phone=4917675891440&text=${msg}`;
         document.getElementById('productLightbox').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     };
@@ -599,17 +613,52 @@ html, body {
         document.body.style.overflow = 'auto';
     };
 
-    window.deleteProd = (id) => {
-        window.prodToDelete = id;
-        document.getElementById('deleteModal').classList.remove('hidden');
-    };
-
-    document.getElementById('confirmDeleteBtn').onclick = async () => {
-        if(window.prodToDelete) {
-            await deleteDoc(doc(db, `products_${COLLECTION_ID}`, window.prodToDelete));
-            document.getElementById('deleteModal').classList.add('hidden');
+    window.deleteProd = async (id) => {
+        if(confirm("Ștergi acest produs?")) {
+            await deleteDoc(doc(db, `products_${COLLECTION_ID}`, id));
         }
     };
+
+
+
+// --- LOGICĂ PREVIEW ---
+document.getElementById('fileInput').onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            document.getElementById('imagePreview').src = ev.target.result;
+            document.getElementById('previewWrapper').classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+};
+
+window.removeSelectedFile = () => {
+    document.getElementById('fileInput').value = "";
+    document.getElementById('previewWrapper').classList.add('hidden');
+};
+
+// --- LOGICĂ ȘTERGERE CUSTOM ---
+let prodToDelete = null;
+window.deleteProd = (id) => {
+    prodToDelete = id;
+    document.getElementById('deleteModal').classList.remove('hidden');
+};
+
+window.closeDeleteModal = () => {
+    document.getElementById('deleteModal').classList.add('hidden');
+    prodToDelete = null;
+};
+
+document.getElementById('confirmDeleteBtn').onclick = async () => {
+    if(prodToDelete) {
+        await deleteDoc(doc(db, `products_${COLLECTION_ID}`, prodToDelete));
+        closeDeleteModal();
+    }
+};
+
+
 </script>
 
 <!-- SCRIPTS: UI INTERACTIONS -->
