@@ -1028,6 +1028,19 @@ body {
 }
 
 
+
+/* Disable all scroll-hide states */
+[data-reveal], .reveal-item, .reveal-on-load {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+}
+
+/* Optional: Keep the hover effects but remove the entrance animations */
+.reveal-item {
+    transition: transform 0.3s ease !important;
+}
+
 </style>
 </head>
 <body>
@@ -1784,61 +1797,25 @@ loadHomeReviews();
 
 
 <script>
-    const initSite = () => {
-        gsap.registerPlugin(ScrollTrigger);
-        const tl = gsap.timeline();
+const initSite = () => {
+    const tl = gsap.timeline();
 
-        // 1. LOADER ANIMATION
-tl.to("#loader-logo", { opacity: 1, y: 0, scale: 1.1, duration: 1.5, ease: "power2.out" })
-          .to(".loader", { yPercent: -100, duration: 1.5, ease: "expo.inOut", delay: 0.5 })
-          .to(".reveal-on-load", { opacity: 1, y: 0, stagger: 0.2, duration: 1.2, ease: "power3.out" }, "-=0.5")
-// Înlocuiește linia existentă cu asta (am redus scale de la 1.15 la 1.1 pentru claritate)
-.to(".hero-img", { scale: 1.1, duration: 4, ease: "power2.out" }, "-=2");
-        // 2. SCROLL REVEALS
-        gsap.utils.toArray('[data-reveal]').forEach(el => {
-            const direction = el.getAttribute('data-reveal');
-            let x = 0, y = 50;
-            if (direction === 'left') { x = -60; y = 0; }
-            if (direction === 'right') { x = 60; y = 0; }
-            if (direction === 'up') { x = 0; y = 100; }
+    // Only the main entrance animation (The Loader)
+    tl.to("#loader-logo", { 
+        opacity: 1, 
+        scale: 1.1, 
+        duration: 1.2, 
+        ease: "power2.out" 
+    })
+    .to(".loader", { 
+        yPercent: -100, 
+        duration: 1, 
+        ease: "expo.inOut", 
+        delay: 0.5 
+    });
 
-            gsap.from(el, {
-                x: x, y: y, 
-                opacity: 0,
-                duration: 1.8,
-                scrollTrigger: {
-                    trigger: el,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse"
-                }
-            });
-        });
-
-        // 3. GALLERY PARALLAX
-        gsap.utils.toArray('.reveal-gallery').forEach((item) => {
-            const speed = item.getAttribute('data-speed');
-            const img = item.querySelector('.parallax-img');
-            
-            gsap.from(item, {
-                y: 100, opacity: 0, duration: 1.5, ease: "power3.out",
-                scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" }
-            });
-
-            if(img) {
-                gsap.fromTo(img, 
-                    { scale: 1.2, y: -20 },
-                    { y: 20 * speed, ease: "none", scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true } }
-                );
-            }
-        }); 
-
-        // 4. NAV SCROLL
-        const nav = document.getElementById('main-nav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
-        });
-    };
+    // We removed all ScrollTrigger logic here to stop the lag
+};
 
     let isLoaded = false;
     window.onload = () => {
