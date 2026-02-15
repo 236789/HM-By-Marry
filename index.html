@@ -492,6 +492,14 @@
     object-fit: cover;
     transition: opacity 1s ease-in-out, transform 2s ease;
 }
+
+@media (min-width: 768px) {
+    .hero-img {
+        padding: 40px;
+        border-radius: 60px;
+        object-fit: contain !important;
+    }
+}
 </style>
 </head>
 <body>
@@ -549,32 +557,32 @@
     />
 </div>
 
-<nav class="fixed w-full z-50 px-6 md:px-10 py-6 transition-all duration-500 flex items-center justify-between" id="main-nav">
+<!-- NAV ACTUALIZAT: Mai subțire pe mobil -->
+<nav class="fixed w-full z-50 px-6 md:px-10 py-3 md:py-6 transition-all duration-500 flex items-center justify-between" id="main-nav">
     <!-- 1. Logo (Left) -->
     <div class="w-32 md:w-44 flex-shrink-0">
         <a href="#home">
-            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/botezuri.png?alt=media&token=952e6adf-9bf6-4ada-ac2f-c9de0cb19b3a" class="h-12 w-auto object-contain hover:opacity-80 transition-opacity" alt="MC Logo" />
+            <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/botezuri.png?alt=media&token=952e6adf-9bf6-4ada-ac2f-c9de0cb19b3a" 
+                 class="h-10 md:h-12 w-auto object-contain hover:opacity-80 transition-opacity" alt="MC Logo" />
         </a>
     </div>
     
-    <!-- 2. Desktop Links (Center) - Perfectly Centered -->
+    <!-- 2. Desktop Links (Center) -->
     <div class="hidden md:flex flex-1 justify-center items-center gap-12 text-[10px] uppercase tracking-[0.2em] font-medium">
         <a href="#home" class="nav-link-desktop">Acasă</a>
         <a href="#philosophy" class="nav-link-desktop">Biografie</a>
         <a href="Colecții.html" class="nav-link-desktop">Colecții</a>
-        <a href="tombola.html" class="nav-link-desktop text-brand-blue">Tombolă</a> <!-- Highlighted -->
+        <a href="tombola.html" class="nav-link-desktop text-brand-blue">Tombolă</a>
         <a href="#bespoke" class="nav-link-desktop text-brand-magenta">Comenzi Personalizate</a>
     </div>
 
     <!-- 3. Auth Button + Hamburger (Right) -->
     <div class="w-32 md:w-44 flex justify-end items-center gap-6 flex-shrink-0">
-        <!-- New Minimalist Login Button -->
         <button onclick="handleAccountClick()" class="login-trigger-text hidden md:flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] uppercase text-brand-ice/80 hover:text-white transition-colors group">
             <i class="fa-regular fa-user text-xs group-hover:text-brand-magenta transition-colors"></i>
             <span>Log In</span>
         </button>
 
-        <!-- Hamburger Icon -->
         <div class="hamburger md:hidden group cursor-pointer" onclick="toggleMenu()">
             <span class="group-hover:bg-brand-magenta transition-colors"></span>
             <span class="group-hover:bg-brand-magenta transition-colors"></span>
@@ -692,34 +700,41 @@
 
     </div>
 </div>
-<!-- HERO -->
-<header id="home" class="relative w-full h-[70vh] md:h-[85vh] flex items-center justify-center overflow-hidden bg-brand-dark text-center px-4">
-    <div class="glow-soft" style="background: var(--blue); top: -100px; left: -100px;"></div>
+<!-- HEADER ACTUALIZAT: Background roz pe PC + Ramă cu Gradient Albastru -->
+<header id="home" class="relative w-full min-h-[70vh] md:min-h-[95vh] flex items-center justify-center overflow-hidden pt-24 md:pt-32 bg-brand-dark md:bg-brand-peach">
+    
+    <!-- Glow decorativ (vizibil doar pe mobil) -->
+    <div class="md:hidden glow-soft" style="background: var(--blue); top: -100px; left: -100px; opacity: 0.1;"></div>
 
-    <!-- Containerul Imaginii -->
-    <div class="absolute inset-0 z-0">
-        <div class="absolute inset-0 bg-brand-dark/40 z-10"></div>
-        <img 
-            src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F3e6146f3-0740-45c4-bcfd-8a4dc21bfb68.png?alt=media&token=1e077f8e-7c7c-4221-a2be-f6252f697d5c" 
-            class="w-full h-full object-cover hero-img" 
-            alt="Hero" 
-            fetchpriority="high" 
-            decoding="sync"
-        />
-    </div>
+    <div class="relative z-10 w-full h-full flex items-center justify-center px-4 md:px-12 pb-16">
+        
+        <!-- RAMA CU GRADIENT (Blue/Indigo) -->
+        <div class="relative p-2 md:p-10 rounded-[30px] md:rounded-[60px] shadow-[0_30px_100px_rgba(0,0,0,0.3)] flex items-center justify-center overflow-hidden" 
+             style="background: radial-gradient(circle at center, #2E1065 0%, #0D071A 100%);">
+            
+            <div class="relative max-w-6xl flex items-center justify-center">
+                
+                <!-- Imaginea -->
+                <img 
+                    src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F3e6146f3-0740-45c4-bcfd-8a4dc21bfb68.png?alt=media&token=1e077f8e-7c7c-4221-a2be-f6252f697d5c" 
+                    class="hero-img w-auto h-auto max-w-full max-h-[60vh] md:max-h-[70vh] object-contain rounded-2xl md:rounded-[40px]" 
+                    alt="Hero"
+                />
 
-    <!-- Conținut Text -->
-    <div class="relative z-20 max-w-4xl mx-auto">
-        <p class="reveal-on-load font-sans text-[10px] md:text-xs tracking-[0.4em] md:tracking-[0.8em] uppercase text-brand-ice mb-4 md:mb-6 opacity-0 font-medium">
-            HANDMADE by Mary
-        </p>
-        <h1 class="reveal-on-load text-5xl md:text-[7rem] lg:text-[8rem] font-serif font-light leading-[1.1] md:leading-none mb-8 md:mb-10 text-brand-alabaster opacity-0 text-outline-black">
-            Petale care <br /> 
-            <span class="text-brand-magenta italic text-outline-white drop-shadow-[0_0_20px_rgba(228,103,218,0.5)]">
-                nu se ofilesc.
-            </span>
-        </h1>
-        <div class="reveal-on-load h-12 md:h-20 w-[1px] bg-brand-ice/50 mx-auto opacity-0"></div>
+                <!-- Textul Suprapus -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-20 pointer-events-none">
+                    <p class="reveal-on-load font-sans text-[10px] md:text-xs tracking-[0.4em] md:tracking-[0.8em] uppercase text-brand-ice mb-4 opacity-0 font-medium">
+                        HANDMADE by Mary
+                    </p>
+                    <h1 class="reveal-on-load text-4xl md:text-[6rem] lg:text-[7.5rem] font-serif font-light leading-tight mb-4 text-brand-alabaster opacity-0 text-outline-black">
+                        Petale care <br /> 
+                        <span class="text-brand-magenta italic text-outline-white drop-shadow-[0_0_20px_rgba(228,103,218,0.5)]">
+                            nu se ofilesc.
+                        </span>
+                    </h1>
+                </div>
+            </div>
+        </div>
     </div>
 </header>
 
@@ -1254,8 +1269,8 @@ loadHomeReviews();
 tl.to("#loader-logo", { opacity: 1, y: 0, scale: 1.1, duration: 1.5, ease: "power2.out" })
           .to(".loader", { yPercent: -100, duration: 1.5, ease: "expo.inOut", delay: 0.5 })
           .to(".reveal-on-load", { opacity: 1, y: 0, stagger: 0.2, duration: 1.2, ease: "power3.out" }, "-=0.5")
-          .to(".hero-img", { scale: 1.15, duration: 4, ease: "power2.out" }, "-=2");
-
+// Înlocuiește linia existentă cu asta (am redus scale de la 1.15 la 1.1 pentru claritate)
+.to(".hero-img", { scale: 1.1, duration: 4, ease: "power2.out" }, "-=2");
         // 2. SCROLL REVEALS
         gsap.utils.toArray('[data-reveal]').forEach(el => {
             const direction = el.getAttribute('data-reveal');
