@@ -1042,9 +1042,344 @@ body {
     transition: transform 0.3s ease !important;
 }
 
+
+
+/* NEON FLICKER EFFECT */
+.neon-text {
+    color: #fff;
+    text-shadow: 
+        0 0 7px #fff,
+        0 0 10px #fff,
+        0 0 21px #fff,
+        0 0 42px var(--magenta),
+        0 0 82px var(--magenta),
+        0 0 92px var(--magenta),
+        0 0 102px var(--magenta),
+        0 0 151px var(--magenta);
+}
+
+.flicker-slow {
+    animation: flicker 4s linear infinite;
+}
+
+.flicker-fast {
+    animation: flicker 0.5s linear infinite;
+    animation-delay: 1s;
+}
+
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        text-shadow: 
+            0 0 4px #fff,
+            0 0 11px #fff,
+            0 0 19px #fff,
+            0 0 40px var(--magenta),
+            0 0 80px var(--magenta);
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+        opacity: 0.2;
+    }
+}
+
+
+#polaroid-img {
+    will-change: opacity;
+    /* This ensures the containment doesn't show background color during switch */
+    background-color: white; 
+}
+
+/* Optional: Add a slight "Floating" animation to the whole frame */
+@keyframes polaroid-float {
+    0%, 100% { transform: rotate(5deg) translateY(0); }
+    50% { transform: rotate(4deg) translateY(-10px); }
+}
+
+.group\/polaroid {
+    animation: polaroid-float 6s ease-in-out infinite;
+}
+
+
+
+
+/* THE LUXURY LENS FILTER */
+#polaroid-display {
+    /* 1. Unify the colors: slight warm tint and boosted contrast */
+    filter: sepia(10%) contrast(110%) brightness(105%);
+    /* 2. Soften the edges to make them look dreamy */
+    box-shadow: inset 0 0 40px rgba(255,255,255,0.3);
+    /* 3. The smooth zoom logic */
+    transform: scale(1);
+    transition: opacity 1s ease-in-out, transform 8s linear;
+}
+
+/* When the image is visible, start a very slow zoom */
+#polaroid-display.zoom-in {
+    transform: scale(1.15);
+}
+
+/* Add a "Light Leak" effect over the photo */
+.polaroid-glare {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, rgba(228,103,218,0.1) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+
+
+/* --- 3D BOOK ANIMATION (UPDATED FOR 3 PAGES) --- */
+.book-container {
+    perspective: 1500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 50px; /* Visual centering adjustment */
+}
+
+.book {
+    width: 300px;
+    height: 400px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+    transform: rotateY(-20deg) rotateX(10deg);
+}
+
+/* OPEN STATE (Desktop shifts right) */
+.book.open {
+    transform: rotateY(0deg) rotateX(0deg) translateX(50px);
+    z-index: 50;
+}
+
+/* COVER STYLES */
+.book-cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2E1065 0%, #130925 100%);
+    border: 2px solid rgba(228, 103, 218, 0.3);
+    border-radius: 4px 15px 15px 4px;
+    transform-origin: left;
+    /* 2s duration matches audio sync */
+    transition: transform 2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    z-index: 50; /* Top of stack so it covers pages */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden; /* Crucial: Hides cover when opened */
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Open Cover Transform */
+.book.open .book-cover {
+    transform: rotateY(-160deg);
+}
+
+/* --- PAGE STYLING (Common) --- */
+.book-page {
+    position: absolute;
+    width: 96%;
+    height: 96%;
+    top: 2%;
+    left: 2%;
+    background: #FAF9F6;
+    border-radius: 2px 10px 10px 2px;
+    padding: 2rem 1.5rem;
+    color: #130925;
+    box-shadow: inset 3px 0 10px rgba(0,0,0,0.1);
+    
+    /* 3D Flip Logic */
+    transform-origin: left center;
+    transition: transform 2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    backface-visibility: hidden; /* Hides the page when flipped */
+    overflow: hidden; /* Prevents text from spilling out */
+}
+
+/* --- PAGE LAYERING (Stack Order) --- */
+.page-1 { z-index: 30; } /* Top Page */
+.page-2 { z-index: 20; } /* Middle Page */
+.page-3 { z-index: 10; } /* Bottom Page */
+
+/* --- FLIP ANIMATIONS --- */
+/* When .flip-1 is added, Page 1 rotates */
+.book.flip-1 .page-1 {
+    transform: rotateY(-180deg);
+}
+
+/* When .flip-2 is added, Page 2 rotates */
+.book.flip-2 .page-2 {
+    transform: rotateY(-180deg);
+}
+
+/* --- MOBILE SPECIFIC FIXES --- */
+@media (max-width: 768px) {
+    .book { 
+        width: 85vw;       
+        max-width: 320px; 
+        height: 520px; /* Taller height to fit text + image */
+    }
+
+    /* Force perfect center on mobile open (No translateX) */
+    .book.open { 
+        transform: rotateY(0deg) rotateX(0deg) translateX(0); 
+    }
+    
+    .book-page {
+        padding: 1.5rem 1rem;
+    }
+    
+    /* Font adjustments for readability */
+    .book-page p {
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+    }
+    
+    .book-page h4 {
+        margin-top: 10px;
+        font-size: 1.3rem;
+    }
+}
+
 </style>
 </head>
 <body>
+
+
+<!-- ABOUT ME BOOK MODAL -->
+<div id="aboutModal" class="fixed inset-0 z-[250] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-brand-dark/95 backdrop-blur-2xl" onclick="closeAboutBook()"></div>
+    
+    <button onclick="closeAboutBook()" class="absolute top-6 right-6 z-[300] text-white/50 hover:text-brand-magenta transition-all">
+        <i class="fa-solid fa-xmark text-4xl"></i>
+    </button>
+
+    <div class="book-container">
+<div id="theBook" class="book">
+    <!-- FRONT COVER -->
+    <div class="book-cover">
+        <img src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/botezuri.png?alt=media&token=952e6adf-9bf6-4ada-ac2f-c9de0cb19b3a" class="w-32 mb-6 opacity-80" alt="Logo">
+        <h3 class="neon-text font-serif italic text-2xl text-center">Povestea <br> Mea</h3>
+        <p class="text-[8px] uppercase tracking-[0.4em] text-brand-blue/60 mt-10">Ascultă Povestea</p>
+    </div>
+
+    <!-- PAGE 3 (Bottom Layer - Revealed Last) -->
+    <div class="book-page page-3">
+        <div class="h-full flex flex-col justify-center text-center">
+            <h4 class="font-serif italic text-xl mb-6 text-brand-magenta">Vă Mulțumesc</h4>
+            <p class="text-[12px] md:text-[14px] leading-relaxed font-medium opacity-90 italic">
+                "Mulțumesc că ați ascultat și sper ca florile mele să aducă bucurie și frumusețe în fiecare zi. <br><br>
+                Fiecare creație este făcută cu dragoste, doar pentru voi."
+            </p>
+            <div class="mt-8 text-[9px] uppercase tracking-widest opacity-50">Handmade by Mary</div>
+        </div>
+    </div>
+
+    <!-- PAGE 2 (Middle Layer - Revealed at 40s) -->
+    <div class="book-page page-2">
+        <div class="h-full flex flex-col">
+            <div class="space-y-4 text-justify">
+                <p class="text-[11px] md:text-[12px] leading-relaxed font-medium opacity-80">
+                    Creez buchete și suveniruri pentru momente speciale – pentru nunți, aniversări, zile de naștere sau pur și simplu pentru cei dragi, atunci când vrei să le arăți cât de mult îi apreciezi.
+                </p>
+                <p class="text-[11px] md:text-[12px] leading-relaxed font-medium opacity-80">
+                    Tot ce fac este realizat cu dragoste, manual, fără grabă, pentru că știu că doar așa poți simți diferența între un cadou făcut cu suflet și unul obișnuit.
+                </p>
+                <p class="text-[11px] md:text-[12px] leading-relaxed font-medium opacity-80">
+                    Îmi doresc ca fiecare buchet să fie mai mult decât un obiect decorativ – să fie o experiență, o bucurie vizuală și emoțională.
+                </p>
+            </div>
+            <p class="mt-auto text-[9px] text-center text-brand-magenta/60 italic animate-pulse">
+                ... urmează ultima parte ...
+            </p>
+        </div>
+    </div>
+
+    <!-- PAGE 1 (Top Layer - Flips at 40s) -->
+    <div class="book-page page-1">
+        <div class="h-full flex flex-col">
+            <h4 class="font-serif italic text-xl md:text-2xl border-b border-black/10 pb-2 mb-4 text-center">Hanci Maria</h4>
+            
+            <div class="space-y-4 text-justify">
+                <p class="text-[11px] md:text-[12px] leading-relaxed font-medium opacity-80">
+                    Salut! Eu sunt Hanci Maria și sunt pasionată de arta handmade. În atelierul meu, fiecare floare pe care o creez este făcută manual, petală cu petală, cu multă răbdare și atenție la detalii.
+                </p>
+                <p class="text-[11px] md:text-[12px] leading-relaxed font-medium opacity-80">
+                    Fiecare buchet sau obiect decorativ este o mică poveste pe care o creez cu suflet, combinând tehnici tradiționale cu un design modern, ca să iasă ceva unic și special.
+                </p>
+                <p class="text-[11px] md:text-[12px] leading-relaxed font-medium opacity-80">
+                    Îmi place să cred că lucrurile pe care le fac nu sunt doar flori din săpun. Ele sunt cadouri care transmit emoție, care aduc bucurie și care rămân o amintire.
+                </p>
+            </div>
+            
+            <p class="mt-auto text-[9px] text-center text-brand-magenta/60 italic animate-pulse">
+                ... pagina se va întoarce automat ...
+            </p>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<!-- PRODUCT PREVIEW MODAL (MOBILE FIXED) -->
+<div id="productModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center px-2 py-4 md:p-10">
+    <!-- Dark blurred backdrop -->
+    <div class="absolute inset-0 bg-brand-dark/90 backdrop-blur-xl" onclick="closeProductModal()"></div>
+    
+    <!-- Modal Container: Added overflow-y-auto for mobile -->
+    <div class="relative bg-[#130925] border border-white/10 w-full max-w-5xl max-h-[95vh] overflow-y-auto md:overflow-hidden flex flex-col md:flex-row rounded-2xl shadow-[0_0_100px_rgba(0,0,0,0.8)] transform transition-all duration-500 scale-95 opacity-0" id="modalContent">
+        
+        <!-- CLOSE BUTTON -->
+        <button onclick="closeProductModal()" class="absolute top-4 right-4 z-50 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-brand-magenta transition-colors">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+
+        <!-- LEFT: Image View (Reduced height on mobile to save space) -->
+        <div class="w-full md:w-1/2 h-[35vh] md:h-auto bg-[#1a0f2e] flex items-center justify-center p-6 md:p-10">
+            <img id="modalProductImg" src="" class="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]" alt="Preview">
+        </div>
+
+        <!-- RIGHT: Details -->
+        <div class="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center bg-[#0D071A]">
+            <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-2 font-bold">Ediție Limitată</span>
+            <h2 class="font-serif text-3xl md:text-5xl text-white italic mb-4 leading-tight">Creație Artizanală</h2>
+            
+            <div class="flex items-center gap-4 mb-6">
+                <span class="text-brand-magenta text-xl md:text-2xl font-serif">Personalizat</span>
+                <div class="h-[1px] flex-1 bg-white/10"></div>
+            </div>
+
+            <ul class="space-y-3 mb-8 text-brand-ice/70 text-xs md:text-base font-light">
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-check text-brand-magenta mt-1 text-[10px]"></i>
+                    <span>Modelat manual din ingrediente premium și ceară naturală.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-check text-brand-magenta mt-1 text-[10px]"></i>
+                    <span>Design unic, realizat special pentru tine.</span>
+                </li>
+            </ul>
+
+            <!-- Order Button (Now visible and priority) -->
+            <div class="mt-auto">
+                <a id="modalWhatsAppBtn" href="#" target="_blank" 
+                   class="btn-luxury-anim w-full py-4 md:py-5 rounded-full flex items-center justify-center gap-4 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.3em] text-white">
+                    <i class="fa-brands fa-whatsapp text-xl md:text-2xl"></i>
+                    <span>Comandă pe WhatsApp</span>
+                </a>
+                <p class="text-center mt-4 text-[8px] uppercase tracking-widest text-white/20">Livrare în toată România</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div id="petal-container"></div>
 <!-- ANIMATED BACKGROUND WRAPPER -->
 <div class="ambient-bg">
@@ -1192,7 +1527,7 @@ body {
     </button>
 
     <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');"></div>
-    
+     
     <!-- Main Container -->
     <div class="mobile-menu-container w-full h-full flex flex-col justify-between pt-20 pb-10">
         
@@ -1275,62 +1610,137 @@ body {
     </div>
 </header>
 
+
+
+
+
+
 <main class="w-full overflow-hidden"> <!-- Added overflow-hidden here as extra safety -->
 
 
 
-<!-- SECTION 1: PHILOSOPHY (Mutată mai sus) -->
-<section id="philosophy" class="pt-4 pb-16 md:pt-10 md:pb-24 bg-brand-peach relative text-brand-dark">
-    <div class="max-w-4xl mx-auto px-6 flex flex-col items-center">
-        
-        <!-- TOP: Title -->
-  <div class="text-center mb-10">
-    <h2 class="float-text text-4xl md:text-5xl font-serif font-bold tracking-tight text-brand-dark">
-        HANDMADE
-    </h2>
-    <br>
-    <h3 class="float-text text-2xl md:text-3xl font-serif italic text-brand-magenta/80">
-        by Mary
-    </h3>
-</div>
-        <!-- MIDDLE: Image -->
-        <div class="relative mb-12 w-full max-w-[320px] md:max-w-[380px]">
-            <div class="showcase-frame frame-peach bg-brand-alabaster/30 rounded-lg shadow-xl">
-                <div class="img-container aspect-[3/4] shadow-2xl overflow-hidden rounded-sm">
+<!-- SECTION 1: PHILOSOPHY -->
+<section id="philosophy" class="py-20 md:py-32 bg-[#0D071A] relative overflow-hidden">
+    
+    <!-- Background Glow -->
+    <div class="glow-soft" style="background: var(--magenta); top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1; width: 800px; height: 800px;"></div>
+
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-24">
+            
+            <!-- 1. THE TITLE (order-1 on mobile) -->
+            <div class="w-full md:w-1/2 order-1 md:order-2 flex flex-col items-center md:items-start text-center md:text-left">
+                <div class="mb-8 md:mb-12">
+                    <span class="text-brand-blue text-[10px] uppercase tracking-[0.5em] mb-4 block font-bold opacity-60">Povestea Noastră</span>
+                    <h2 class="neon-text font-serif text-5xl md:text-7xl lg:text-8xl leading-tight italic">
+                        Handmade <br> <span class="flicker-slow">by</span> Mary
+                    </h2>
+                    <div class="h-[1px] w-24 bg-brand-magenta mt-6 md:ml-0 mx-auto"></div>
+                </div>
+
+                <!-- DESKTOP TEXT -->
+                <div class="hidden md:block space-y-8">
+    <p class="text-brand-ice/90 text-lg font-light leading-relaxed italic">
+        "Nu vindem doar <span class="text-brand-magenta font-bold">flori de săpun</span>. Sculptăm <span class="text-brand-magenta font-bold">emoții parfumate</span> care nu se ofilesc <span class="text-brand-magenta font-bold">niciodată</span>."
+    </p>
+                    <p class="text-brand-blue/50 text-sm md:text-base leading-loose tracking-wide">
+                        Fiecare petală este modelată manual în atelierul nostru, folosind tehnici care îmbină răbdarea artizanală cu designul modern. Rezultatul? Obiecte decorative care par să respire.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="https://www.instagram.com/handmade.candles.mary" target="_blank" class="btn-luxury-blue group px-8 py-4 rounded-full flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em]">
+                            <i class="fa-brands fa-instagram text-lg group-hover:rotate-12 transition-transform"></i>
+                            <span>Instagram</span>
+                        </a>
+
+
+    <!-- NEW BUTTON HERE -->
+    <button onclick="openAboutBook()" class="btn-luxury-blue group px-8 py-4 rounded-full flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] border border-brand-magenta/30">
+        <i class="fa-solid fa-book-open text-lg text-brand-magenta"></i>
+        <span>Despre Mine</span>
+    </button>
+                        <a href="https://www.tiktok.com/@handmade.candles.soap" target="_blank" class="btn-luxury-anim group px-8 py-4 rounded-full flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white">
+                            <i class="fa-brands fa-tiktok text-lg group-hover:-rotate-12 transition-transform"></i>
+                            <span>TikTok</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. THE IMAGE CONTAINER (order-2 on mobile) -->
+            <div class="w-full max-w-[350px] md:w-[450px] order-2 md:order-1 flex-shrink-0 relative group">
+                
+                <!-- Main Image Box -->
+<div class="absolute inset-0 opacity-[0.15] pointer-events-none mix-blend-overlay" 
+     style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');">
+</div>                
+                <div class="relative bg-[#1a0f2e] p-1.5 rounded-2xl border border-white/10 overflow-hidden shadow-2xl z-10">
                     <img 
                         src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FCaptur%C4%83%20de%20ecran%202026-02-12%20192716.png?alt=media&token=89a9939e-38a7-4434-8fb6-58979eec3cc5" 
-                        class="w-full h-full object-cover" 
-                        alt="Handmade by Mary Detail" 
-                        loading="lazy"
+                        class="w-full h-auto rounded-xl transform group-hover:scale-105 transition-transform duration-[2s]" 
+                        alt="Handmade Mary Artistry"
                     />
                 </div>
-            </div>
-        </div>
 
-        <!-- BOTTOM: Content & Socials -->
-        <div class="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <div class="border-l-2 border-brand-magenta/20 pl-6">
-                <p class="text-lg font-serif italic mb-3">Creații unice, create cu suflet.</p>
-                <ul class="space-y-2 text-[10px] md:text-[11px] font-semibold uppercase tracking-wider opacity-80">
-                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-magenta rounded-full"></span> Flori de săpun & Buchete</li>
-                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-magenta rounded-full"></span> Lumânări Parfumate</li>
-                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-magenta rounded-full"></span> Decor & Aranjamente</li>
-                </ul>
-            </div>
+<!-- THE DYNAMIC POLAROID STACK -->
+<div class="absolute -bottom-6 -right-4 md:-bottom-10 md:-right-12 w-36 md:w-56 bg-[#FAF9F6] p-2 md:p-3 shadow-[20px_20px_60px_rgba(0,0,0,0.8)] rotate-[5deg] z-30 transition-all duration-500 hover:rotate-0 hover:scale-110 flex flex-col group/polaroid overflow-hidden cursor-pointer" onclick="nextPolaroid()">
+    
+    <!-- Paper Texture Overlay -->
+    <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');"></div>
+    
+<div class="aspect-square bg-white overflow-hidden relative border border-black/5">
+    <!-- THE GLARE LAYER -->
+    <div class="polaroid-glare"></div>
+    
+    <img id="polaroid-display" 
+         src="https://iili.io/qJePnPn.png" 
+         class="w-full h-full object-contain p-2 zoom-in" 
+         alt="Handmade Detail">
+</div>
+    <!-- Polaroid Bottom Label -->
+    <div class="pt-3 md:pt-5 pb-1 relative z-10">
+        <p id="polaroid-caption" class="font-serif italic text-[10px] md:text-[12px] text-[#2c2c2c] text-center tracking-tighter opacity-60">
+            Handmade Magic
+        </p>
+    </div>
 
-            <div class="flex flex-col gap-4">
-                <p class="text-[9px] uppercase tracking-[0.2em] font-bold text-brand-dark/40">Evenimente • Cadouri • Mărturii</p>
-                <div class="flex items-center gap-3">
-                    <a href="https://www.instagram.com/handmade.candles.mary?igsh=bDVldWphNHZscmhp" target="_blank" class="flex-1 py-2.5 border border-brand-dark/20 rounded-full flex items-center justify-center gap-2 hover:bg-brand-magenta hover:text-white transition-all duration-300">
-                        <i class="fa-brands fa-instagram text-base"></i>
-                        <span class="text-[9px] font-bold uppercase tracking-widest">Instagram</span>
-                    </a>
-                    <a href="https://www.tiktok.com/@handmade.candles.soap?_r=1&_t=ZG-93rQGoj8tWq" target="_blank" class="flex-1 py-2.5 border border-brand-dark/20 rounded-full flex items-center justify-center gap-2 hover:bg-brand-magenta hover:text-white transition-all duration-300">
-                        <i class="fa-brands fa-tiktok text-base"></i>
-                        <span class="text-[9px] font-bold uppercase tracking-widest">TikTok</span>
-                    </a>
+    <!-- Subtle Paper Sheen -->
+    <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none"></div>
+</div>
+
+                <!-- Floating Tech Badge -->
+                <div class="absolute top-4 left-4 bg-black/70 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full z-20">
+                    <p class="text-brand-ice text-[9px] font-bold uppercase tracking-widest">Atelier Artizanal</p>
                 </div>
             </div>
+
+<!-- 3. MOBILE TEXT & SOCIALS (order-3 on mobile) -->
+<div class="w-full order-3 md:hidden flex flex-col items-center text-center space-y-8 mt-10 px-4">
+<p class="text-brand-ice/90 text-lg md:text-2xl font-light leading-relaxed italic">
+    "Nu vindem doar <span class="text-brand-magenta font-bold">flori de săpun</span>. Sculptăm <span class="text-brand-magenta font-bold">emoții parfumate</span> care nu se ofilesc <span class="text-brand-magenta font-bold">niciodată</span>."
+</p>
+    
+    <!-- MOBILE SOCIALS -->
+    <div class="flex flex-wrap justify-center gap-4 pt-4">
+        <a href="https://www.instagram.com/handmade.candles.mary" target="_blank" class="btn-luxury-blue group px-6 py-4 rounded-full flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em]">
+            <i class="fa-brands fa-instagram text-lg"></i>
+            <span>Instagram</span>
+        </a>
+
+
+    <!-- NEW BUTTON HERE -->
+    <button onclick="openAboutBook()" class="btn-luxury-blue group px-6 py-4 rounded-full flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] border border-brand-magenta/30">
+        <i class="fa-solid fa-book-open text-lg text-brand-magenta"></i>
+        <span>Despre Mine</span>
+    </button>
+        <a href="https://www.tiktok.com/@handmade.candles.soap" target="_blank" class="btn-luxury-anim group px-6 py-4 rounded-full flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white">
+            <i class="fa-brands fa-tiktok text-lg"></i>
+            <span>TikTok</span>
+        </a>
+    </div>
+</div>
+            </div>
+
         </div>
     </div>
 </section>
@@ -1551,6 +1961,7 @@ body {
 </main>
 <!-- FOOTER -->
 <!-- FOOTER -->
+<!-- FOOTER -->
 <footer class="bg-[#0D071A] pt-24 pb-12 px-6 md:px-10 border-t border-brand-blue/10 relative overflow-hidden">
     <!-- Fundal subtil cu reflexii -->
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-96 bg-brand-purple/5 blur-[120px] pointer-events-none"></div>
@@ -1558,7 +1969,7 @@ body {
     <div class="max-w-7xl mx-auto text-center">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-12 items-start">
             
-            <!-- 1. BRAND COLUMN - Centered -->
+            <!-- 1. BRAND COLUMN -->
             <div class="flex flex-col items-center space-y-8 order-1">
                 <img 
                     src="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/botezuri.png?alt=media&token=952e6adf-9bf6-4ada-ac2f-c9de0cb19b3a" 
@@ -1566,8 +1977,8 @@ body {
                     class="w-32 md:w-40 opacity-90 hover:scale-105 transition-transform duration-500"
                 />
                 <p class="text-brand-blue/50 text-[11px] md:text-xs max-w-xs font-light leading-loose uppercase tracking-[0.2em]">
-                    MC Handmade Marry. <br>
-                    Artă botanică românească. Flori care nu se ofilesc niciodată, sculptate manual pentru momente de neuitat.
+                    MC Handmade Mary. <br>
+                    Artă botanică românească. Flori care nu se ofilesc niciodată, sculptate manual.
                 </p>
                 <div class="flex justify-center space-x-5">
                     <a href="https://www.instagram.com/handmade.candles.mary" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
@@ -1576,31 +1987,33 @@ body {
                     <a href="https://www.tiktok.com/@handmade.candles.soap" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
                         <i class="fa-brands fa-tiktok text-lg"></i>
                     </a>
-                    <a href="https://api.whatsapp.com/send?phone=4917675891440" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
-                        <i class="fa-brands fa-whatsapp text-lg"></i>
-                    </a>
+
+
+
+        <!-- WhatsApp (Restored) -->
+        <a href="https://api.whatsapp.com/send?phone=4917675891440" target="_blank" class="w-10 h-10 border border-brand-blue/20 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-magenta hover:border-transparent hover:text-white transition-all duration-300">
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+        </a>
                 </div>
             </div>
 
-            <!-- 2. NAVIGATION COLUMN - Centered -->
-            <div class="flex flex-col items-center order-2 md:order-2">
+            <!-- 2. NAVIGATION COLUMN -->
+            <div class="flex flex-col items-center order-2">
                 <h5 class="text-brand-ice text-[10px] uppercase tracking-[0.4em] mb-8 font-bold">Navigare</h5>
                 <ul class="text-brand-blue/60 text-[10px] space-y-5 font-medium tracking-[0.2em]">
                     <li><a href="#home" class="hover:text-brand-magenta transition-colors">ACASĂ</a></li>
-                    <li><a href="#philosophy" class="hover:text-brand-magenta transition-colors">DESPRE BRAND</a></li>
-                    <li><a href="#collection" class="hover:text-brand-magenta transition-colors">GALERIE PRODUSE</a></li>
+                    <li><a href="#philosophy" class="hover:text-brand-magenta transition-colors">BIOGRAFIE</a></li>
+                    <li><a href="Colecții.html" class="hover:text-brand-magenta transition-colors">COLECȚII</a></li>
                     <li><a href="#bespoke" class="hover:text-brand-magenta transition-colors">COMENZI SPECIALE</a></li>
                 </ul>
             </div>
 
-<!-- 3. DEVELOPER COLUMN - Centered with Tri-Contact -->
-            <div class="flex flex-col items-center order-3 md:order-3">
-                <div class="relative group">
-                    <!-- Glow Effect -->
-                    <div class="absolute inset-0 bg-brand-ice/20 blur-2xl rounded-full group-hover:bg-brand-magenta/30 transition-all duration-700"></div>
+            <!-- 3. DEVELOPER COLUMN (Neon & Flicker Effect) -->
+            <div class="flex flex-col items-center order-3">
+                <div class="relative group cursor-pointer">
+                    <div class="absolute inset-[-4px] bg-gradient-to-r from-brand-blue via-brand-magenta to-brand-purple rounded-full opacity-20 group-hover:opacity-100 group-hover:rotate-180 transition-all duration-1000 blur-md"></div>
                     
-                    <!-- Creator Avatar -->
-                    <a href="https://www.tiktok.com/@lost_soul_zzz" target="_blank" class="relative block w-24 h-24 mb-6 rounded-full border-2 border-brand-ice/30 p-1 overflow-hidden transition-transform duration-500 group-hover:scale-110 group-hover:border-brand-magenta">
+                    <a href="https://www.tiktok.com/@lost_soul_zzz" target="_blank" class="relative block w-24 h-24 rounded-full border-2 border-brand-ice/30 p-1 overflow-hidden transition-all duration-500 group-hover:scale-105 group-hover:border-brand-magenta">
                         <img 
                             src="https://iili.io/f1ddIfe.png" 
                             alt="Lost Soul" 
@@ -1609,33 +2022,36 @@ body {
                     </a>
                 </div>
                 
-                <h6 class="text-brand-ice/80 text-[10px] uppercase tracking-[0.3em] font-bold mb-2">Website realizat de</h6>
-                <p class="text-brand-magenta font-serif italic text-xl mb-4">Lost Soul / Nica Emmanuel</p>
+    <h6 class="text-brand-ice/80 text-[10px] uppercase tracking-[0.4em] font-bold mt-6 mb-1">Website realizat de</h6>
                 
-                <!-- Contact Links Container -->
-                <div class="flex flex-col items-center gap-3">
-                    <span class="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-blue/50">Contact Developer</span>
+                <!-- NEON TEXT WITH BUGGY FLICKER -->
+                <p class="font-serif italic text-2xl mb-6 neon-text">
+                    <span class="flicker-slow">L</span>ost <span class="flicker-fast">S</span>oul / 
+                    Nica <span class="flicker-slow">E</span>mmanuel
+                </p>
+                
+                <div class="flex flex-col items-center gap-4 bg-brand-dark/40 p-6 rounded-2xl border border-brand-blue/5">
+                    <span class="text-[9px] uppercase tracking-[0.4em] font-bold text-brand-blue/30">Connect with Dev</span>
                     
-                    <div class="flex items-center gap-6">
-                        <!-- Discord -->
-                        <a href="https://discord.com/users/1063511180376817755" target="_blank" class="text-brand-blue/50 hover:text-[#5865F2] hover:scale-125 transition-all duration-300" title="Discord">
+                    <div class="flex items-center gap-8">
+                        <a href="https://discord.com/users/1063511180376817755" target="_blank" class="text-brand-blue/40 hover:text-[#5865F2] hover:scale-125 transition-all duration-300">
                             <i class="fa-brands fa-discord text-2xl"></i>
                         </a>
-                        
-                        <!-- WhatsApp -->
-                        <a href="https://wa.link/anjgnu" target="_blank" class="text-brand-blue/50 hover:text-[#25D366] hover:scale-125 transition-all duration-300" title="WhatsApp">
+                        <a href="https://wa.link/anjgnu" target="_blank" class="text-brand-blue/40 hover:text-[#25D366] hover:scale-125 transition-all duration-300">
                             <i class="fa-brands fa-whatsapp text-2xl"></i>
                         </a>
-
-                        <!-- TikTok -->
-                        <a href="https://www.tiktok.com/@lost_soul_zzz" target="_blank" class="text-brand-blue/50 hover:text-[#FE2C55] hover:scale-125 transition-all duration-300" title="TikTok">
+                        <a href="https://www.tiktok.com/@lost_soul_zzz" target="_blank" class="text-brand-blue/40 hover:text-[#FE2C55] hover:scale-125 transition-all duration-300">
                             <i class="fa-brands fa-tiktok text-2xl"></i>
                         </a>
                     </div>
                 </div>
             </div>
+        </div>
 
-
+        <div class="mt-20 pt-8 border-t border-brand-blue/5">
+            <p class="text-[9px] uppercase tracking-[0.5em] text-brand-blue/20">
+                &copy; 2026 MC Eternal Petals Artistry • Toate drepturile rezervate.
+            </p>
         </div>
     </div>
 </footer>
@@ -2092,6 +2508,146 @@ const allAssets = [
     "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=4ef1128f-abf0-4927-91db-60fa4ef92d6a",
     "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F4a037ff8-c3a4-4822-9bf8-1a2239c64700.png?alt=media&token=d05d2a2e-54e7-42f5-92bc-e66a93a56c61"
 ];
+
+
+
+const polaroidImages = [
+    "https://iili.io/qJePnPn.png", "https://iili.io/qJePCMX.png", "https://iili.io/qJePzcG.png",
+    "https://iili.io/qJePxFs.png", "https://iili.io/qJePu94.png", "https://iili.io/qJePAAl.png",
+    "https://iili.io/qJePRN2.png", "https://iili.io/qJeP5tS.png", "https://iili.io/qJePcPe.png",
+    "https://iili.io/qJeP0Ku.png", "https://iili.io/qJeP1cb.png", "https://iili.io/qJePESj.png",
+    "https://iili.io/qJePVAQ.png", "https://iili.io/qJePWNV.png", "https://iili.io/qJePXDB.png",
+    "https://iili.io/qJePjoP.png", "https://iili.io/qJePwV1.png", "https://iili.io/qJePNiF.png",
+    "https://iili.io/qJePeKg.png", "https://iili.io/qJePvUJ.png", "https://iili.io/qJePSHv.png",
+    "https://iili.io/qJePURR.png", "https://iili.io/qJePgNp.png", "https://iili.io/qJePrDN.png"
+];
+
+let polaroidIndex = 0;
+let isSlideshowPaused = false;
+
+// 1. ROTATION LOGIC
+const rotatePolaroid = () => {
+    if (isSlideshowPaused) return; 
+    const img = document.getElementById('polaroid-display');
+    if(!img) return;
+
+    img.style.opacity = '0';
+    img.classList.remove('zoom-in');
+
+    setTimeout(() => {
+        polaroidIndex = (polaroidIndex + 1) % polaroidImages.length;
+        img.src = polaroidImages[polaroidIndex];
+        img.onload = () => {
+            img.style.opacity = '1';
+            img.classList.add('zoom-in');
+        };
+    }, 800); 
+};
+
+// 2. MODAL LOGIC (The Preview Box)
+const handlePolaroidClick = () => {
+    const currentImg = polaroidImages[polaroidIndex];
+    const modal = document.getElementById('productModal');
+    const modalContent = document.getElementById('modalContent');
+    const modalImg = document.getElementById('modalProductImg');
+    const whatsappBtn = document.getElementById('modalWhatsAppBtn');
+
+    if(!modal) return;
+
+    isSlideshowPaused = true; 
+    modalImg.src = currentImg;
+    whatsappBtn.href = `https://api.whatsapp.com/send?phone=4917675891440&text=Bună! Sunt interesat de acest model: ${currentImg}`;
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+    }, 10);
+};
+
+const closeProductModal = () => {
+    const modal = document.getElementById('productModal');
+    const modalContent = document.getElementById('modalContent');
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    modalContent.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        isSlideshowPaused = false; 
+    }, 500);
+};
+
+// --- CRITICAL: EXPOSE TO WINDOW ---
+// This prevents the "not defined" error
+window.nextPolaroid = handlePolaroidClick; 
+window.closeProductModal = closeProductModal;
+
+// Start rotation
+setInterval(rotatePolaroid, 4000);
+
+// --- AUDIO SETUP ---
+const storyAudio = new Audio("https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/ElevenLabs_2026-02-15T14_36_33_Alice%20-%20Soothing%2C%20Calm%20and%20Youthful_pvc_sp100_s50_sb75_se0_b_m2.mp3?alt=media&token=ca0a2915-3a32-45c3-a1dd-2a63b1cc02dc");
+storyAudio.volume = 0.6; 
+
+// Timers
+let audioStartTimer = null;
+let page1FlipTimer = null;
+let page2FlipTimer = null;
+
+window.openAboutBook = () => {
+    const modal = document.getElementById('aboutModal');
+    const book = document.getElementById('theBook');
+    
+    modal.classList.remove('hidden');
+    
+    // 1. OPEN COVER
+    setTimeout(() => {
+        book.classList.add('open');
+    }, 100);
+
+    // 2. START AUDIO (Approx 2.1s later)
+    audioStartTimer = setTimeout(() => {
+        storyAudio.play().catch(e => console.log("Audio block:", e));
+        
+        // 3. FLIP PAGE 1 at 40 SECONDS
+        page1FlipTimer = setTimeout(() => {
+            book.classList.add('flip-1');
+        }, 40000); 
+
+        // 4. FLIP PAGE 2 at 1 MINUTE 46 SECONDS (106000 ms)
+        page2FlipTimer = setTimeout(() => {
+            book.classList.add('flip-2');
+        }, 106000);
+
+    }, 2100); 
+};
+
+window.closeAboutBook = () => {
+    const modal = document.getElementById('aboutModal');
+    const book = document.getElementById('theBook');
+    
+    // STOP EVERYTHING
+    storyAudio.pause();
+    storyAudio.currentTime = 0;
+    
+    clearTimeout(audioStartTimer);
+    clearTimeout(page1FlipTimer);
+    clearTimeout(page2FlipTimer);
+    
+    // RESET ANIMATION SEQUENCE
+    // 1. Unflip pages instantly or quickly
+    book.classList.remove('flip-1');
+    book.classList.remove('flip-2');
+    
+    // 2. Wait a moment for pages to reset, then close cover
+    setTimeout(() => {
+        book.classList.remove('open'); 
+    }, 300); // Small delay ensures pages are flat before cover closes
+
+    // 3. Hide Modal after cover closes
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 1500); 
+};
 </script>
 </body>
 </html>
