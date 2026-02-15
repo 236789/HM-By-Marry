@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>MC | Eternal Petals Artistry</title>
 
-<!-- CRITICAL: Preload Logo & Hero for Speed -->
-    <link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/botezuri.png?alt=media&token=952e6adf-9bf6-4ada-ac2f-c9de0cb19b3a">
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=2000&auto=format&fit=crop">
-
-
+<!-- CRITICAL: Preload Brand Assets -->
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/botezuri.png?alt=media&token=952e6adf-9bf6-4ada-ac2f-c9de0cb19b3a">
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2F3.png?alt=media&token=0a075be9-3a7d-486b-8577-ff1a56fe4159">
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/paper-style-luxury-background_23-2148985108.jpg?alt=media&token=357f22f1-6a79-4064-b5d2-454f2efcad1b">
+<!-- CRITICAL: Preload Hero & First Slide of every collection -->
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Ftexts%2F3.png?alt=media&token=0a075be9-3a7d-486b-8577-ff1a56fe4159">
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Feedcf612-d4c8-430a-855f-5981d6daca9a.png?alt=media&token=417d6c91-6806-46d4-a1fb-76642d787e7b">
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8">
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028">
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fa5c8bff7-a0ab-43a7-9441-f3cd8c16f08c.png?alt=media&token=0a0bfdf5-2cae-4e23-8d11-f2a794790d9a">
+<link rel="preload" as="image" href="https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F53a5fe13-c761-4347-9ea0-eebe804876bb.png?alt=media&token=cc7a387b-0039-4b4d-9143-0e89a272cedb">
 
 
 <!-- Google Fonts -->
@@ -996,7 +1002,30 @@ body {
     pointer-events: none;
 }
 
+/* FORCE GPU FOR SMOOTH SCROLLING */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
+/* Fix mobile lag by optimizing expensive CSS properties */
+@media (max-width: 768px) {
+    /* 1. Remove blur filters on mobile (the main cause of lag) */
+    .glow-soft { display: none !important; }
+    
+    /* 2. Disable complex backdrop blurs on nav and frames */
+    nav, .showcase-frame, .indigo-frame, .mobile-menu {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background-color: rgba(19, 9, 37, 0.98) !important; /* Solid color is 100x faster */
+    }
+
+    /* 3. Hardware acceleration for sliding images */
+    .slide-img {
+        will-change: opacity;
+        transform: translateZ(0); /* Forces GPU render */
+    }
+}
 
 
 </style>
@@ -2057,6 +2086,28 @@ function initFloatingText() {
 window.addEventListener('load', () => {
     initFloatingText();
 });
+
+// FULL IMAGE CACHE - Preloads every image in the background
+const allAssets = [
+    // --- The 10 Falling Petals ---
+    "https://iili.io/qJRyA5x.png", "https://iili.io/qJRyuJj.png", "https://iili.io/qJRyz0u.png",
+    "https://iili.io/qJRyIUb.png", "https://iili.io/qJRyROQ.png", "https://iili.io/qJRy5bV.png",
+    "https://iili.io/qJRyYzB.png", "https://iili.io/qJRyaWP.png", "https://iili.io/qJRy0qF.png",
+    "https://iili.io/qJRy10g.png",
+
+    // --- Collection Slide 1 ---
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Feedcf612-d4c8-430a-855f-5981d6daca9a.png?alt=media&token=417d6c91-6806-46d4-a1fb-76642d787e7b",
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2017_54_13.png?alt=media&token=9f4db92e-1a21-410d-ae88-0f7ae7df41b8",
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fef565368-bda4-4b16-84cd-c779d36f4799.png?alt=media&token=4fc4bec4-d750-47fe-bb38-9ac63dd43028",
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fa5c8bff7-a0ab-43a7-9441-f3cd8c16f08c.png?alt=media&token=0a0bfdf5-2cae-4e23-8d11-f2a794790d9a",
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F53a5fe13-c761-4347-9ea0-eebe804876bb.png?alt=media&token=cc7a387b-0039-4b4d-9143-0e89a272cedb",
+
+    // --- Collection Slide 2 ---
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Feedcf612-d4c8-430a-855f-5981d6daca9a.png44.png?alt=media&token=c0f7929e-4219-49b4-99bf-3f2436386eb8",
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2FChatGPT%20Image%2012%20feb.%202026%2C%2018_03_15.png?alt=media&token=dc921b91-168b-47e4-bf90-8bb8f9e16352",
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2Fb49ecd7c-41ac-4ba7-9c3f-ff1c7d6c50f1.png?alt=media&token=4ef1128f-abf0-4927-91db-60fa4ef92d6a",
+    "https://firebasestorage.googleapis.com/v0/b/ksda-7546f.firebasestorage.app/o/HM%20MC%2F4a037ff8-c3a4-4822-9bf8-1a2239c64700.png?alt=media&token=d05d2a2e-54e7-42f5-92bc-e66a93a56c61"
+];
 </script>
 </body>
 </html>
