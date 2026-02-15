@@ -502,7 +502,7 @@ body {
         object-fit: contain !important;
     }
 }
-/* --- ANIMATED BACKGROUND START --- */
+/* --- ANIMATED BACKGROUND (DRIFT & GHOST LOGIC) --- */
 .ambient-bg {
     position: fixed;
     top: 0;
@@ -510,11 +510,10 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    z-index: -1; /* Puts it behind everything */
-    background-color: var(--dark); /* Base color */
+    z-index: -1;
+    background-color: var(--dark);
 }
 
-/* The Noise/Grain Overlay - Adds texture so it doesn't look like a cheap gradient */
 .bg-grain {
     position: absolute;
     inset: 0;
@@ -524,65 +523,85 @@ body {
     pointer-events: none;
 }
 
-/* The Moving Blobs */
 .blob-cont {
     position: absolute;
     inset: 0;
-    filter: blur(80px); /* This creates the smooth blend */
+    filter: blur(100px); /* Slightly higher blur for smoother "leaving" */
     z-index: 0;
 }
 
 .blob {
     position: absolute;
     border-radius: 50%;
-    animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0.6;
+    opacity: 0; /* Start hidden */
 }
 
-/* Blob 1: Purple/Magenta (Top Left) */
+/* Blob 1: Purple (Drifts from Top Left to Center) */
 .blob-1 {
-    top: -10%;
-    left: -10%;
-    width: 50vw;
-    height: 50vw;
-    background: radial-gradient(circle, var(--purple) 0%, transparent 70%);
-    animation-delay: 0s;
-}
-
-/* Blob 2: Blue (Bottom Right) */
-.blob-2 {
-    bottom: -10%;
-    right: -10%;
+    top: -20%;
+    left: -20%;
     width: 60vw;
     height: 60vw;
+    background: radial-gradient(circle, var(--purple) 0%, transparent 70%);
+    animation: drift-1 25s infinite ease-in-out;
+}
+
+/* Blob 2: Blue (Drifts from Bottom Right to Center) */
+.blob-2 {
+    bottom: -20%;
+    right: -20%;
+    width: 70vw;
+    height: 70vw;
     background: radial-gradient(circle, var(--blue) 0%, transparent 70%);
-    animation-delay: -5s;
+    animation: drift-2 30s infinite ease-in-out;
+    animation-delay: 2s;
 }
 
-/* Blob 3: Magenta Accent (Floating Center) */
+/* Blob 3: Magenta (Appears in center, grows, and leaves) */
 .blob-3 {
-    top: 40%;
-    left: 40%;
-    width: 40vw;
-    height: 40vw;
+    top: 30%;
+    left: 20%;
+    width: 50vw;
+    height: 50vw;
     background: radial-gradient(circle, var(--magenta) 0%, transparent 70%);
-    animation-delay: -10s;
-    opacity: 0.4;
+    animation: drift-3 22s infinite ease-in-out;
+    animation-delay: 5s;
 }
 
-/* The Animation Movement */
-@keyframes float {
-    0% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0, 0) scale(1); }
+/* --- THE SICK DRIFT KEYFRAMES --- */
+
+/* Blob 1: Drifts in, stays, then moves far left out */
+@keyframes drift-1 {
+    0% { transform: translate(-10%, -10%) scale(1); opacity: 0; }
+    20% { opacity: 0.5; }
+    50% { transform: translate(20%, 20%) scale(1.2); opacity: 0.7; }
+    80% { opacity: 0.5; }
+    100% { transform: translate(-30%, 10%) scale(1); opacity: 0; }
 }
 
-/* Mobile Optimization: Reduce blur/size slightly for performance */
+/* Blob 2: Drifts in from bottom, circles, then leaves bottom-right */
+@keyframes drift-2 {
+    0% { transform: translate(10%, 10%) scale(1); opacity: 0; }
+    30% { opacity: 0.4; }
+    60% { transform: translate(-15%, -20%) scale(1.3); opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translate(20%, 20%) scale(1); opacity: 0; }
+}
+
+/* Blob 3: Pulsates in the middle then drifts top-right out */
+@keyframes drift-3 {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+    25% { opacity: 0.5; transform: scale(1); }
+    50% { transform: translate(15%, -15%) scale(1.2); opacity: 0.4; }
+    75% { opacity: 0.5; }
+    100% { transform: translate(40%, -40%) scale(0.8); opacity: 0; }
+}
+
+/* Mobile Optimization */
 @media (max-width: 768px) {
-    .blob { filter: blur(60px); opacity: 0.5; }
+    .blob { filter: blur(60px); }
+    .blob-1, .blob-2, .blob-3 { width: 80vw; height: 80vw; }
 }
-/* --- ANIMATED BACKGROUND END --- */
 
 
 
@@ -745,10 +764,219 @@ body {
     transform: translateX(5px);
     transition: transform 0.3s ease;
 }
+
+/* --- FIXED STAR DROP POSITIONING --- */
+.reviews-icon-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px; 
+    height: 40px; /* Increased height to contain the stars inside the container */
+    margin-right: 5px;
+}
+
+.user-icon-anim {
+    font-size: 1.4rem;
+    color: var(--ice);
+    margin-top: 10px; /* Push user down to make room for stars */
+}
+
+.stars-wrapper {
+    position: absolute;
+    top: 2px; /* Pulls stars down closer to the icon head */
+    left: 50%;
+    transform: translateX(-50%); /* Centers stars perfectly over the icon */
+    display: flex;
+    gap: 2px;
+}
+
+.stars-wrapper i {
+    font-size: 8px; /* Slightly larger for better visibility */
+    color: var(--magenta);
+    opacity: 0;
+    transform: translateY(-5px) scale(0);
+    filter: drop-shadow(0 0 5px var(--magenta));
+    animation: star-sequence 4s infinite;
+}
+
+/* Same star-sequence timing */
+.stars-wrapper i:nth-child(1) { animation-delay: 0.2s; }
+.stars-wrapper i:nth-child(2) { animation-delay: 0.4s; }
+.stars-wrapper i:nth-child(3) { animation-delay: 0.6s; }
+.stars-wrapper i:nth-child(4) { animation-delay: 0.8s; }
+.stars-wrapper i:nth-child(5) { animation-delay: 1.0s; }
+
+@keyframes star-sequence {
+    0%, 10% { opacity: 0; transform: translateY(-5px) scale(0); }
+    15% { opacity: 1; transform: translateY(0) scale(1.3); } 
+    20% { transform: scale(1); } 
+    80% { opacity: 1; transform: translateY(0) scale(1); }
+    90%, 100% { opacity: 0; transform: translateY(3px) scale(0); }
+}
+
+/* Enhance the Blue Button to match WhatsApp Luxury exactly */
+.btn-luxury-blue {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, #0B1120, #1E3A8A); /* Slightly brighter deep blue */
+    z-index: 1;
+    border: 1px solid rgba(113, 140, 229, 0.4);
+    box-shadow: 0 0 20px rgba(113, 140, 229, 0.2);
+    transition: all 0.4s ease;
+}
+
+.btn-luxury-blue::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(255,255,255,0.5), rgba(255,255,255,0.2), transparent);
+    transform: skewX(-25deg);
+    animation: sheen-sweep 4s infinite; /* Same timing as WhatsApp */
+}
+
+.btn-luxury-blue:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(113, 140, 229, 0.5);
+    border-color: var(--ice);
+}
+
+
+
+/* --- UPDATED LUXURY BADGE (PURPLE THEME) --- */
+.btn-review-badge {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 35px 45px;
+    min-width: 280px;
+    gap: 15px;
+    /* Matches WhatsApp Button Exactly */
+    background: linear-gradient(90deg, var(--dark), #2E1065) !important;
+    border: 1px solid rgba(228, 103, 218, 0.2) !important;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    z-index: 1;
+    transition: all 0.4s ease;
+}
+
+/* Luxury Sheen (White sweep) */
+.btn-review-badge::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        rgba(255, 255, 255, 0.5), 
+        rgba(255, 255, 255, 0.2), 
+        transparent
+    );
+    transform: skewX(-25deg);
+    animation: sheen-sweep 5s infinite;
+    pointer-events: none;
+}
+
+/* Hover State - Glows Magenta like the rest of the site */
+.btn-review-badge:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(228, 103, 218, 0.3);
+    border-color: var(--magenta) !important;
+}
+
+/* LOCK ICONS (No shifting on hover) */
+.btn-review-badge:hover i, 
+.btn-review-badge:hover span {
+    transform: none !important;
+}
+
+/* --- STAR SEQUENCE (1 BY 1) --- */
+.badge-stars-wrapper {
+    display: flex;
+    gap: 6px;
+    height: 15px;
+}
+
+.badge-stars-wrapper i {
+    font-size: 10px;
+    color: var(--magenta);
+    opacity: 0;
+    filter: drop-shadow(0 0 5px var(--magenta));
+    /* Only apply name, duration and timing here */
+    animation-name: star-sequence-vertical;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+/* Staggered Delays for 1-by-1 effect */
+.badge-stars-wrapper i:nth-child(1) { animation-delay: 0.2s; }
+.badge-stars-wrapper i:nth-child(2) { animation-delay: 0.4s; }
+.badge-stars-wrapper i:nth-child(3) { animation-delay: 0.6s; }
+.badge-stars-wrapper i:nth-child(4) { animation-delay: 0.8s; }
+.badge-stars-wrapper i:nth-child(5) { animation-delay: 1.0s; }
+
+@keyframes star-sequence-vertical {
+    0%, 10% { opacity: 0; transform: translateY(-10px) scale(0); }
+    20% { opacity: 1; transform: translateY(0) scale(1.4); } 
+    25% { transform: scale(1); } 
+    80% { opacity: 1; transform: translateY(0) scale(1); }
+    90%, 100% { opacity: 0; transform: translateY(5px) scale(0); }
+}
+
+.badge-user-icon {
+    font-size: 2.2rem;
+    color: var(--ice);
+    filter: drop-shadow(0 0 10px rgba(184, 244, 255, 0.4));
+}
+
+.badge-text {
+    color: var(--ice);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    font-size: 10px;
+}
+
+
+#petal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5; /* Behind content, above background */
+    overflow: hidden;
+    perspective: 1200px;
+}
+
+.petal {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0; /* Start hidden for fade-in */
+}
+
+
+
+
 </style>
 </head>
 <body>
-
+<div id="petal-container"></div>
 <!-- ANIMATED BACKGROUND WRAPPER -->
 <div class="ambient-bg">
     <div class="bg-grain"></div>
@@ -760,7 +988,7 @@ body {
 </div>
 
 
-
+ 
 <!-- AUTH MODAL -->
 <div id="authModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
     <div class="absolute inset-0 bg-brand-dark/90 backdrop-blur-md" onclick="toggleAuthModal()"></div>
@@ -1058,10 +1286,27 @@ body {
 <!-- Elimină data-reveal pentru ca butonul să nu aștepte scroll-ul -->
 <div class="mt-4"> 
 <!-- LUXURY REVIEWS BUTTON -->
-<a href="Recenzii.html" class="btn-luxury-blue px-12 py-5 rounded-sm font-bold uppercase tracking-[0.4em] text-[10px]">
-    <span>Vezi toate recenziile</span>
-    <i class="fa-solid fa-arrow-right-long"></i>
-</a>
+<!-- VERTICAL LUXURY REVIEWS BADGE -->
+<div class="flex justify-center mt-12">
+    <a href="Recenzii.html" class="btn-luxury-blue btn-review-badge rounded-sm">
+        
+        <!-- TOP: User Icon -->
+        <i class="fa-solid fa-circle-user badge-user-icon"></i>
+
+        <!-- MIDDLE: Stars Animation -->
+        <div class="badge-stars-wrapper">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+        </div>
+
+        <!-- BOTTOM: Text -->
+        <span class="badge-text relative z-10">Vezi toate recenziile</span>
+        
+    </a>
+</div>
 </div>
 </section>
 
@@ -1650,6 +1895,112 @@ window.handleAccountClick = function() {
         });
     });
 
+
+function createRealPetalFall() {
+    const container = document.getElementById('petal-container');
+    const petalCount = 18; // Balanced number for high-end feel
+    
+    // Your 10 Petal Images
+    const petalImages = [
+        "https://iili.io/qJRyA5x.png",
+        "https://iili.io/qJRyuJj.png",
+        "https://iili.io/qJRyz0u.png",
+        "https://iili.io/qJRyIUb.png",
+        "https://iili.io/qJRyROQ.png",
+        "https://iili.io/qJRy5bV.png",
+        "https://iili.io/qJRyYzB.png",
+        "https://iili.io/qJRyaWP.png",
+        "https://iili.io/qJRy0qF.png",
+        "https://iili.io/qJRy10g.png"
+    ];
+
+    function spawnPetal() {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        
+        // Randomize image and size
+        const randomImg = petalImages[Math.floor(Math.random() * petalImages.length)];
+        const size = Math.random() * 30 + 20; // Size between 20px and 50px
+        
+        petal.style.width = `${size}px`;
+        petal.style.height = `${size}px`;
+        petal.style.backgroundImage = `url('${randomImg}')`;
+
+        // Apply a random slight blur to some petals for "depth of field"
+        if (Math.random() > 0.6) {
+            petal.style.filter = `blur(${Math.random() * 2}px)`;
+        }
+
+        container.appendChild(petal);
+
+        const startX = Math.random() * window.innerWidth;
+        const fallDuration = Math.random() * 12 + 10; // Slow, elegant fall
+        const drift = (Math.random() - 0.5) * 400;
+
+        // Set initial 3D Position
+        gsap.set(petal, { 
+            x: startX, 
+            y: -100, 
+            z: Math.random() * 200,
+            rotationX: Math.random() * 360,
+            rotationY: Math.random() * 360,
+            rotationZ: Math.random() * 360,
+            opacity: 0 
+        });
+
+        // 1. The Fall Animation
+        gsap.to(petal, {
+            opacity: 1,
+            y: window.innerHeight + 100,
+            x: startX + drift,
+            duration: fallDuration,
+            ease: "none",
+            onComplete: () => {
+                petal.remove();
+                spawnPetal(); // Loop
+            }
+        });
+
+        // 2. The 3D Flutter (This makes the images look real)
+        gsap.to(petal, {
+            rotationX: "+=720",
+            rotationY: "+=360",
+            duration: fallDuration * 0.4,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+
+        // 3. The Side Sway
+        gsap.to(petal, {
+            x: "+=80",
+            duration: Math.random() * 3 + 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+    }
+
+    // Initialize with stagger
+    for (let i = 0; i < petalCount; i++) {
+        setTimeout(spawnPetal, i * 800);
+    }
+}
+
+// Start when everything is loaded
+window.addEventListener('load', createRealPetalFall);
+ 
+</script>
+
+
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+<script>
+    const lenis = new Lenis();
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
 </script>
 </body>
 </html>
